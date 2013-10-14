@@ -35,3 +35,9 @@ This repository contains:
     practice problems for one of the exams.  These are in `practice`.
 
 I plan to release this under a Creative Commons license shortly.
+
+WARNING
+-------
+
+The lecture notes contain errors!  I am aware of several, and there
+are probably several more of which I am unaware.  Corrections are welcome.
