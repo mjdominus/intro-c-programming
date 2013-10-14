@@ -1,0 +1,76 @@
+
+
+
+\begin{flushleft}
+\verb%int main(int argc, char **argv) %
+\\* \verb%{%
+\\* \verb%  /*%\mbox{ index of the name of the file we're working on now. }\verb%*/%
+\\* \verb%  int i;                %
+\\* \verb%  FILE *cur_file;%
+\end{flushleft}
+
+\begin{flushleft}
+\verb%  for ( i=1;  i < argc; i++ ) {%
+\end{flushleft}
+
+\begin{flushleft}
+\verb%    /*%\mbox{ open a file and handle errors }\verb%*/%
+\\* \verb%    cur_file = open_file(argv[i]);%
+\\* \verb%    if (cur_file == NULL)%
+\\* \verb%      continue;%
+\end{flushleft}
+
+\begin{flushleft}
+\verb%    /*%\mbox{ Get data from file, print data and handle errors}\verb%*/%
+\\* \verb%    spew(cur_file);%
+\end{flushleft}
+
+\begin{flushleft}
+\verb%    /*%\mbox{ close file and handle errors }\verb%*/%
+\\* \verb%    /*%\mbox{ postpone: announce that file is finished }\verb%*/%
+\\* \verb%  }%
+\end{flushleft}
+
+\begin{flushleft}
+\verb%  /*%\mbox{ return success or failure code }\verb%*/%
+\\* \verb%}%
+\end{flushleft}
+
+
+\begin{flushleft}
+\verb%FILE * open_file(char *filename)%
+\\* \verb%{%
+\\* \verb%  FILE *file;%
+\end{flushleft}
+
+\begin{flushleft}
+\verb%  file = fopen(filename, "r");%
+\end{flushleft}
+
+\begin{flushleft}
+\verb%  if (file == NULL) {%
+\\* \verb%    fprintf(stderr, "I couldn't open file %\verb-%-\verb%s!.\n", filename);%
+\\* \verb%  }%
+\end{flushleft}
+
+\begin{flushleft}
+\verb%  return file;%
+\\* \verb%}%
+\end{flushleft}
+
+
+\begin{flushleft}
+\verb%int /*%\mbox{?}\verb%*/ spew(FILE *current)%
+\\* \verb%{%
+\\* \verb%  int c;%
+\end{flushleft}
+
+\begin{flushleft}
+\verb%  while ((c = getc(current)) != EOF)%
+\\* \verb%    putchar(c);%
+\end{flushleft}
+
+
+\begin{flushleft}
+\verb%}%
+\end{flushleft}

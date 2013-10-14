@@ -1,0 +1,74 @@
+
+\begin{Large}
+There are thousands of different computer languages.
+\end{Large}
+
+The big, general-purpose ones get a lot of press: FORTRAN, COBOL, Lisp,
+C, Pascal, ALGOL, and BASIC.  But often the best way to solve a little
+problem in the day-to-day use of a computer is to invent a language for
+it.  For example:
+
+\begin{itemize}
+\item {\sc unix} has a pattern-matching program called {\tt grep}; you
+hand grep a `pattern', and it searches for lines in a certain file that
+match the pattern.  What's a pattern?  There's a language for describing
+patterns. 
+\item IBM mainframes have at least three different langauges for writing
+little utility programs.  If a user wants a program that maintains a
+list of certain files and reports which ones have changed since the day
+before, there is unlikely to be exactly what they want already written;
+so they are likely to write the program in a language called {\tt EXEC
+2} or {\tt REXX}.  Such languages are rich in string-manipulation
+operators and in functions that get information about the state of the
+file system.  {\tt REXX} has recently become popular as a stripting
+language on the Commodor Amiga microcomputer, of all things.
+\item The {\sc unix} program that reads and interprets the user's
+commands has a language built into it so that, for example, you could
+loop over a list of files, performing certain operations on each, just
+by typing the {\tt for} loop on the command line.  
+\item {\sc unix} has a program called {\tt YACC} which reads a file
+which contains a description of the desired behavior of a parser program
+and then writes a complete parser, in C, which behaves according to
+specification.  The input description is written in a special-purpose
+parser-description language unique to {\tt YACC}.
+\item Nearly all large computers have one or more langauges for running
+complicated jobs and arranging for the input and output sources to come
+from certain files or devices.  MS-DOS's redirection operators are a
+vestigial remain of this sort of thing.  IBM's job control language is
+called JCL.  (Bet you can't guess what it stands for.)
+\item Many early text editors' commands form a language, and instead of
+typing the commands to the editor from the terminal, you could put
+commands in a file and tell the editor to execute the commands
+automatically.  
+\item The CIS department's grpahics lab has a package called `Jack'
+which simulates the constraints on a human body (or any other collection
+of shapes) as it moves through space.  You describe the constraints with
+a language of some type.
+\item A popular adventure game was written by inventing a language for
+designing adventure games, implementing a compiler for that langauge,
+and writing the adventure in the specialized language.
+\item {\sc unix} has a program which searches through the directory tree
+for files satisfying certain criteria, such as `all files whose names
+end with {\tt .c} and which were modified fewer then seven days ago.'
+To describe to this program what files to look for, one uses a
+specialized language.
+\end{itemize}
+
+The point I want to make here is that you've learnt one language, C,
+which is general, flexible, and popular, but which is vastly overmatched
+in almost any area by some langauge specialized for that area.
+
+C is good for writing things like compilers and operating systems, where
+you need to manage every minute detail, but for little projects, it's
+not so hot; it's too hard to keep track of all the nonsense.  The
+guess-a-number program would have taken fifteen minutes to write in a
+language like BASIC, which is less flexible but easier to use for things
+like reading numbers in from the user.
+
+If you take anything away from this course, I'd like it not to be a lot
+of syntactic details of the C language.  Instead, I'd rather you
+remembered how to program in general: how to break a problem into little
+pieces, how to plan ahead, how to hide data from entities that shouldn't
+be concerned with it, and how to test and debug the half-finished
+product.  These will serve you well whether you're writing an operating
+system or you're building spreadsheets.

@@ -1,0 +1,10 @@
+\subsection{break}
+\label{break}
+
+The {\tt break} statement interrupts a loop prematurely.  It's easy to
+use:  You just write {\tt break;}, and control immediately passes the the
+statement following the end of the smallest enclosing {\tt while}, {\tt
+do{\rm\ldots}while}, or {\tt for} statement.\footnote{{\tt break} also
+breaks out of {\tt switch} statements, which we'll see in section
+\ref{switch}.} 
+

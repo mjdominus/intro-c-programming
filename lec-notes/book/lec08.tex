@@ -1,0 +1,384 @@
+%
+% CSE 110 Lecture Notes
+%
+% Entire contents are copyright 1992 by Mark-Jason Dominus.
+% All rights reserved.  Unauthorized reproduction prohobited.
+%
+
+\section{A Function to Swap the Values of Two Variables}
+
+    Consider a program which takes a long list of numbers and arranges
+them in numerical order.  This operation is called {\em sorting}\/.  By
+some estimates, 50\% of all computer use in the world is devoted to
+sorting things.  Many typical sorting algorithms work by finding two
+elements in the list that are out of order, and then swapping their
+positions.  In C that would mean we would have a bunch of variables, one
+for each element in the list, and we would swap the values in the two
+variables that contained out-of-order elements.
+
+    If we were writing such a program, we would do a lot of swapping.
+We can swap the values of two variables, say {\tt x} and {\tt y}, as
+follows:
+
+\begin{flushleft}
+\verb% temp = x; %
+\verb% x = y; %
+\verb% y = temp; %
+\end{flushleft}
+
+\noindent where {\tt temp} is a variable of the same type as that of
+{\tt x} and {\tt y}.  Of course, that'll get ugly and cluttered if we
+have to write it a lot; it would be better if we could put it into a
+function and simply write something like
+
+\begin{flushleft}
+\verb% swap(x,y); %
+\end{flushleft}
+
+\noindent to swap the values of variables {\tt x} and {\tt y}.  
+
+\subsection{A First Try}
+
+Here's our first cut at a program which sets up two variables and the
+calls a {\tt swap} function to swap their values:
+
+\input swap1.tex
+
+\subsection{Why the First Try Doesn't Work}
+
+If you key this in and compile it, you'll discover it doesn't work.  It
+compiles okay, but the values of {\tt x} and {\tt y} never get swapped.
+What's wrong?
+
+The problem is this: {\tt swap} only gets the {\em values}\/ of its
+arguments {\tt x} and {\tt y}; it never finds out where {\tt x} and {\tt
+y} actually are so that it can change them.  Put another way, the values
+{\tt swap} receives are {\em copies}\/ of the values stored in {\tt x}
+and {\tt y}.  {\tt swap}'s variables {\tt n1} and {\tt n2} are private
+variables; they get created when {\tt swap} is called and destroyed
+again when {\tt swap} returns.  All the shuffling around of values
+that {\tt swap} does is in its own private variables which get
+destroyed when it returns.
+
+This is actually a feature and not a bug---normally, of course, we don't
+want functions that we call from {\tt main} to be able to mess around
+with {\tt main}'s variables.  It would be very bad, for example, if
+{\tt printf} surreptitiously changed the computer's secret number in
+the middle of your guessing game program.
+
+The way out is the same as with {\tt scanf}:  instead of passing the
+values of the variables whose values we want to swap, we'll pass their
+addresses.  Then {\tt swap} will know where {\tt x} and {\tt y} are
+actually written on the blackboard, and it will be able to change their
+values all it wants.  Note that even if we tell {\tt swap} where {\tt
+x} and {\tt y} are on the blackboard, it still doesn't know where any of
+{\tt main}'s other variables are, so it can only change the ones we
+wanted it to.  
+
+This would be a good time to go back and review the material from
+section \ref{first-pointers}
+
+\subsection{This One Works}
+\label{swap2}
+
+\input swap2.tex
+
+\subsection{The {\tt\&} Operator Again}
+
+First, note that the call to {\tt swap} in {\tt main} has changed from
+
+\begin{flushleft}
+\verb% swap(x, y); %
+\end{flushleft}
+\noindent to 
+\begin{flushleft}
+\verb% swap(&x, &y); %
+\end{flushleft}
+
+\noindent .   Now, recall what the {\tt\&} operator does:  if {\tt x} is
+some variable, then {\tt\&x} describes where that variable can be found
+on the blackboard.  The value of {\tt\&x} is said to {\em point to}\/
+{\tt x}; since the type of {\tt x} is \int, the type of {\tt\&x} is
+\p2\Int.
+
+\subsection{The {\tt *} Operator}
+
+Now we know how to make a pointer: we use the {\tt\&} operator.  Once we
+have a pointer, how to we find out or change what it is pointing to?
+The complement of the {\tt\&} operator is the {\tt *} operator,
+sometimes called the {\em dereferencing operator}\/.  If {\em p}\/ is a
+pointer value, then {\tt *}{\em p}\/ is the object to which {\em p}\/
+points.  So, for example, the value of {\tt *\&x} is the same as the
+value of {\tt x}, because {\tt *\&x} means to get whatever {\tt\&x}
+points to, and {\tt\&x} points to {\tt x}.
+
+Let's suppose that {\tt swap} was called from {\tt main} as in the
+example above, and let's look at the individual statements in {\tt swap}
+and see what they do.  First, when {\tt swap} gets called, {\tt n1} gets
+assigned the value of the first argument, which is a pointer to the
+variable {\tt x}.  (That is, {\tt\&x}.)  {\tt n2} gets assigned the
+value of the second argument, which is a pointer to the variable {\tt
+y}.  (That is, {\tt\&y}.)  Then, the line
+
+\begin{flushleft}
+\verb% temp = *n1; %
+\end{flushleft}
+
+\noindent in {\tt swap} says to find the variable that {\tt n1} points to
+({\tt x} in this case), get its value (5), and assign that value to the
+variable on the left, {\tt temp}.
+
+The line 
+
+\begin{flushleft}
+\verb% *n1 = *n2; %
+\end{flushleft}
+
+\noindent says to find the variable that {\tt n2} points to
+({\tt y}), get its value (119), and assign that value to the variable
+that {\tt n1} points to ({\tt x}).
+
+The line 
+
+\begin{flushleft}
+\verb% *n2 = temp; %
+\end{flushleft}
+
+\noindent says to get the value of {\tt temp} (5), and
+assign that value to the variable that {\tt n2} points to.  ({\tt y} in
+this case.)
+
+\subsection{{\tt swap's} Header}
+
+As usual, in {\tt swap}'s header we have to tell the compiler what types
+of arguments {\tt swap} will take and what type of return value it will
+return.  We say that {\tt swap} returns type {\tt void}.  That means
+that {\tt swap} really doesn't return any value.
+
+The parameter declaration {\tt int *n1} declares a variable, {\tt n1},
+of type \p2\Int.  Here is how to remember what this means:  If the
+declaration had said {\tt int n1}, it would mean that {\tt n1} is an
+\int.  But instead it says {\tt int *n1}, so instead it means that {\tt
+*n1} is an \int.  Since {\tt *n1}, the thing {\tt n1} points to, is an
+\int, {\tt n1} itself must be a \p2\Int.
+
+\subsection{A Note About Functions that Return {\tt void}}
+
+If a function's return type is {\tt void}, that means it doesn't return
+a value at all.  To return from such a function, we just write 
+
+\begin{flushleft}
+\verb% return ; %
+\end{flushleft}
+
+\noindent , omitting the expression that usually follows the word {\tt
+return}.
+
+The other way to return from a {\tt void} function is to just let
+control flow off the bottom of the function; this is the same as doing
+{\tt return~;}.  
+
+If you do {\tt return~;} in a non-{\tt void} function, or let control
+flow off the bottom of a non-{\tt void} function, the function may
+return a random garbage value to its caller, or your program may fail
+completely.
+
+\subsection{More About Prototypes}
+
+Back in section \ref{first-prototypes}, there was a brief note about
+{\em prototypes}\/.  You should go and reread that now if you've
+forgotten it.
+
+Here's the problem we must solve: At the time the compiler compiles the
+line {\tt swap(\&x, \&y); }, it hasn't seen the definition of {\tt
+swap} yet.\footnote{In fact, it's quite possible that {\tt swap}'s
+source code resided in a different file entirely, which was compiled
+eight months ago and then thrown away.  I am not being facetious.} But
+the compiler needs to write the machine instructions for the call to and
+return from {\tt swap}, and to write those correctly it needs to know
+the types and number of the arguments and the type of the return
+value.\footnote{I'm afraid you won't be able to appreciate why this is
+until you've studied the inner workings of the compiler in detail.  We
+won't do that in this course.} We need a way to give the compiler this
+information even in the absence, temporary or otherwise, of the {\tt
+swap} function itself.
+
+The way we do that is with a {\em prototype}\/.  To write a prototype
+for a certain function, we write an ordinary function header for that
+function, but we follow it with a semicolon instead of a function body.
+The function header contains all the information the compiler needs to
+translate the call and return properly.
+
+That's what the line {\tt void swap(int *n1, int *n2); } is doing at the
+top of the program of section \ref{swap2}.  It provides argument and
+return value type information for {\tt swap} to the compiler in
+advance of the actual definition of {\tt swap}.
+
+If the compiler hasn't seen a prototype for a certain function at the
+time it compiles a call to that function, it guesses and does the best
+that it can.  It assumes that the function's return value is \int, which
+can lead to disaster if it isn't,\footnote{Try writing a program that
+uses {\tt sqrt} without including {\tt <math.h>} and you'll see what
+kind of horrors can occur---you get completely bogus answers back from
+{\tt sqrt} because the compiler thinks that {\tt sqrt} is returning an
+\int\ when it's really returning a \double.} and it does the best it can
+to handle the arguments, which sometimes works out and sometimes
+doesn't.  
+
+You should have a prototype in your program for every function except
+{\tt main}.  ({\tt main} always has the same return type and
+argument types anyway.)
+
+Library functions like {\tt printf} and {\tt sqrt} must have prototypes
+too, so that the compiler can compile the calls to them
+correctly,\footnote{In this case the source code for the called function
+{\em really}\/ isn't available---it's locked in a vault somewhere at
+Borland.} but the prototypes almost always appear in some header file,
+and so you include the prototype into your program by including the
+appropriate header file.  For example, if you hunt up the {\tt math.h}
+header file and look in it, you'll see, along with a lot of other
+nonsense, something like
+
+\begin{flushleft}
+\verb% double sqrt(double arg); %
+\end{flushleft}
+\noindent .
+
+The actual definition of a function, the one that supplies the
+instructions about how to execute the function, includes a header for
+the function, and so it counts as a prototype---after the compiler has
+seen an entire function, it certainly has enough information to compile
+calls to that function.  If we moved the {\tt swap} function so that it
+appeared before {\tt main} in the file, we could omit the prototype,
+because by the time the compiler had to compile the call to {\tt swap},
+it would have seen the entire definition of the {\tt swap} function and
+would have known all about it.
+
+\section{{\tt break}}
+\label{break}
+
+The {\tt break} statement interrupts a loop prematurely.  It's easy to
+use: You just write {\tt break;}, and if the computer reaches the {\tt
+break} statement, control immediately passes the the statement following
+the end of the smallest enclosing {\tt while}, {\tt do{\rm\ldots}while},
+{\tt for}, or {\tt switch} statement.\footnote{We haven't seen {\tt
+switch} yet, but it's coming up soon.}
+
+\subsection{Examples of {\tt break}}
+
+In each of these ghostly examples, the \breakhere\ symbol shows the
+place in the program to which the computer skips if it happens to
+execute the indicated {\tt break} statement.
+ 
+\begin{flushleft}
+\verb% while ( . . . ) { % \\*
+\verb%     . . . % \\*
+\verb%     if ( . . . ) % \\*
+\verb%       break ; % \\*
+\verb%     . . . % \\*
+\verb% } % \\*
+\breakhere
+\end{flushleft}
+
+
+\begin{flushleft}
+\verb% while ( . . . ) { % \\*
+\verb%     for ( . . . ) { % \\*
+\verb%         . . . % \\*
+\verb%         if ( . . . ) % \\*
+\verb%             break ; % \\*
+\verb%         . . . % \\*
+\verb%     } % \\*
+\verb%    % \breakhere \\*
+\verb%     . . .  % \\*
+\verb% } % \\*
+\end{flushleft}
+
+
+\begin{flushleft}
+\verb% do { % \\*
+\verb%     . . . % \\*
+\verb%     if ( . . . ) % \\*
+\verb%         if ( . . . ) % \\*
+\verb%             break ; % \\*
+\verb%     . . . % \\*
+\verb% } while ( . . . ) ; % \\*
+\breakhere
+\end{flushleft}
+
+Note that {\tt break} does {\em not}\/ care about {\tt if} (or {\tt
+else}) when it breaks; if it did, it would be useless.  (Why?)
+
+If you write a {\tt break} statement that isn't enclosed by a {\tt
+while}, {\tt do{\rm\ldots}while}, {\tt for}, or {\tt switch} statement,
+the compiler will grouse and refuse to compile your program.
+
+\subsection{{\tt break} Statement Considered Harmful?}
+
+Many early programming languages had only two control structures: They
+had an {\tt if{\rm--}else}, and they had the infamous {\tt goto}
+statement, which unconditionally transferred control to a certain other
+statement.\footnote{This is an oversimplification.  Many early
+programming languages, notably LISP, had an utterly different way of
+managing control flow in the first place, and this whole debate is moot
+for them.  On the other hand, FORTRAN (which is much more like C than
+LISP is) had a whole mob of conditional and computed test statements,
+all of which ended by transferring control to the statement with a
+particular line number.  The point stands anyway.}
+
+Around 1968, imperative languages such as ALGOL (a distant ancestor of
+C), were just beginning to have what are known as {\em logical control
+structures}, which let you express your algorithms in terms of blocks of
+code which were executed when certain conditions held, rather than in
+terms of a flow of control which jumped around the program from
+numbered statement to numbered statement in response to certain
+conditions.
+
+In 1968 a gentleman named Edsger Dijkstra wrote a note in {\em
+Communications of the ACM}\/, a well-known computer science journal,
+called {\em Goto Statement Considered Harmful}.  He had discovered that
+when programmers in his organization were forbidden from using {\tt
+goto}, and required to use only logical control structures, the programs
+they wrote had fewer errors and the errors the programs did have were
+easier to fix.
+
+This is a reasonable thing to notice, and, because the logical control
+structure proponents were mostly right, most modern imperative
+languages, including C, stress logical control structures such as {\tt
+while}, and have {\tt goto} only as an afterthought, if at all.
+
+Logical control structures are a little closer to the way we think than
+{\tt goto} is.  Rather than giving someone a laundry list of
+instructions like ``14. If you're not at the store, {\tt goto} step
+11.'' we're more likely to say, ``Keep walking north {\tt until} you get
+to the store.''  {\tt goto} is considered bad form in most cases, and
+although it occasionally has its uses, it really is better to avoid it
+whenever possible.
+
+That warning extends to {\tt break} (and to {\tt continue}, although we
+haven't seen that yet): {\tt break} interrupts the logical flow of
+control and causes an unconditional jump to somewhere else, and so it
+can be confusing; overuse of {\tt break} can obscure what your program
+is really doing.  When you see a {\tt while} loop, you normally know
+what's going on; you can say, ``Oh, this part of the program tries to do
+such-and-so {\tt while} there is data left in the file.''  But if
+there's a {\tt break} in the loop, you have to add on a qualifier:
+``\ldots unless we hit the {\tt break}.''
+
+I'm tolerant of {\tt break}.  Sometimes it's much easier to express
+something with a {\tt break} than it would be without, and the code is
+shorter or clearer with the {\tt break} than without.  Nevertheless,
+there are a lot of logical-control fanatics in the world, and they'll
+tell you never to use {\tt break}, {\tt continue}, or {\tt goto}, and to
+{\tt return} only from the bottom of a function, and never from the
+middle.  
+
+In the CSE110 handbook, it says never to use {\tt break} or {\tt
+continue} in this class, and that you'll lose at least one point on any
+assignment you turn in that has a {\tt break} or a {\tt continue}.
+That's the logical-control fanatics talking.  Since I am not a
+logical-control fanatic, that rule goes out the window.  I am, however,
+a simplicity and clarity fanatic, because I spend a substantial part of
+my life reading other people's C code.  So the rule I'd rather have you
+follow is this: When in doubt, write the code both ways, and pick the
+one that seems clearest and simplest.

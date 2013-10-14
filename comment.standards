@@ -1,0 +1,56 @@
+Commenting Standards:
+
+--- In General:
+
+``When the code and the comments disagree, both are probably wrong.''
+
+The comments should describe what is happening, how it is being done,
+what arguments mean, which globals are used and which are modified, and
+any restrictions or bugs.
+
+Avoid comments that are clear from the code, as such information rapidly
+gets out of date.
+
+Comments that disagree with the code are of negative value.
+
+Short comments should be _what_ comments, such as ``compute mean
+value'', rather than _how_ comments such as ``sum of values divided by
+n''.
+
+C is not assembler; putting a comment at the top of a 3-10 line section
+telling what it does overall is often more useful than a comment on each
+line describing micrologic.
+
+--- In Particular:
+
+Every program should start with a comment saying briefly
+what it is for.  Example:  "fmt -- filter for simple filling of text".
+
+Put a comment on each function saying what the function does, what sorts
+of arguments it gets, and what the possible values of arguments mean and
+are used for.  It is not necessary to duplicate in words the meaning of
+the C argument declarations, if a C type is being used in its customary
+fashion.  If there is anything nonstandard about its use, or any
+possible values that would not work the way one would expect, be sure to
+say so.  
+
+Explain the significance of the return value of each function, if there
+is one.  Decribe what sorts of return values the function might return.
+If something goes wrong, does the function signal an error?  If so, how?
+If not, why not?
+
+There should be a comment on each variable as well, like this:
+
+    /* Nonzero means truncate lines in the display;
+       zero means continue them.  */
+    int truncate_lines;
+
+Never ever write a comment like this:
+	i++;         /* increment i */
+That's worse than useless.  Of COURSE `i++' means to increment i.  But
+the person reading the program will wonder if he or she is missing a
+subtle point.  You may think that this is funny, but a lot of you wrote
+comments like this in your homework programs.  Here's one:
+
+	/* initialize total number of guesses */
+	guessnum = 0;

@@ -1,0 +1,232 @@
+
+
+\documentstyle{article}
+
+% \def\brac#1{{\tt <}#1{\tt >}}
+\def\brac#1{$<$#1$>$}
+\def\Int{{\tt int}}
+\def\int{\brac{\Int}}
+\def\int{\brac{\Int}}
+\def\Shortint{{\tt short~int}}
+\def\shortint{\brac{\Shortint}}
+\def\Longint{{\tt long~int}}
+\def\longint{\brac{\Longint}}
+\def\Float{{\tt float}}
+\def\float{\brac{\Float}}
+\def\Double{{\tt double}}
+\def\double{\brac{\Double}}
+\def\Char{{\tt char}}
+\def\chr{\brac{\Char}}
+\def\Void{{\tt void}}
+\def\void{\brac{\Void}}
+
+\def\ptr#1{pointer~to #1}
+\def\p2#1{\brac{\ptr#1}}
+\def\Ano#1#2{array~of {#1}~#2s}
+\def\ano#1#2{\brac{\Ano#1#2}}
+\def\Ao#1{array~of #1}
+\def\ao#1{\brac{\Ao#1}}
+
+\def\breakhere{\mbox{$\otimes$}}
+\parskip 8pt
+
+
+\topmargin -0.5in
+\textheight 9in
+
+% \def\baselinestretch{2}
+
+\title{Midterm Exam Key}
+\author{CSE 110}
+\date{21 July 1992}
+
+\begin{document}
+
+\maketitle
+
+\section{Tracing}
+
+\subsection{10 Points}
+
+Since the value of {\tt name} is a pointer to the first element (the 5)
+of the array {\tt name}, {\tt p} now points to the first element.
+
+Similarly, since the value of {\tt name} is a pointer to an element of
+an array, \mbox{\tt name + 1} points to the next element, so {\tt q} now
+points to the second element, the 23.
+
+So the first {\tt printf} prints out {\tt 5 5 23}.
+
+{\tt *(p++)} says to get what {\tt p} points to, throw it away, and then
+bump up the value of {\tt p}.  To bump up the value of a pointer means
+to make it point to the next element of the array, so {\tt p} now points
+to the second element of {\tt name}, the 23.  The {\tt *} here is a
+total red herring---{\tt p++} alone would have done the same thing.
+
+{\tt (*q)++} says to get what {\tt q} points to, throw it away, and then
+bump it up by 1.  {\tt q} was pointing to the second element of {\tt
+name}, the 23, so that element gets bumped up to 24.  Note that the
+value of {\tt q} didn't change: it's still pointing to the same place;
+rather, the value stored in that place changed.  The {\tt *} here was
+not a red herring because {\tt q++} means to bump up {\tt q}, rather
+than what {\tt q} points to.
+
+In any case, Since {\tt p} was pointing to the second element of the
+array {\tt name}, which is now 24 instead of 23, {\tt *p} is 24.  {\tt
+q[0]} is completely identical with {\tt *(q + 0)} and so is synonymous
+with {\tt *q}, whose value is 24.  
+
+So the second {\tt printf} prints {\tt 24 24}.
+
+\subsection{10 Points}
+
+{\tt t} starts at 4.  
+
+The condition in the {\tt while} statement is {\bf false} if {\tt t-1}
+is zero, {\bf true} otherwise.  So the {\tt while} loop will coninue
+until {\tt t} becomes 1.  It's not 1 yet, so we go into the loop.
+
+We print {\tt 4}.
+
+The condition in the {\tt if} statement is {\bf false} if {\tt t\%3} is
+zero, {\bf true} otherwise.  {\tt t\%3} is the remainder when {\tt t} is
+divided by 3, and so is 0 if and only if {\tt t} is a multiple of 3.  So
+when {\tt t} is a multiple of 3, we take the {\tt else} clause;
+otherwise we take the {\tt if} clause.
+
+First time through, {\tt t} is not a multiple of 3, so we take the {\tt
+if} part of the statement and {\tt t} gets the value 9.  
+
+We print {\tt 9}.
+
+Second time through, {\tt t} is a umltiple of 3, so we take the {\tt
+else} clause.  {\tt t} gets the value 3.
+
+We print {\tt 3}.
+
+Second time through, {\tt t} is a umltiple of 3, so we take the {\tt
+else} clause.  {\tt t} gets the value 1.
+
+Now the {\tt while} condition, {\tt t-1}, is zero ({\bf false}) so we
+exit the loop. that's the end of the program.
+
+\subsection{10 Points}
+
+{\tt a} gets 5, {\tt b} gets 23.  We print {\tt 5 23}.
+
+We call {\tt scramble}.  {\tt x} gets 23 and {\tt y} gets a pointer to
+{\tt a}, whose value is 5.
+
+Inside of {\tt scramble}, we print {\t 23 5}.  Then {\tt temp} gets 24,
+{\tt x} gets 5, and {\tt *y} gets 24.  Since {\tt y} is pointing to {\tt
+a}, this actually changes the value of {\tt a} to 24.  We then print
+{\tt 5 24}.  Then we return from {\tt scramble}; {\tt x} and {\tt y} are
+destroyed.  
+
+We print the values of {\tt a} and {\tt b}.  {\tt a} was changed by {\tt
+scramble} to 24, but {\tt scramble} couldn't possibly change {\tt b},
+because it didn't know where {\tt b} was, so {\tt b} must still be 23.
+We print {\tt 24 23}.
+
+We call {\tt scramble}.  {\tt x} gets 24 and {\tt y} gets a pointer to
+{\tt b}, whose value is 23.
+
+Inside of {\tt scramble}, we print {\t 24 23}.  Then {\tt temp} gets 25,
+{\tt x} gets 23, and {\tt *y} gets 25.  Since {\tt y} is pointing to {\tt
+b}, this actually changes the value of {\tt b} to 25.  We then print
+{\tt 23 25}.  Then we return from {\tt scramble}; {\tt x} and {\tt y} are
+destroyed.  
+
+We print the values of {\tt a} and {\tt b}.  {\tt b} was changed by {\tt
+scramble} to 25, but {\tt scramble} couldn't possibly change {\tt a},
+because it didn't know where {\tt a} was, so {\tt a} must still be 24.
+We print {\tt 24 25}.
+
+\section{Writing Code}
+
+These are sample solutions; yours will of course be at least a little
+different. 
+
+\subsection{10 Points}
+\input pow.tex
+
+I can't help but show you another solution which is less srtaightforard,
+but much, much faster.  If {\tt p} is 1,000, then the loop in the
+program above executes 1,000 times.  But the loop in the program below
+gets the same answer and only executes 10 times.  
+
+\input pow2.tex
+
+\subsection{20 Points}
+\input strrev.tex
+
+\subsection{20 Points}
+\input getint.tex
+
+\section{Debugging}
+
+\subsection{5 Points}
+
+The specific bug I had in mind was this: If getline returns the string
+{\tt "\%s \%d \%s \%d \%s \%d \%s \%d''}, then printf will see the
+{\tt\%s} and {\tt \%d}s, and will expect to receive eight more
+arguments, four \p2\Char s and four \int s.  They won't be there, of
+course, because we didn't pass them, and so {\tt printf} will get
+garbage values instead.  {\tt printf} will print out garbage \int\
+values for the {\tt\%d} conversions.  The garbage \p2\Char s will tell
+{\tt printf} to go looking for string data in all sorts of unlikely and
+random places, some of which will be full of garbage and others of which
+will not exist and cause a program failure when {\tt printf} tries to
+look at them.
+
+The correct program has {\tt printf("\%s", s);} instead of {\tt
+printf(s);}.
+
+Although this was the answer I had in mind, I awarded credit for any
+reasonable bug that could possibly cause the behavior I described.  One
+answer I thought of after I wrote the problem, but which nobody turned
+in, was that {\tt getline} might be unable to get enough memory to store
+the input line, but it has to return a pointer anyway.  If it returns a
+garbage pointer we're hosed.  It {\em should}\/ return {\tt NULL} under
+these circumstances, but we failed to check for that, and so we're hosed
+that way too.
+
+\subsection{5 Points}
+
+It's better to write {\tt NUMBER\_OF\_NOSTRILS} instead of putting 2's
+all over your program because it comunicates to the person reading the
+code just what the {\tt 2} is supposed to represent, and distinguishes
+it from other {\tt 2}'s such as those that represent completely
+different things, such as the number of rabbits in a brace.  ({\tt
+RABBITS\_IN\_BRACE}.  
+
+If you write {\tt NUMBER\_OF\_NOSTRILS * AVERAGE\_HAIRS\_PER\_NOSTRIL} it's
+obvious what you're computing; on the other hand, the number {\tt 1346}
+doesn't communicate anything.
+
+\subsection{5 Points}
+
+When a function is called, all its local variables, including the
+parameter variables that hold its arguments, are created from scratch
+and initialized with the appropriate values.  Parameter variables are
+initialized with the values of the arguments the function was passed.
+So {\tt var} here is created fresh when {\tt set\_to\_57} is called, 
+initialized with the argument that the caller passed in, and destroyed
+again when {\tt set\_to\_57} returns.  {\tt var} is not the variable
+that the caller wanted to change; it is a different variable which is
+initialized with the same value. 
+
+Thus {\tt p} points to {\tt var} itself, and not to the variable that
+the caller wanted to change.  The statement {\tt *p = 57} changes the
+value of the variable {tt var}, but not the value of the variable that
+the caller wanted to change.  When {\tt set\_to\_57} returns, {\tt var}
+is destroyed anyway, so this function still doesn't do anything.
+
+\subsection{5 Points}
+
+The problem here is very simple.  Since {\tt 9} and {\tt 5} are both
+\int s, the {\tt /} in the expression {\tt (9/5)} means integer
+division, and to drop fractions from the result.  Thus {\tt (9/5)} means
+1, and not 1.8.  To fix the problem, change {\tt (9/5)} to {\tt 1.8}.  
+
+\end{document}

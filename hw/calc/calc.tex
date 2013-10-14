@@ -1,0 +1,230 @@
+
+\documentstyle{article}
+
+% \def\brac#1{{\tt <}#1{\tt >}}
+\def\brac#1{$<$#1$>$}
+\def\Int{{\tt int}}
+\def\int{\brac{\Int}}
+\def\int{\brac{\Int}}
+\def\Shortint{{\tt short~int}}
+\def\shortint{\brac{\Shortint}}
+\def\Longint{{\tt long~int}}
+\def\longint{\brac{\Longint}}
+\def\Float{{\tt float}}
+\def\float{\brac{\Float}}
+\def\Double{{\tt double}}
+\def\double{\brac{\Double}}
+\def\Char{{\tt char}}
+\def\chr{\brac{\Char}}
+\def\Void{{\tt void}}
+\def\void{\brac{\Void}}
+
+\def\ptr#1{pointer~to #1}
+\def\p2#1{\brac{\ptr#1}}
+\def\Ano#1#2{array~of {#1}~#2s}
+\def\ano#1#2{\brac{\Ano#1#2}}
+\def\Ao#1{array~of #1}
+\def\ao#1{\brac{\Ao#1}}
+
+\def\np{{\tt NULL} pointer}
+
+\def\breakhere{\mbox{$\otimes$}}
+
+\title{Assignment \#3}
+\author{Due Date: Thursday, 6 August, 1992}
+\date{28 July 1992}
+
+\parskip 8pt
+
+\begin{document}
+\maketitle
+
+    You will write a program which reads arithmetic expressions,
+evaluates them, and prints the result.
+
+\section{Requirements}
+
+Your program will implement a reverse Polish notation calculator.  The
+program will read from the standard input.  Your program will compute
+the values of all expressions entered.  Expressions will consist of
+integers and operators.  Your program will recognize the operators {\tt
++}, {\tt -}, {\tt *}, {\tt /}, and {\tt \%}.  Furthermore, your program
+will print out the most recently computed result when it sees the
+operator {\tt =}.  Your program will discard the most recently computed
+result when it sees the operator {\tt .}.  
+
+Your program will not place any arbitrary limits on the complexity of
+the expressions the user can evaluate.  Your program will handle error
+conditions as gracefully as possible and will print appropriate error
+messages if memory is exhausted or if the expression the user enters
+contains an error.
+
+\subsection{Example}
+
+Indented lines represent user input; other lines represent output.
+\begin{flushleft}
+\verb!         2 3 * ! \\*
+\verb!         =! \\*
+\verb! 6! \\*
+\verb!         4 + = ! \\*
+\verb! 10 ! \\*
+\verb!         7 - = ! \\*
+\verb! 3 ! \\*
+\verb!         5 6 * = + = ! \\*
+\verb! 30! \\*
+\verb! 33! \\*
+\verb!         12 3 * = ! \\*
+\verb! 36 ! \\*
+\verb!         .! \\*
+\verb!         =! \\*
+\verb! 33 ! \\*
+\verb!         12 12 12 * * 1 + = ! \\*
+\verb! 1729 ! \\*
+\verb!         . =  ! \\*
+\verb! 33 ! \\*
+\verb!         .! \\*
+\verb!         =! \\*
+\verb! (stack empty)! \\*
+\end{flushleft}
+
+\section{What to Hand in}
+
+You should hand in a disk with your source code and an executable, and
+any special instructions to me.  You may choose to supply a log file
+that demonstrates your program, if you like.  I will not accept paper
+copies of solutions to this assignment.
+
+\section{Assignment-Specific Points}
+
+    I will award seven points for a working RPN calculator, and seven
+points for arranging that the calculator can handle arbitrarily
+complicated expressions.
+
+\section{About Reverse Polish Notation}
+\label{rpn}
+
+Evaluating ordinary arithmetic expressions is a pain, because you don't
+get to evaluate things in the order they're entered.  To evaluate the
+expression \mbox{\tt 4 * ( 3 + 7 - 6 * 2) + 11} you have to skip forward to
+the part in the parentheses, then skip back; you can't evaluate it from
+left to right.
+
+Fortunately there is an easier way, adopted by programming language
+designers, calculator manufacturers, logicians, and us.  We will require
+that our expressions be entered in {\em reverse Polish notation}\/.
+What this means is that instead of each operator coming between the two
+quantities it's supposed to operate on (which is ambiguous), each
+operator follows the two quantities it's supposed to operate on.
+
+
+A reverse Polish notation expression, therefore, is either just a
+number, or two simpler expressions {\em followed}\/ by an operator
+symbol, which says how to combine the values of the two expressions.
+For example:
+\begin{itemize}
+\item The value of {\tt 2 3 +}  is 5.
+\item The value of {\tt 3 4 *}  is 12.
+\item The value of {\tt 2 3 + 3 4 * +} is 17; the final {\tt +} says to
+evaluate the two expressions ({\tt 2 3 +} and {\tt 3 4 *}) that came
+before and add their values together.
+\item The value of {\tt 2 3 + 4 *} is 20; the final {\tt *} says to
+take the values of the two preceding expressions, {\tt 2 3 +} and {\tt
+4}, and multiply them.
+\item The value of {\tt 2 3 4 * +} is 14; the final {\tt +} says to take
+the values of the two preceding expressions, {\tt 2} and {\tt 3 4 *},
+and add them.
+\end{itemize}
+
+Issues of precedence and parenthesization disappear, because it's no
+longer ambiguous where a subexpression ends, and therefore it's clear
+what the operands of each operator symbol are.  Every expression and
+sub-expression ends with an operator symbol.  
+
+Reverse polish notation is great for calculators because you get to
+write the operators in the order that the operations are actually
+performed.  If you heed to compute two quantities, $x$ and $y$, and add
+them together, then you first compute $x$, then compute $y$, and then do
+the addition---of course it's absurd to say you want to do the addition
+before you've computed $y$; that's impossible.  Reverse Polish notation
+lets you actually write the expressions in the order they're computed:
+\mbox{$x$ $y$ +} means `compute $x$; then compute $y$; then add those
+two values.'
+
+Since the operations in an RPN expression are written in the order that
+they actually have to be performed, it turns out that interpreting and
+evaluating these expressions is very easy.  There's a natural way to
+implement an RPN calculator, which is the subject of the next section.
+
+\section{Stacks}
+
+The name {\em stack}\/ is supposed to make you think of those stacks of
+plates with springs underneath that you sometimes find in cafeterias.
+The spring is under a whole stack of plates, but it keeps them at the
+right height so that only the top plate is visible.  You can only see
+the top plate; you can only remove the top plate; but when you take the
+top plate off, the plate just below it appears and then you can examine
+or remove that plate.  When you put a new plate on top, it obscures the
+plate that used to be visible.
+
+So a stack is a data structure that has two operations defined on it:
+You can {\em pop}\/ the stack; that means you take the top element off
+the stack and examine it; the element under the top element becomes the
+new top.  We also speak of popping the top element itself.  You can also
+{\em push}\/ a new element onto the stack.  If you push {\tt foo} onto a
+stack and then push {\tt bar}, {\tt bar} is on the top of the stack and
+{\tt foo} is under that; if you pop the stack you get {\tt bar}, and
+then if you pop it again you get {\tt foo}.  The only way to examine the
+data at the bottom of the stack is to pop off everything else above it.
+If you try to pop the stack when the stack is empty, you get an error.
+
+It turns out that a stack is just  the thing for implementing an RPN
+calculator.  The rules are simple: 
+\begin{enumerate}
+\item Read the input from left to right. 
+\item If you see a number, push it onto the stack.
+\item If you see an operator, pop the right number of operands off the
+stack, operate on them, and push the result on the stack.
+\end{enumerate}
+
+For example, let's say the user enters the expression {\tt 2 3 * 4 +}.
+We should compute the value 10.  What do we do?  First, we see {\tt 2},
+so we push that on the stack; then we push the {\tt 3} after it.  Then
+we see the {\tt *}, so we pop the {\tt 3} and the {\tt 2} from the
+stack, multiply them, and push the result, 6.  Then we push the {\tt 4};
+the stack now contains a {\tt 6} and a {\tt 4} with the {\tt 4} at the
+top.  Then we see the {\tt +}; we pop the {\tt 6} and the {\tt 4}, add
+them, and push the result, 10, back on the stack.  The top of the stack
+now contains the result {\tt 10}, which was the value we wanted to
+compute.
+
+Let's do another example:  {\tt 2 3 4 + *}.  We see the {\tt 2}, the
+{\tt 3}, and the {\tt 4}, and push them on the stack in that order, so
+that the {\tt 4} is at the top and the {\tt 2} is at the bottom.  Then
+we see the {\tt +}; we pop the top two elements (The {\tt 4} and the
+{\tt 3} off the stack, add them, and push the result, 7, back on the
+stack.  The stack now contains two elements, {\tt 2} and {\tt 7}, with
+the {\tt 7} on top.  Then we see the {\tt *}, pop the two elements off
+the stack, multiply them, and push the result, 14, back on.  The top [of
+the stack now contains the value 14, which is what we wanted to compute.
+
+\subsection{A Simple Implementation of a Stack}
+
+Here's code that implements a stack of \int s and two functions for
+pushing and popping.
+
+\input ss.tex
+
+Unfortunately, this is a little too simple.  This program terminates if
+the user tries to make the stack too deep by computing too many
+intermediate results.  Your program will not have this problem.  We will
+arrange for our stack to grow as large as necessary, until the computer
+runs out of memory.  Probably the simplest way to do this is to
+implement your stack as a linked list.
+
+If we don't discuss linked lists in class by the end of the 29th of
+July, please mention it to me and I'll hand out detailed information
+about them on the 30th.  
+
+\end{document}
+
+

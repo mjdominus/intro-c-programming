@@ -1,0 +1,159 @@
+
+\documentstyle{article}
+
+% \def\brac#1{{\tt <}#1{\tt >}}
+\def\brac#1{$<$#1$>$}
+\def\Int{{\tt int}}
+\def\int{\brac{\Int}}
+\def\int{\brac{\Int}}
+\def\Shortint{{\tt short~int}}
+\def\shortint{\brac{\Shortint}}
+\def\Longint{{\tt long~int}}
+\def\longint{\brac{\Longint}}
+\def\Float{{\tt float}}
+\def\float{\brac{\Float}}
+\def\Double{{\tt double}}
+\def\double{\brac{\Double}}
+\def\Char{{\tt char}}
+\def\chr{\brac{\Char}}
+\def\Void{{\tt void}}
+\def\void{\brac{\Void}}
+
+\def\ptr#1{pointer~to #1}
+\def\p2#1{\brac{\ptr#1}}
+\def\Ano#1#2{array~of {#1}~#2s}
+\def\ano#1#2{\brac{\Ano#1#2}}
+\def\Ao#1{array~of #1}
+\def\ao#1{\brac{\Ao#1}}
+
+\def\breakhere{\mbox{$\otimes$}}
+\parskip 8pt
+
+
+\topmargin -0.5in
+\textheight 9in
+
+% \def\baselinestretch{2}
+
+\title{Midterm Exam}
+\author{CSE 110}
+\date{21 July 1992}
+
+\begin{document}
+% \setcounter{page}{0}
+\begin{center}
+{\Large \bf CSE 110 Final Exam}\\
+\vspace{.2in}
+{\large M--J. Dominus}\\
+\vspace{.2in}
+5 August, 1992
+
+Due: 5 PM, 7 August 1992
+\end{center}
+
+Welcome to the exam. 
+
+Make sure to make it clear which parts of the things you write are the
+ones I should grade.  Be sure to label each answer with a number of the
+problem it's the answer to.
+
+The exam is take-home, open-book, and open-notes.  You may consult any
+printed or electronic reference medium, but you may not consult other
+people and in particular you may not consult your classmates.  So the
+rules are the same as for an in-class open-book test.
+
+\section{50 Points}
+
+Enclosed is a program.  The specification for this program went
+something like this: ``Read an arbitrarily large number of lines of
+input from the standard input, and then print them out again in random
+order; each line must be printed exactly once.''
+
+Evaluate and criticize the program at length.
+
+You might consider some of the following: Indentation, white space,
+variable and function names, argument passing, information hiding,
+comments (too many?  too few?), the algorithm used, the conciseness of
+the code, the correctness of the program, the attractiveness of the
+input and output, the use of manifest constants, formatting, dependence
+of the code on things that are None of Our Business, length of
+functions, appropriateness of control structures (did the programmer use
+{\tt if}...{\tt if} when they should have used {\tt if}...{\tt else}?
+Did they use {\tt while} when {\tt do}...{\tt while} would have been
+better?), appropriateness of variable types.
+
+(Please note: I wrote this list before I saw the code, so I do not
+necessarily expect all of these subjects to be worthy of comment.)
+
+The code uses a function you haven't seen before:
+
+{\tt index} is a function whose arguments are a string {\tt s} and a
+char {\tt c}.  {\tt index} tried to find an occurrence of the character
+{\tt c} in the string {\tt s}.  If it finds one, it returns a pointer to
+it.  Otherwise, it returns the {\tt NULL} pointer.  For example, {\tt
+index("CSE110", 'E')} returns a pointer to the character {\tt 'E'}.  
+
+\section{25 Points}
+
+Suppose we have a large, complicated program which stores information in
+a doubly-linked list whose nodes have the following form:
+
+\begin{flushleft}
+\verb% struct node {% \\*
+\verb%   int province_code;% \\*
+\verb%   int beheadment_count;% \\*
+\verb%   int rioting_index;% \\*
+\verb%   struct node *next; /* Pointer to next node in list */% \\*
+\verb%   struct node *prev; /* Pointer to previous node in list */% \\*
+\verb% } ;% 
+\end{flushleft}
+\label{struct}
+
+The first node in the list has a {\tt NULL} value stored in its {\tt
+prev} member; the last node in the list has a {\tt NULL} value stored in
+its {\tt next} member.  There are no bogus nodes.
+
+Write a single function, whose argument is a pointer to a node in the
+list, and which deletes the node from the list and frees the memory that
+was used to hold that node.
+
+Don't worry about communicating back to the caller if you happen to
+delete the head or the tail node.
+
+\section{Miscellany}
+
+\subsection{15 Points}
+
+Many beginners are daunted by the complexity of {\tt argc} and {\tt
+argv} and the details of managing command-line arguments.
+
+Try to explain the reasons for the existing design.  Defend or criticize
+it.  If you criticize the design, try to think of a better design.
+
+\subsection{5 Points}
+
+Abscissa Eckert-Mauchly, a beginning programmer who knows too many
+things that are none of her business, is writing a function to allocate
+a structure of the type discussed in question \ref{struct}.  She says,
+``The struct has three int members, of two bytes each, and two pointers,
+which are four bytes each, for a total of fourteen bytes.''  Then she
+writes
+
+\begin{flushleft}
+\verb% newnode = malloc(14); %
+\end{flushleft}
+
+What should she have written instead, and why?
+
+\subsection{5 Points}
+
+    After seeing your solution to the previous question, Abscissa
+disagrees.  ``My way is faster that yours,'' she says, ``because the
+program doesn't have to stop and figure out the value of your argument
+to {\tt malloc} every time the function is called; it gets the {\tt 14}
+right away without having to compute anything extra.''
+
+    Is this a legitimate complaint?  If it is, whose way is better?  If
+not, why not?
+
+\end{document}

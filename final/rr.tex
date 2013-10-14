@@ -1,0 +1,118 @@
+\input tgrindmac
+\File{rr.c},{10:43},{Aug  5 1992}
+\L{\LB{}}
+\L{\LB{\C{}\/*}}
+\L{\LB{ * Program reads input and then prints it out again}}
+\L{\LB{ *}}
+\L{\LB{ * Joe Keane}}
+\L{\LB{ * 5 August 1992}}
+\L{\LB{ *}}
+\L{\LB{ * Note:  I did not want to use too many copmments because}}
+\L{\LB{ * the program has to skip over them when it is running and}}
+\L{\LB{ * so it makes the program run slowly.}}
+\L{\LB{ *\/\CE{}}}
+\L{\LB{}}
+\L{\LB{\K{\#include} \<stdio.h\>}}
+\L{\LB{\K{\#include} \<string.h\>}}
+\L{\LB{\K{\#include} \<malloc.h\>}}
+\L{\LB{\K{\#include} \<stdlib.h\>}}
+\L{\LB{}}
+\L{\LB{\K{\#define} MAX 82}}
+\L{\LB{}}
+\L{\LB{\K{struct} listnode*read\_in(\K{void});}}
+\L{\LB{\K{char}*read\_input(\K{void});}}
+\L{\LB{\K{void} rp(\K{struct} listnode *list);}}
+\L{\LB{}}
+\L{\LB{\K{struct} listnode \{}}
+\L{\LB{  \K{char} *line;}}
+\L{\LB{  \K{struct} listnode *next;}}
+\L{\LB{\} ;}}
+\L{\LB{}}
+\L{\LB{\C{}\/* Main function *\/\CE{}}}
+\L{\LB{\K{int} main(\K{void})}}
+\L{\LB{\{}}
+\L{\LB{  \K{struct} listnode *input\_list = (NULL), *newnode;}}
+\L{\LB{  \K{char} *cur\_line;}}
+\L{\LB{}}
+\L{\LB{  \K{while} ((cur\_line = read\_input()) != (NULL)) }}
+\L{\LB{  \{}}
+\L{\LB{    \K{if} ((newnode = malloc(5)) == (NULL)) \C{}\/* Make new listnode *\/\CE{}}}
+\L{\LB{    \{}}
+\L{\LB{    perror(\S{}\"read input\"\SE{});}}
+\L{\LB{    exit(1);}}
+\L{\LB{    \}}}
+\L{\LB{    newnode\-\>line=cur\_line;newnode\-\>next=input\_list;}}
+\L{\LB{    input\_list = newnode;}}
+\L{\LB{  \}}}
+\L{\LB{}}
+\L{\LB{  rp(input\_list);}}
+\L{\LB{  \K{return} 0;}}
+\L{\LB{\}}}
+\L{\LB{}}
+\L{\LB{\C{}\/* Read input from stding *\/\CE{}}}
+\L{\LB{\K{char} *}}
+\L{\LB{\Proc{read\_input}  read\_input(\K{void})}}
+\L{\LB{\{}}
+\L{\LB{  \K{char} chars[MAX], *end\_ptr;}}
+\L{\LB{  \K{int} c, dummy;}}
+\L{\LB{}}
+\L{\LB{  \C{}\/* I like to put exrta parentheses aroung NULL because it makes it *\/\CE{}}}
+\L{\LB{  \C{}\/* look more ephemeral. *\/\CE{}}}
+\L{\LB{  \K{if} (fgets(chars, MAX, stdin) == (NULL))}}
+\L{\LB{      \K{return} (NULL);}}
+\L{\LB{}}
+\L{\LB{  \K{if} (((end\_ptr = index(chars, \S{}\'\!n\'\SE{}))) == (NULL))}}
+\L{\LB{      \K{while} (((c = getchar()) != \S{}\'\!n\'\SE{}) \&\& (c != \-1)) ; \C{}\/* EOF is \-1 *\/\CE{}}}
+\L{\LB{}}
+\L{\LB{  \K{if} (end\_ptr != (NULL))}}
+\L{\LB{      *end\_ptr = \S{}\'\!0\'\SE{};}\Tab{24}{}}
+\L{\LB{}}
+\L{\LB{  end\_ptr = strdup(chars);}}
+\L{\LB{}}
+\L{\LB{  \K{return} end\_ptr;}}
+\L{\LB{\}}}
+\L{\LB{  }}
+\L{\LB{\K{void}}}
+\L{\LB{\Proc{echo}  echo(\K{char} *s)}}
+\L{\LB{\{}}
+\L{\LB{  fprintf(stderr, \S{}\"The string is: \%s\!n\"\SE{}, s);}}
+\L{\LB{\}}}
+\L{\LB{}}
+\L{\LB{\C{}\/* print out words in list in random order *\/\CE{}}}
+\L{\LB{\K{void} }}
+\L{\LB{\Proc{rp}  rp(\K{struct} listnode *l)}}
+\L{\LB{\{}}
+\L{\LB{  \K{int} n, m, i;}}
+\L{\LB{  \K{struct} listnode *cur\_node, *next\_node;}}
+\L{\LB{  \K{char} **pointer\_array;}\Tab{32}{\C{}\/* Array of pointers to list lines *\/\CE{}}}
+\L{\LB{  \K{char}* s;}}
+\L{\LB{  srandom(time((NULL)));}}
+\L{\LB{}}
+\L{\LB{  n = 0;}}
+\L{\LB{  cur\_node = l;}}
+\L{\LB{  \K{while} (!(cur\_node == (NULL))) }}
+\L{\LB{   \{}}
+\L{\LB{     n++;}}
+\L{\LB{     next\_node = cur\_node\-\>next;}}
+\L{\LB{     cur\_node = next\_node;}}
+\L{\LB{   \}}}
+\L{\LB{}}
+\L{\LB{}}
+\L{\LB{  \K{if} ((pointer\_array = malloc((n+1) * \K{sizeof}(\K{char} **))) == (NULL))}}
+\L{\LB{    exit(2);}}
+\L{\LB{    i = 0;}}
+\L{\LB{  \K{for} (cur\_node=l;cur\_node;i++,cur\_node=cur\_node\-\>next)}}
+\L{\LB{    pointer\_array[i] = cur\_node\-\>line;}}
+\L{\LB{  \K{for} (i=0; i \< n; i++) }}
+\L{\LB{   \{}}
+\L{\LB{      m = n; pointer\_array [m] = (NULL);}}
+\L{\LB{      \K{while} (pointer\_array [m] == (NULL)) }}
+\L{\LB{       \{}}
+\L{\LB{}\Tab{8}{ m = random() \% n;}}
+\L{\LB{       \}}}
+\L{\LB{      s = pointer\_array [m];}}
+\L{\LB{      printf(\S{}\"\%s\!n\"\SE{}, pointer\_array [m]);}}
+\L{\LB{      pointer\_array [m] = (NULL);}}
+\L{\LB{   \}}}
+\L{\LB{\}}}
+\vfill\eject\end

@@ -1,0 +1,31 @@
+%
+% CSE 110 Lecture Notes
+%
+% Entire contents are copyright 1992 by Mark-Jason Dominus.
+% All rights reserved.  Unauthorized reproduction prohobited.
+%
+\begin{flushleft}
+\verb%void strrev(char *s)%
+\\* \verb%{%
+\\* \verb%  int i, len = strlen(s);%
+\\* \verb%  char aux[len+1];              /*%\mbox{ You can't do this }\verb%*/%
+\end{flushleft}
+
+\begin{flushleft}
+\verb%  aux[len] = '\0';%
+\end{flushleft}
+
+\begin{flushleft}
+\verb%  for (i=0; i<len; i++)%
+\\* \verb%    aux[i] = s[len-1-i];        /*%\mbox{ Copy string backwards }\verb%*/%
+\end{flushleft}
+
+\begin{flushleft}
+\verb%  for (i=0; i<len; i++)%
+\\* \verb%    s[i] = aux[i];              /*%\mbox{ Copy string forwards }\verb%*/%
+\end{flushleft}
+
+\begin{flushleft}
+\verb%  return;%
+\\* \verb%}%
+\end{flushleft}

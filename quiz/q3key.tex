@@ -1,0 +1,124 @@
+
+\documentstyle{article}
+
+\def\brac#1{$<$#1$>$}
+\def\Int{{\tt int}}
+\def\int{\brac{\Int}}
+\def\int{\brac{\Int}}
+
+\topmargin -0.5in
+\textheight 9in
+
+\parskip 8pt
+
+\title{Quiz \#3 Answers}
+\date{8 July 1992}
+\author{}
+\begin{document}
+
+{\bf 1.  What are the values of {\tt x{\rm ,} y{\rm , and} z} when this code
+is finished executing?
+
+\verb% % \\*
+\verb% int x, y, z; %  \\*
+\verb%  %  \\*
+\verb% x=12; y=9; z=23; %  \\*
+\verb% x = y++ + ++z;      y = z / x; %  \\*
+\verb% if ( y > x ) %  \\*
+\verb%    z = 119;%  
+}
+
+First, {\tt x} gets 12, {\tt y} gets 9, and {\tt z} gets 23.
+
+Then we have to evaluate {\tt x = y++ + ++z;}.  The value of {\tt y++}
+is 9, and the compiler remembers to bump up the value of {\tt y} by 1
+sometime before the end of the statement.  The value of {\tt ++z} is 24,
+which is what {\tt z} will be after the compiler bumps up the value of
+{\tt z} by 1, which it must also do before the end of the statement.  So
+{\tt x} gets $9+24$, which is 33.  That's the end of the statement, so
+now {\tt y} and {\tt z} have both been bumped, and {\tt y} is 10 and
+{\tt z} is 24.
+
+The next statement is {\tt y = z / x;}.  {\tt z} is 24 and {\tt x} is
+33, and they're both \int s, so {\tt /} means integer division, which
+means we discard the fractional part of the result.  So {\tt y} gets 0.
+
+Now {\tt y > x} is false, so the computer skips the whole {\tt if}
+statement.  The final result is:  {\tt x{\rm : 33,} y{\rm : 0,} z{\rm :
+24}}.  These were worth a point each.
+
+{\bf 2.  What are the values of {\tt x{\rm ,} y{\rm , and} z} when this code
+is finished executing?  ({\bf Caution!} This is a trick question.)
+
+\verb% % \\*
+\verb% int x, y, z; %  \\*
+\verb%  %  \\*
+\verb% x=12; y=9; z=23; %  \\*
+\verb% if ( x = y ) %  \\*
+\verb%    z *= 2;%  
+}
+
+This is a trick question because the condition in the {\tt if} clause is
+{\tt x = y}, and {\em not}\/ {\tt x == y}.  The expression {\tt x == y}
+compares {\tt x} and {\tt y}, yielding  true if they're equal and false
+otherwise.  The expression {\tt x = y}, on the other hand, assigns the
+value of {\tt y} to the variable {\tt x}, and its value is whatever
+value got assigned to {\tt x}---in this case, 9.  So after the condition
+in the {\tt if} clause is evaluated,
+{\tt x} is 9, {\tt y} is 9, and {\tt z} is 23.  
+
+Now, a condition is `true' when its value is not zero, and the value of
+this condition is 9.  Therefore the statement {\tt z *= 2;} is executed.
+This assigns the value 46 to {\tt z}.  So the final score is: {\tt x{\rm
+: 9,} y{\rm : 9,} z{\rm : 46}}.  {\tt y} was easy and was worth a point;
+the values of the other two depended on you knowing realizing what the
+{\tt =} was doing and were worth two points each.
+
+{\bf 3.  What does this print?  And are are the values of {\tt x {\rm and} y}
+when it is finished?
+
+\verb% % \\*
+\verb% int x, y%  \\*
+\verb%  %  \\*
+\verb% x=7; y=9; %  \\*
+\verb% if ( --x > 6 &&  y++ > 8 ) printf("Foo.\n"); % \\*
+\verb% else printf("Bar.\n"); %
+}
+
+The thing to remember here is that {\tt \&\&} short-circuits.  That
+means that the compiler evaluates the left-hand part of the {\tt\&\&}
+expression first, and only evaluates the right-hand part if it needs to.
+The value of {\tt --x} is 6, and the compiler remembers that it must
+decrement {\tt x} before the end of the statement.  Since {\tt 6 > 6} is
+false, the compiler knows that whatever's on the right of {\tt\&\&} is
+irrelevant---the whole expression will be false no matter what.  So it
+never evaluates the {\tt y++ > 8} part, and in particular it doesn't
+evaluate {\tt y++}, so {\tt y} never gets bumped.
+
+The condition was false, so the computer jumps to the {\tt else} clause
+and prints {\tt Bar.}.  {\tt x} got decremented by this time, so {\tt x}
+is now 6.  {\tt y} never got incremented at all, so {\tt y} is still 9.
+
+Getting the {\tt Bar.} and the value of {\tt x} were worth a point
+apiece; to get the value of {\tt y} you had to remember that {\tt \&\&}
+short-circuited and so that was worth two points.
+
+{\bf 4.  On the back of this sheet, write one sentence about each of three
+things that the preprocessor does.}
+
+The three things I was looking for in particular were:  
+
+\begin{itemize}
+\item The preprocessor removes comments, which are any text between and
+including the sequences {\tt /*} and {\tt */}.
+\item The preprocessor substitutes the appropriate text for the names of
+manifest constants that have been defined with the {\tt\#define}
+directive.
+\item The preprocessor incorporates  the text of files included with the
+{\tt\#include} directive into the input seen by the compiler.
+\end{itemize}
+
+Most people got at least two of these.  They were worth a point each.
+
+\end{document}
+

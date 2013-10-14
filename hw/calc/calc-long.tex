@@ -1,0 +1,411 @@
+
+\documentstyle{article}
+
+% \def\brac#1{{\tt <}#1{\tt >}}
+\def\brac#1{$<$#1$>$}
+\def\Int{{\tt int}}
+\def\int{\brac{\Int}}
+\def\int{\brac{\Int}}
+\def\Shortint{{\tt short~int}}
+\def\shortint{\brac{\Shortint}}
+\def\Longint{{\tt long~int}}
+\def\longint{\brac{\Longint}}
+\def\Float{{\tt float}}
+\def\float{\brac{\Float}}
+\def\Double{{\tt double}}
+\def\double{\brac{\Double}}
+\def\Char{{\tt char}}
+\def\chr{\brac{\Char}}
+\def\Void{{\tt void}}
+\def\void{\brac{\Void}}
+
+\def\ptr#1{pointer~to #1}
+\def\p2#1{\brac{\ptr#1}}
+\def\Ano#1#2{array~of {#1}~#2s}
+\def\ano#1#2{\brac{\Ano#1#2}}
+\def\Ao#1{array~of #1}
+\def\ao#1{\brac{\Ao#1}}
+
+\def\np{{\tt NULL} pointer}
+
+\def\breakhere{\mbox{$\otimes$}}
+
+\title{Assignment \#3}
+\author{Due Date: Thursday, 6 August, 1992}
+\date{15 July 1992}
+
+\parskip 8pt
+
+\begin{document}
+\maketitle
+
+    You will write a program which reads arithmetic expressions,
+evaluates them, and prints the result.
+
+\section{Requirements}
+
+Your program will implement a reverse Polish notation calculator.  The
+program will read from the standard input.  Your program will compute
+the values of all expressions entered.  Expressions will consist of
+integers and operators.  Your program will recognize the operators {\tt
++}, {\tt -}, {\tt *}, {\tt /}, and {\tt \%}.  Furthermore, your program
+will print out the most recently computed result when it sees the
+operator {\tt =}.  Your program will discard the most recently computed
+result when it sees the operator {\tt .}.  
+
+Your program will not place any arbitrary limits on the complexity of
+the expressions the user can evaluate.  Your program will handle error
+conditions as gracefully as possible and will print appropriate error
+messages if memory is exhausted or if the expression the user enters
+contains an error.
+
+\subsection{Example}
+
+Indented lines represent user input; other lines represent output.
+\begin{flushleft}
+\verb!         2 3 * =! \\*
+\verb! 6! \\*
+\verb!         4 + = ! \\*
+\verb! 10 ! \\*
+\verb!         7 - = ! \\*
+\verb! 3 ! \\*
+\verb!         5 6 * = + = ! \\*
+\verb! 30! \\*
+\verb! 33! \\*
+\verb!         12 3 * = ! \\*
+\verb! 36 ! \\*
+\verb!         .! \\*
+\verb!         =! \\*
+\verb! 33 ! \\*
+\verb!         12 12 12 * * 1 + = ! \\*
+\verb! 1729 ! \\*
+\verb!         . =  ! \\*
+\verb! 33 ! \\*
+\verb!         .! \\*
+\verb!         =! \\*
+\verb! (stack empty)! \\*
+\end{flushleft}
+
+\section{What to Hand in}
+
+You should hand in a disk with your source code and an executable, and
+any special instructions to me.  You may choose to supply a log file
+that demonstrates your program, if you like.  I will not accept paper
+copies of solutions to this assignment.
+
+\section{Assignment-Specific Points}
+
+
+\section{About Reverse Polish Notation}
+\label{rpn}
+
+Evaluating ordinary arithmetic expressions is a pain, because you might
+have to remember arbitrarily large expressions for a long time until you
+can evaluate them.  For example, If the input stream contains {\tt 2 +
+3} you can't forget the {\tt 2 + 3} and replace it with 5 immediately,
+because it might be the first part of {\tt 2 + 3 * 4}.  Also, it's
+unreasonable to write a calculator program that evaluates expressions of
+this type without having it handle parentheses, and that's also painful.
+
+Fortunately there is a solution, adopted by programming language
+designers, calculator manufacturers, logicians, and us.  We require that
+our expressions be entered in {\em Reverse Polish Notation}\/.  What
+this means is that instead of each operator coming between the two
+quantities it's supposed to operate on (which is ambiguous), each
+operator follows the two quantities it's supposed to operate on.
+
+A reverse Polish notation expressions is either just a number, or two
+simpler expressions followed by an operator symbol, which says how to
+combine the values of the two expressions. 
+For example:  
+\begin{itemize}
+\item The value of {\tt 2 3 +}  is 5.
+\item The value of {\tt 3 4 *}  is 12.
+\item The value of {\tt 2 3 + 3 4 * +} is 17; the final {\tt +} says to
+evaluate the two expressions that came before and add their values
+together.
+\item The value of {\tt 2 3 + 4 *} is 20; the final l{\tt *} says to
+take the values of the two preceding expressions, {\tt 2 3 +} and {\tt
+4}, and multiply them.
+\item The value of {\tt 2 3 4 * +} is 14; the final {\tt +} says to take
+the values of the two preceding expressions, {\tt 2} and {\tt 3 4 *},
+and add them.
+\end{itemize}
+
+Issues of precedence and parenthesization disappear, because it's no
+longer ambiguous where a subexpression ends, and therefore it's clear
+what the operands of each operator symbol are.  Every expression and
+sub-expression ends with an operator symbol.  
+
+It turns out that interpreting and evaluating these expressions is very
+easy.  
+
+\section{Stacks}
+
+A {\em stack}\/ is like an array, but only one element is accessible at
+any time:  The {\em top}\/ element. There are just two things you can do
+with a stack:  You can {\em push}\/ a value onto the stack, in which
+case that value becomes the top value, and you can {\em pop}\/ the top
+value off of the stack and examine it, in which case the element that
+was pushed just before it becomes the new top.
+
+The name `stack' is supposed to make you think of those stacks of plates
+with springs underneath that you sometimes find in cafeterias.  The
+spring is under a whole stack of plates, but it keeps them at the right
+height so that only the top plate is visible.  You can only see the top
+plate; you can only remove the top plate; but when you take the top
+plate off, the plate just below it appears and then you can examine or
+remove that plate.  When you put a new plate on top, it obscures the
+plate that used to be visible.
+
+It turns out that a stack is just  the thing for implementing an RPN
+calculator.  The rules are simple:  Read the input from right to left. 
+\begin{enumerate}
+\item If you see a number, push it onto the stack.
+\item If you see an operator, pop the right number of operands off the
+stack, operate on them, and push the result on the stack.
+\end{enumerate}
+
+For example, let's say the user enters the expression {\tt 2 3 * 4 +}.
+We should compute the value 10.  What do we do?  First, we see {\tt 2},
+so we push that on the stack; then we push the {\tt 3} after it.  Then
+we see the {\tt *}, so we pop the {\tt 2} and the {\tt 3} from the
+stack, multiply them, and push the result, 6.  Then we push the {\tt 4};
+the stack now contains a {\tt 6} and a {\tt 4} with the {\tt 4} at the
+top.    Then we see the {\tt +}; we pop the {\tt 6} and the {\tt 4}, add
+them, and push the result, 10, back on the stack.  The top of the stack
+now contains the result {\tt 10}, which was the value we wanted to
+compute.
+
+Let's do another example:  {\tt 2 3 4 + *}.  We see the {\tt 2}, the
+{\tt 3}, and the {\tt 4}, and push them on the stack in that order, so
+that the {\tt 4} is at the top and the {\tt 2} is at the bottom.  Then
+we see the {\tt +}; we pop the top two elements (The {\tt 3} and the
+{\tt 4} off the stack, add them, and push the result, 7, back on the
+stack.  The stack now contains two elements, {\tt 2} and {\tt 7}, with
+the {\tt 7} on top.  Then we see the {\tt *}, pop the two elements off
+the stack, multiply them, and push the result, 14, back on.  The top [of
+the stack now contains the value 14, which is what we wanted to compute.
+
+\subsection{A Simple Implementation of a Stack}
+
+\input ss.tex
+
+Unfortunately, this is a little too simple.  This program terminates if
+the user tries to make the stack too deep by computing too many
+intermediate results.  Your program will not have this problem.  We will
+arrange for our stack to grow as large as necessary, until the computer
+runs out of memory.
+
+\section{Dynamic Memory Allocation}
+
+We are finally going to learn how to allocate memory on the fly, getting
+more when we need it, a subject not usually covered in introductory C
+courses.
+
+\subsection{{\tt malloc}}
+
+We've already seen {\tt strdup}, which find memory somewhere and reserves
+it.  How did {\tt strdup} find that memory?
+
+Chances are it called {\tt malloc}.  {\tt malloc} finds memory by asking
+the operating system for a big bunch of memory and then parceling it
+out a little at a time as you ask for it.  It's {\tt malloc} that takes
+care of recording how big each parcel is so that {\tt free} can free it
+properly.  
+
+To call {\tt malloc}, pass as an argument the number of bytes of space
+you want to allocate.  {\tt malloc} will reserve that many bytes and
+return a pointer to the memory it found.  If it fails for any reason,
+such as because all the memory is already reserved, {\tt malloc} returns
+(all together now) the {\tt NULL} pointer.  
+
+\subsection{{\tt sizeof}}
+
+Frequently you want to allocate enough memory to store an object of a
+certain type; you need to be able to tell {\tt malloc} how many bytes of
+space the object takes up so it knows how much to allocate.  There's an
+operator in C which tells you how big an object is: {\tt sizeof}. 
+
+If {\em type} is the name of a type, the value of the expression {\tt
+sizeof({\em type}\/)} is the number of bytes needed to hold that type;
+for example, on our machines, {\tt sizeof(int)} is 2 and {\tt
+sizeof(double)} is 8.  
+
+If we want to get enough space for an array of 13 \int s, we can do {\tt
+malloc(13 * sizeof(int))} or even {\tt malloc(sizeof(int[13]))}.    
+
+\section{{\tt struct}s}
+
+We've seen how to use an array to store many values of the same type,
+and even to treat the collection of values as a unit.  Now we'll look at
+the complementary type, the {\em structure}\/, which allows you to group
+several different object together as a unit.
+
+\subsection{Creating a New Structure Type}
+
+The typical example of a structure is this:  You want to keep track of
+the employees in your organization.  Each employee has a name (a string
+of no more than 50 characters), a social security number (a \longint),
+and a salary (an \int).  You want to handle several such records.
+
+You can create a new type, a {\tt struct employee}, which keeps all of
+this information in one place.  First, you define the new type:
+
+\begin{flushleft}
+\verb% struct employee {% \\*
+\verb%   char name[50];% \\*
+\verb%   long int ssn;% \\*
+\verb%   int salary;% \\*
+\verb%} ; % 
+\end{flushleft}
+
+When you write this in your program, it defines a new type, the type
+{\tt struct employee}.  A variable of type {\tt struct employee} has
+three {\em members}\/:  {\tt name}, an array of 50 \chr s, {\tt ssn}, a
+\longint, and {\tt salary}, an \int.  
+{\tt employee} is called the {\em tag}\/ of the structure.
+
+\subsection{Creating {\tt struct} Variables}
+
+To declare a variables of type {\tt struct employee}, just write:
+
+\begin{flushleft}
+\verb% struct employee smithers, marketing[12], *the_employee;% 
+\end{flushleft}
+
+{\tt smithers} is a {\tt struct employee}; {\tt marketing} is an array
+of twelve of these structures, and {\tt the\_employee} is a pointer to
+one of these structures.
+
+\subsection{The {\tt .} Operator}
+
+Suppose {\tt smithers} is a {\tt struct employee} variable, as above.
+Suppose we want to store the information that Smithers' social security
+number is {\tt 314-15-9265}.  Here's how we might do that:
+
+\begin{flushleft}
+\verb% smithers.ssn = 314159265; %
+\end{flushleft}
+
+The {\tt .} operator is the {\em structure member}\/ operator.  Its left
+operand must be a structure of some type; its right operand must be the
+name of one of the members of that structure.  The entire expression
+refers to the specified member of the specified structure.  So
+similarly, 
+
+\begin{flushleft}
+\verb% if ( smithers.salary > 10000 ) { %  \\*
+\verb%   ... % 
+\end{flushleft}
+
+\noindent asks if Smithers' salary exceeds ten thousand dollars. 
+
+Similarly, let's suppose the array {\tt marketing}, which is an array of
+12 {\tt struct employee}s, has been initialized with the names,
+salaries, and social security numbers of the members of the marketing
+department.  Here's how we'd compute the average salary in the marketing
+department:  
+
+\begin{flushleft}
+\verb% long int totalsalary = 0;% \\*
+\verb% % \\*
+\verb% for (i=0; i<12; i++) % \\*
+\verb%   totalsalary += marketing[i].salary;% \\*
+\verb! printf("Average salary is %f.\n", totalsalary/12.0);! \\*
+\end{flushleft}
+
+{\tt marketing} is an array of {\tt struct employee}s, so {\tt
+marketing[i]} is a {\tt struct employee}, and {\tt marketing[i].salary}
+is the salary member of that {\tt struct employee}. 
+
+\section{The Linked List}
+
+The simplest example of a data structure with no fixed size is the {\em
+linked list}\/.  A linked list is a collection of {\em nodes} in some
+order; each node contains some information about how to find the `next'
+node, and perhaps some auxiliary information as well.  The last node has
+some kind of marker that says it's last.  
+
+To keep track of a linked list, all we need to do is remember where the
+first node is.  Then that first node contains information (called a {\em
+link}\/ that tells us where the second node is; the second node contains
+information about where the third node is, and soforth. Clearly the list
+can be any length.  
+
+Here's a simple way to implement a linked list: it keeps track of as
+many numbers as we like:
+
+\begin{flushleft}
+\verb% struct listnode {% \\*
+\verb%   int data; % \\*
+\verb%   struct listnode *next; % \\*
+\verb%} ; % 
+\end{flushleft}
+
+This {\tt struct} has two members:  {\tt data}, which actually holds a
+number, and {\tt next}, which points to the next node in the list.  
+
+Suppose the location of the first node in the list is stored in the
+variable {\tt firstnode}, whose type is {\tt struct listnode *}.
+Suppose also we discover that we need to remember one more number, {\tt
+newnumber}.  How can we add that number onto the list of numbers in a
+list of these nodes?
+
+\begin{flushleft}
+\verb% struct listnode *temp;% \\* 
+\verb% % \\* 
+\verb% temp = malloc(sizeof(struct listnode));% \\* 
+\verb% % \\* 
+\verb% (*temp).next = firstnode;% \\* 
+\verb% (*temp).data = newnumber;% \\* 
+\verb% firstnode = temp;% \\* 
+\end{flushleft}
+
+First we create enough space for a new list node; we link the node to
+the rest of the list, store the number we want to remember into the data
+element, and then remember that the new node is now first, with {\tt
+firstnode = temp}.  We can do this as many times as we want, until the
+memory runs out.  
+
+Now suppose we want to average the numbers stored in each node.  It's
+easy:
+
+\begin{flushleft}
+\verb% struct listnode *current;%  \\*
+\verb% int average;%  \\*
+\verb% long int sum = 0L;%  \\*
+\verb% int nodecount = 0;%  \\*
+\verb% %  \\*
+\verb% for (listnode = firstnode; % \*
+\verb%      listnode != NULL; %  \\*
+\verb%      listnode = (*listnode).next) {%  \\*
+\verb%   sum += (*listnode).data; %  \\*
+\verb%   nodecount += 1;%  \\*
+\verb% }%  \\*
+\verb% %  \\*
+\verb% average = sum / nodecount;%  \\*
+\end{flushleft}
+
+Here we've assumed that the {\tt next} pointer of the last node in the
+list is {\tt NULL}.  This makes perfect sense, and we can be sure that
+no other node but the last has {\tt NULL} for its {\t next} pointer,
+because all the other {\tt next} pointers point to other nodes, whose
+addresses are not {\tt NULL}. 
+
+I hope it's obvious how this is all relevant to the problem of managing
+an arbitrarily large stack for your calculator.  
+
+\subsection{The {\tt ->} Operator}
+
+The operation of accessing the member of a structure that is pointed to
+by a structure pointer variable is common.  We've used the construction
+{\tt (*foo).bar} several times already.  C lets you use a short cut.
+
+In all circumstances, the expression {\tt foo->bar} is identical with
+{\tt (*foo).bar}.  {\tt foo} must be a pointer to a structure, and {\tt
+bar} must be the name of one of the members of that structure.  
+
+\end{document}
+
+

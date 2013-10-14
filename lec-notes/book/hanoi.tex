@@ -1,0 +1,77 @@
+%
+% CSE 110 Lecture Notes
+%
+% Entire contents are copyright 1992 by Mark-Jason Dominus.
+% All rights reserved.  Unauthorized reproduction prohobited.
+%
+
+\begin{flushleft}
+\verb%#include <stdio.h>%
+\\* \verb%#include <stdlib.h>%
+\end{flushleft}
+
+\begin{flushleft}
+\verb%void hanoi(int num_rings, int start_peg, int end_peg);%
+\\* \verb%void move(int ring_num, int start, int end);%
+\end{flushleft}
+
+\begin{flushleft}
+\verb%int main(int argc, char **argv)%
+\\* \verb%{%
+\\* \verb%  int num_rings;%
+\end{flushleft}
+
+\begin{flushleft}
+\verb%  if (argc != 2) {%
+\\* \verb%    fprintf(stderr, "Usage: %\verb-%-\verb%s number_of_rings\n", argv[0]);%
+\\* \verb%    return 1;%
+\\* \verb%  }%
+\end{flushleft}
+
+\begin{flushleft}
+\verb%  num_rings = atoi(argv[1]);%
+\end{flushleft}
+
+\begin{flushleft}
+\verb%  hanoi(num_rings, 1, 3);%
+\end{flushleft}
+
+\begin{flushleft}
+\verb%  return 0;%
+\\* \verb%}%
+\end{flushleft}
+
+\begin{flushleft}
+\verb%void%
+\\* \verb%  hanoi(int num_rings,%
+\\* \verb%        int start_peg, %
+\\* \verb%        int end_peg)%
+\\* \verb%{%
+\\* \verb%  int spare_peg = 6 - start_peg - end_peg;%
+\end{flushleft}
+
+\begin{flushleft}
+\verb%  if (num_rings > 0) {%
+\\* \verb%    hanoi(num_rings - 1, start_peg, spare_peg);%
+\\* \verb%    move(num_rings, start_peg, end_peg);%
+\\* \verb%    hanoi(num_rings - 1, spare_peg, end_peg);%
+\\* \verb%  }%
+\end{flushleft}
+
+\begin{flushleft}
+\verb%  return;%
+\\* \verb%}%
+\end{flushleft}
+
+
+\begin{flushleft}
+\verb%void move(int ring_num, int start, int end)%
+\\* \verb%{%
+\\* \verb%  printf("Move disk %\verb-%-\verb%d from peg %\verb-%-\verb%d onto peg %\verb-%-\verb%d.\n", %
+\\* \verb%         ring_num, start, end);%
+\end{flushleft}
+
+\begin{flushleft}
+\verb%  return;%
+\\* \verb%}%
+\end{flushleft}

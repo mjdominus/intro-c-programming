@@ -1,0 +1,37 @@
+
+\begin{flushleft}
+\verb%#define MAXDEPTH 100            /*%\mbox{ Stack can contain up to 100 integers }\verb%*/%
+\end{flushleft}
+
+\begin{flushleft}
+\verb%int stack[MAXDEPTH];%
+\\* \verb%int stackpointer = 0;           /*%\mbox{ Index of next empty stack element }\verb%*/%
+\end{flushleft}
+
+\begin{flushleft}
+\verb%int pop(void)%
+\\* \verb%{%
+\\* \verb%  if (stackpointer == 0) {      /*%\mbox{ Stack is empty }\verb%*/%
+\\* \verb%    fprintf(stderr, "The stack is empty!\n");%
+\\* \verb%    exit(1);%
+\\* \verb%  }%
+\end{flushleft}
+
+\begin{flushleft}
+\verb%  return stack[--stackpointer];%
+\\* \verb%}%
+\end{flushleft}
+
+\begin{flushleft}
+\verb%void push(int val)%
+\\* \verb%{%
+\\* \verb%  if (stackpointer > MAXDEPTH) {        /*%\mbox{ Stack is full }\verb%*/%
+\\* \verb%    fprintf(stderr, "Stack overflow!\n");%
+\\* \verb%    exit(1);%
+\\* \verb%  }%
+\end{flushleft}
+
+\begin{flushleft}
+\verb%  stack[stackpointer++] = val;%
+\\* \verb%}%
+\end{flushleft}

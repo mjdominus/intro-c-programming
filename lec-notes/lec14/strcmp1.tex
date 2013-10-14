@@ -1,0 +1,23 @@
+
+\begin{flushleft}
+\verb%int strcmp(char *s1, char *s2)%
+\\* \verb%{ %
+\\* \verb%  while(1) {%
+\\* \verb%    if ( *s1 == '\0' && *s2 == '\0' )%
+\\* \verb%      return 0;                 /*%\mbox{ strings are identical }\verb%*/%
+\\* \verb%    else if (*s1 == '\0') %
+\\* \verb%      return -1;                /*%\mbox{ {\tt s1} is a prefix of {\tt s2} }\verb%*/%
+\\* \verb%    else if (*s2 == '\0') %
+\\* \verb%      return 1;                 /*%\mbox{ {\tt s2} is a prefix of {\tt s1} }\verb%*/%
+\\* \verb%    else if ( *s1 < *s2 )%
+\\* \verb%      return -1;                /*%\mbox{ {\tt s1} is less }\verb%*/%
+\\* \verb%    else if ( *s1 > *s2 )%
+\\* \verb%      return 1;                 /*%\mbox{ {\tt s2} is less }\verb%*/%
+\\* \verb%    else {%
+\\* \verb%      s1++; s2++;%
+\\* \verb%    }%
+\\* \verb%  }%
+\\* \verb%}%
+\end{flushleft}
+
+

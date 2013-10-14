@@ -1,0 +1,64 @@
+
+
+
+\documentstyle{article}
+
+\topmargin -0.5in
+\textheight 9in
+
+\title{Quiz \#7}
+\date{15 July 1992}
+\author{Time: 10 minutes}
+\begin{document}
+
+\maketitle
+
+0. What's your name?
+
+\vspace{.5in}
+
+Professor Spuyten, a noted eccentric, doesn't like to use the {\tt ++}
+operator because he says reminds him of eyes looking at him.  He has
+written the following program:
+
+\begin{flushleft}
+\verb% int main(void) % \\*
+\verb% {% \\*
+\verb%   int foo = 52;% \\*
+\verb% % \\*
+\verb%   increment(foo);% \\*
+\verb%   /*% $foo$ should be 53 by now. \verb% */% \*
+\verb!   printf("The value of foo is now %d.\n", foo);! \\*
+\verb% % \\*
+\verb% }% \\*
+\verb% % \\*
+\verb% void increment(int n) % \\*
+\verb% {% \\*
+\verb%   n += 1;% \\*
+\verb%   return;% \\*
+\verb% }%
+\end{flushleft}
+
+\vspace{8pt}
+
+He explains: ``Since I don't like the increment operator, I wanted to
+write a function to do the same thing.  I thought that if I did {\tt
+increment(foo)}, the value of {\tt foo} would get bumped up to 53.  But
+it didn't work.''
+
+\vspace{8pt}
+1.  What does Professor Spuyten's program print out, and why doesn't it
+print 53?
+
+\vspace{16pt}
+
+2.  Correct Professor Spuyten's program so that it does what he wanted. 
+
+\vspace{16pt}
+3.  There are at least three other errors in Spuyten's program.  Find
+them.
+
+\vspace{16pt}
+
+Answer on the other side of this sheet.
+\end{document}

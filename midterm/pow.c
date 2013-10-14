@@ -1,0 +1,9 @@
+long int pow(int n, int p)
+{
+  long int power = 1;
+
+  for ( ; p; p--)
+    power *= n;
+
+  return power;
+}

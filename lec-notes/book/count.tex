@@ -1,0 +1,138 @@
+%
+% CSE 110 Lecture Notes
+%
+% Entire contents are copyright 1992 by Mark-Jason Dominus.
+% All rights reserved.  Unauthorized reproduction prohobited.
+%
+\vfill\input tgrindmac
+\L{\LB{}}
+\L{\LB{\C{}\/* Program to read words from standard input, count number of }}
+\L{\LB{   occurrences of each word, and write report onto standard output.}}
+\L{\LB{   }}
+\L{\LB{   A `word\' is a sequence of non\-whitespace characters.  Words therefore}}
+\L{\LB{   are separated by whitespace.}}
+\L{\LB{}}
+\L{\LB{   28 July 1992  Mark\-Jason Dominus (MJD) mjd@saul.cis.upenn.edu}}
+\L{\LB{}}
+\L{\LB{   Copyright 1992 Mark\-Jason Dominus and the Trustees of the University}}
+\L{\LB{   of Pennsylvania. All rights reserved.}}
+\L{\LB{*\/\CE{}}}
+\L{\LB{}}
+\L{\LB{  }}
+\L{\LB{\K{\#include} \<stdio.h\>}}
+\L{\LB{\K{\#include} \<ctype.h\>}\Tab{32}{\C{}\/* For isspace() *\/\CE{}}}
+\L{\LB{\K{\#include} \<string.h\>}}
+\L{\LB{\K{\#include} \<malloc.h\>}}
+\L{\LB{}}
+\L{\LB{\K{\#define} MAXWORDLEN 80}\Tab{32}{\C{}\/* We fail on words longer than}}
+\L{\LB{}\Tab{32}{   80 characters *\/\CE{}}}
+\L{\LB{}}
+\L{\LB{\K{char} * getword(\K{void});}}
+\L{\LB{\K{struct} wordcount\_node * count(\K{char} *word, \K{struct} wordcount\_node *list);}}
+\L{\LB{\K{struct} wordcount\_node * create\_new\_node(\K{void});}}
+\L{\LB{}}
+\L{\LB{\K{struct} wordcount\_node \{}}
+\L{\LB{  \K{char} *word;}}
+\L{\LB{  \K{int} count;}\Tab{32}{\C{}\/* number of occurrences of this word *\/\CE{}}}
+\L{\LB{  \K{struct} wordcount\_node *next;}\Tab{32}{\C{}\/* pointer to next node in list *\/\CE{}}}
+\L{\LB{\} ;}}
+\L{\LB{}}
+\L{\LB{\K{int} }}
+\L{\LB{\Proc{main}  main(\K{void})}}
+\L{\LB{\{}}
+\L{\LB{  \K{char} *newword;}}
+\L{\LB{  \K{struct} wordcount\_node *list;}\Tab{32}{\C{}\/* Pointer to list of words seen so far *\/\CE{}}}
+\L{\LB{  \K{struct} wordcount\_node *cur;}}
+\L{\LB{}}
+\L{\LB{}}
+\L{\LB{  list = NULL;}\Tab{32}{\C{}\/* Empty list *\/\CE{}}}
+\L{\LB{}}
+\L{\LB{  \C{}\/* Read in words and count them *\/\CE{}}}
+\L{\LB{  \K{while} ((newword = getword()) != NULL) \{}}
+\L{\LB{    list = count(newword, list);}}
+\L{\LB{    free(newword);}\Tab{32}{\C{}\/* `count\' made a copy of `newword\', so}}
+\L{\LB{}\Tab{32}{   we can throw `newword\' away. *\/\CE{}}}
+\L{\LB{  \}}}
+\L{\LB{}}
+\L{\LB{  \C{}\/* Print out accumulated information *\/\CE{}}}
+\L{\LB{  \K{for} (cur = list; cur != NULL; cur = cur\-\>next)}}
+\L{\LB{    printf(\S{}\"\%s \%d\!n\"\SE{}, cur\-\>word, cur\-\>count);}}
+\L{\LB{}}
+\L{\LB{  \K{return} 0;}}
+\L{\LB{\}}}
+\L{\LB{}}
+\L{\LB{\C{}\/*}}
+\L{\LB{  search for `word\' in `list\'.  }}
+\L{\LB{  If it\'s there, increment the count associated with it.}}
+\L{\LB{  Otherwise, create a new node, and attach it to the front of the list.}}
+\L{\LB{  In either case, return a pointer to the head of the list when done.}}
+\L{\LB{}}
+\L{\LB{  Note that this works correctly if `list\' is NULL. *\/\CE{}}}
+\L{\LB{}}
+\L{\LB{\K{struct} wordcount\_node *}}
+\L{\LB{\Proc{count}  count(\K{char} *word, \K{struct} wordcount\_node *list)}}
+\L{\LB{\{}}
+\L{\LB{  \K{struct} wordcount\_node *cur;}}
+\L{\LB{  \K{struct} wordcount\_node *newnode;}}
+\L{\LB{}}
+\L{\LB{  \K{for} (cur = list; cur != NULL; cur = cur\-\>next)}}
+\L{\LB{    \K{if} (strcmp(word, cur\-\>word) == 0) \{}}
+\L{\LB{      cur\-\>count++;}}
+\L{\LB{      \K{return} list;}}
+\L{\LB{    \}}}
+\L{\LB{}}
+\L{\LB{  \C{}\/* If we\'re here, we didn\'t find the word. *\/\CE{}}}
+\L{\LB{}}
+\L{\LB{  \K{if} ((newnode = create\_new\_node()) == NULL) \{}}
+\L{\LB{    fprintf(stderr, \S{}\"Out of memory.\!n\"\SE{});}}
+\L{\LB{    exit(1);}}
+\L{\LB{  \}}}
+\L{\LB{}}
+\L{\LB{  \C{}\/* Attach new node to rest of list *\/\CE{}}}
+\L{\LB{  newnode\-\>next = list;}}
+\L{\LB{  }}
+\L{\LB{  \C{}\/* We don\'t know if our caller is going to reuse or overwrite}}
+\L{\LB{     the memory that contains `word\', so we\'d better copy it if we want}}
+\L{\LB{     to keep it around. *\/\CE{}}}
+\L{\LB{  newnode\-\>word = strdup(word);}}
+\L{\LB{  }}
+\L{\LB{  newnode\-\>count = 1;}}
+\L{\LB{}}
+\L{\LB{  \K{return} newnode;}}
+\L{\LB{\}}}
+\L{\LB{  }}
+\L{\LB{\C{}\/* Create a new list node and return a pointer to it. }}
+\L{\LB{   Return NULL if out of memory or on some other failure. }}
+\L{\LB{   *\/\CE{}}}
+\L{\LB{\K{struct} wordcount\_node *}}
+\L{\LB{\Proc{create\_new\_node}  create\_new\_node(\K{void})}}
+\L{\LB{\{}}
+\L{\LB{  \K{return} (\K{struct} wordcount\_node *) malloc(\K{sizeof}(\K{struct} wordcount\_node));}}
+\L{\LB{\}}}
+\L{\LB{}}
+\L{\LB{}}
+\L{\LB{\C{}\/* Read a word from standard input; return NULL on EOF. }}
+\L{\LB{   Has poor behavior on words longer than MAXWORDLEN characters. }}
+\L{\LB{   *\/\CE{}}}
+\L{\LB{\K{char} *}}
+\L{\LB{\Proc{getword}  getword(\K{void})}}
+\L{\LB{\{}}
+\L{\LB{  \K{char} buf[MAXWORDLEN];}}
+\L{\LB{  \K{int} i=0, c;}}
+\L{\LB{}}
+\L{\LB{  \C{}\/* Eat up white space that precedes a word, if any. *\/\CE{}}}
+\L{\LB{  \K{while} ( isspace(c = getchar()) \&\& c != EOF  )}}
+\L{\LB{    \C{}\/* nothing *\/\CE{} ;}}
+\L{\LB{}}
+\L{\LB{  \K{if} (c != EOF) ungetc(c,stdin);}}
+\L{\LB{}}
+\L{\LB{  \C{}\/* Read word *\/\CE{}}}
+\L{\LB{  \K{while} ( !isspace(c = getchar()) \&\& c != EOF  )}}
+\L{\LB{    buf[i++] = c;}}
+\L{\LB{}}
+\L{\LB{  buf[i] = \S{}\'\!0\'\SE{};}}
+\L{\LB{}}
+\L{\LB{  \K{if} (i == 0) \K{return} NULL;}\Tab{32}{\C{}\/* We hit EOF without reading anything *\/\CE{}}}
+\L{\LB{  \K{else}  \K{return} strdup(buf);}}
+\L{\LB{\}}}
+\vfill\eject

@@ -1,0 +1,316 @@
+%
+% CSE 110 Lecture Notes
+%
+% Entire contents are copyright 1992 by Mark-Jason Dominus.
+% All rights reserved.  Unauthorized reproduction prohobited.
+%
+
+\documentstyle[fancyheadings]{article}
+
+% \def\brac#1{{\tt <}#1{\tt >}}
+\def\brac#1{$<$#1$>$}
+\def\Int{{\tt int}}
+\def\int{\brac{\Int}}
+\def\int{\brac{\Int}}
+\def\Shortint{{\tt short~int}}
+\def\shortint{\brac{\Shortint}}
+\def\Longint{{\tt long~int}}
+\def\longint{\brac{\Longint}}
+\def\Float{{\tt float}}
+\def\float{\brac{\Float}}
+\def\Double{{\tt double}}
+\def\double{\brac{\Double}}
+\def\Char{{\tt char}}
+\def\chr{\brac{\Char}}
+\def\Void{{\tt void}}
+\def\void{\brac{\Void}}
+
+\def\p2#1{\brac{pointer~to #1}}
+
+\parskip 8pt
+
+% \def\baselinestretch{2}
+
+\title{Lecture 6}
+\author{CSE 110}
+\date{8 July 1992}
+
+\pagestyle{fancy}
+\lhead{CSE 110 Lecture Notes}
+\chead{Mark--Jason Dominus}
+\rhead{\thepage}
+\lfoot{Copyright \copyright 1992 Mark-Jason Dominus}
+\cfoot{}
+\rfoot{All rights reserved.}
+
+
+
+\begin{document}
+
+\maketitle
+
+\section{I Made a Mistake}
+
+When I said that the declaration {\tt int foo;} initialized {\tt foo} to
+be 0, I lied.  The compiler is a allowed to initialize {\tt foo} to
+anything it wants, including 0 or a random garbage value.  To initialize
+{\tt foo} to 0, write {\tt int foo = 0;}.  
+
+\section{Loops}
+
+Frequently we want a program to keep doing the same thing over and over
+again until something happens.  That's called {\em looping}\/.
+
+\subsection{{\tt while}}
+
+For example, we might play a game and then ask the user if he or she
+wants to play again.  We'd want to do that over and over as long as the
+user kept saying `yes', until finally the user said `no'.
+
+We use a {\tt while} statement for that sort of control flow.  The form
+of a {\tt while} statement is:
+
+\begin{quote}
+{\tt while (}{\it condition}\/{\tt )} {\it statement}
+
+\end{quote}
+
+To execute this kind of statement, the computer first evaluates the
+condition, which is just an expression.  If the condition is true, it
+executes the statement.  If the condition is false, it skips the whole
+thing and goes on to the next statement.
+
+So far this is just like {\tt if}.  The difference is this: When the
+computer is done executing the statement in the body of an {\tt if}, it
+goes on to the next statement.  When the computer is done executing the
+statement in the body of a {\tt while}, it goes back and repeats the
+whole statement.  The computer will test the condition and execute the
+statement over and over, until finally when the condition is false, it
+gets to go on to the next statement.
+
+Here's code to print out the numbers between 1 and 50, inclusive:
+
+\verb% % \\*
+\verb% int x = 1;% \\*
+\verb% % \\*
+\verb% while (x <= 50)% \\*
+\verb!   printf("%d ", x++);!	 \\*
+\verb% %
+
+Control is stuck in the {\tt while} loop until the value of {\tt x}
+exceeds 50.  Each time through the {\tt while} loop, we call {\tt
+printf()} to print the value of {\tt x}, and we increment {\tt x}.  When
+we've incremented {\tt x} so many times that its value exceeds 50, the
+test in the {\tt while} statement fails and we drop down to the next
+statement.  
+
+Here's another example.  This time the body of the {\tt while} statement
+is a compound statement:
+
+\verb% % \\*
+\verb% int n=0;% \\*
+\verb% % \\*
+\verb% while ( n<1 || n>10 ) { % \\*
+\verb%   printf("Please enter an integer between 1 and 10.\n");% \\*
+\verb!   scanf("%d", &n);! \\*
+\verb% }% 
+
+\noindent We'll keep prompting the user and reading an integer until we
+get one between 1 and 10.  Note that {\tt n} is initialized to 0; if it
+were initialized to 7 instead for some reason, we'd never prompt at
+all, because the condition would be false the first time we got to the
+{\tt while} statement.
+
+
+\section{More about {\tt scanf()}}
+
+{\tt scanf()} is a function, and so it has a return value.  It returns a
+value to its caller to say whether or not it succeeded in doing what the
+caller asked.  It returns an \int.
+
+In the quadratic equation program we did
+
+\begin{flushleft}
+\verb%   /*%\mbox{ get inputs $a$, $b$, and $c$ from user. }\verb%*/%
+\\* \verb%   printf("Please input a, b, and c, one per line.\n");%
+\\* \verb%   scanf("%\verb-%-\verb%lf", &a);%
+\\* \verb%   scanf("%\verb-%-\verb%lf", &b);%
+\\* \verb%   scanf("%\verb-%-\verb%lf", &c);%
+\end{flushleft}
+
+\noindent but there's a somewhat simpler way:
+
+\begin{flushleft}
+\verb%   /*%\mbox{ get inputs $a$, $b$, and $c$ from user. }\verb%*/%
+\\* \verb%   printf("Please input a, b, and c, separated by white space.\n");%
+\\* \verb!   scanf("%lf %lf %lf", &a, &b, &c);!
+\end{flushleft}
+
+{\tt scanf()}'s first argument, the {\em format string}\/, can contain
+more than one conversion specifier (The {\tt \%lf}s are {\em conversion
+specifiers}\/ because they specify how to convert the input to values),
+and it can contain white space.  The format string is like a pattern
+that tells {\tt scanf()} what things to look for in the input, in what
+order, and what to do with them if it finds them.
+
+A {\tt \%lf} tells {\tt scanf()} to start looking for input in the form
+of a decimal numeral, and that there will be an extra argument of type
+\mbox{\p2\Double} which will say where to store the value that the numeral
+represents.  White space in the format string tells {\tt scanf()} to
+expect some white space characters in the input and to read them and
+throw them away.
+
+The format string we gave to {\tt scanf()} above tells it to read a
+decimal numeral into the \double\ variable pointed to by {\tt \&a}, then
+read and discard some white space characters in the input, then to read
+another decimal numeral into the space pointed to by {\tt\&b}, discard
+more white characters, and finally read a last decimal numeral into the
+space pointed to by {\tt\&c}.  When {\tt scanf()} reaches the end of the
+format string, it stops reading the input, and any characters still
+unread stay there until the next time a function asks for input.
+
+Now, we already know what happens if the {\tt scanf()} call above gets
+the input \mbox{\tt 12 39.07 -.00003}, but what if you gave it \mbox{\tt
+12 foo -.00003} instead?  The {\tt 12} gets read and put into the space
+pointed to by {\tt\&a}, and then the blank character is all right
+because it's white space, but as soon as {\tt scanf} sees the character
+{\tt f}, it knows something's wrong---it's expecting something it can
+interpret as a \double, and no \double\ starts with {\tt f}.  What does
+it do?
+
+It leaves the {\tt f} and all the following characters unread, does not
+store anything into the spaces pointed to by {\tt\&b} or {\tt\&c}, and
+returns immediately.  It returns the value 1, because it was only able
+to read, interpret, and store one of the conversions.  If we had given
+{\tt scanf()} the correct input with three numerals in it, it would have
+been able to read, interpret and store all three of the conversions, and
+so it would have returned 3.  {\tt scanf()} always returns the number of
+conversions it was able to read, interpret, and store.
+
+\subsection{A Heinous Error}
+
+Beginners often make this mistake:
+\label{heinous-error}
+
+\begin{flushleft}
+\verb! int num = 0; ! \\*
+\verb!  ! \\*
+\verb! while ( num < 1 || n > 50 ) { ! \\*
+\verb!   printf("Enter an integer between 1 and 50.\n"); ! \\*
+\verb!   scanf("%d", &num); ! \\*
+\verb! } ! 
+\end{flushleft}
+
+What's wrong here is that if the user enters a bogus input, such as {\tt
+foo}, instead of a decimal numeral, the {\tt scanf()} will fail to
+convert the input, will return 0, will leave the value of {\tt num}
+unchanged, and {\em will leave the bogus input unread}\/.  Then the next
+time through the loop, the bogus input will still be there, and it must
+be read before anything else is,\footnote{It would be a terrible
+disaster for the program to receive the input characters in any order
+other than the order the user typed them in.  If you want your program
+to look at the characters in the input in some other order, you must
+read them into memory, and then you can look at the memory any way you
+want.} so {\tt scanf()} will fail again in the same way.  This code
+loops forever if the user enters a bogus input, printing the prompt over
+and over again.
+
+Because of situations like this, {\tt scanf()} is rarely used to read
+input from users---it is much better for reading input from other
+computers, which are more predictable.  But we can use it, if we are
+careful.
+
+\section{Flushing Input}
+
+To recover from bogus\footnote{I am not being cute here.  `Bogus' is an
+English word meaning `counterfeit'.} input to {\tt scanf()} above, we
+first need to detect the bogusness of the input, and then we need to
+discard the bogus input.
+
+We already know how to do the former: We check the return code from {\tt
+scanf()} and see if it's what we expected.  This section is about how to
+do the latter.
+
+\subsection{{\tt getchar()}}
+
+{\tt getchar()} accepts no arguments.  It reads one character from the
+input and returns that character as its return value.  The character we
+read with{\tt getchar()} is no longer available to be read again; next
+time we call {\tt getchar()} or {\tt scanf()} or any other input
+function, reading will commence with the character after the one we just
+read.
+
+If there is no more input, or if {\tt getchar()} can't read a character
+for some reason, it returns {\tt EOF}.  {\tt EOF} stands for ``End Of
+File''.  
+
+Whatever {\tt EOF} is {\tt\#defined} as, it can't have type \chr.  Why
+not?  Because if it did, then that \chr\ value might actually appear in
+the input, and then you wouldn't be able to distinguish between when
+{\tt getchar()} returned {\tt EOF} because it had happened to read that
+character in the input and when {\tt getchar()} returned {\tt EOF}
+because there was an error.  
+
+The return type of {\tt getchar()} therefore can't be \chr, because {\tt
+getchar()} needs to be able to return {\tt EOF}, which is not a \chr.
+Accordingly, {\tt getchar()}'s return type is \int, and the characters
+it returns are converted to \int s when they're returned.
+
+You have to {\tt\#include <stdio.h>} to use {\tt getchar()}, because you
+need the definition of {\tt EOF}, and also because on most systems {\tt
+getchar()} is actually a macro, and the definition of that macro is in
+{\tt <stdio.h>}.
+
+\subsection{Character Constants}
+
+If you write the sequence {\tt 'f'}, the compiler generates a value of
+type \int\ which represents the value of the character {\tt f}.  If {\tt
+c} is an \int\ variable in which a character is stored, you can see
+whether the character stored in {\tt c} is the letter {\tt f} by doing
+
+\begin{flushleft}
+\verb% if (c == 'f') { ... } % 
+\end{flushleft}
+
+{\tt 'f'} is called a {\em character constant}\/.  Some characters, such
+as newlines, are hard to type or would confuse the compiler if you
+actually put them into the source code.  The compiler lets you write
+{\tt '\verb+\+n'} to represent the newline character; similarly, {\tt
+'\verb+\+t'} is a TAB character, {\tt '\verb+\\+'} is a backslash ({\tt
+\verb+\+}) character, and {\tt ' '} is a blank character.  Then
+
+\begin{flushleft}
+\verb% if (c == '\n') { ... } % 
+\end{flushleft}
+
+\noindent checks to see if the character stored in {\tt c} is the
+newline character, and executes the statements in the body of the {\tt
+if} if it is.
+
+\subsection{A Program to Count Words}
+
+This program counts the number of characters, words, and lines in its input.
+
+\input wc.tex
+
+There aren't any notes for this program because there's nothing new here.
+
+\subsection{Flushing the Input Line}
+
+Now we know enough to recover from the heinous error of section
+\ref{heinous-error}.  If {\tt scanf()} doesn't return what we expect,
+we'll use {\tt getchar()} to discard all the input up to the end of the
+line, to give {\tt scanf()} a fresh start next time we call it.  Here's
+the code:
+
+\input devour.tex
+
+There's only one new feature here: a {\tt ;} by itself is a {\em null
+statement}\/: it behaves syntactically like a statement, but it doesn't
+actually do anything.  The gobbling up of characters happens in {\tt
+getchar()}, which is in the condition part of the {\tt while} loop, so
+the {\tt while} doesn't have to do anything in its body.  But the syntax
+rules say that {\tt while} must be followed by a statement.  So we
+follow it with a null statement, which doesn't do anything.
+
+\end{document}

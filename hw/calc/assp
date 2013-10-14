@@ -1,0 +1,29 @@
+
+Seven points for implementing a working calculator:
+   +2 for implementing the commands as described                ____________
+
+   +3 for recovering gracefully from syntactically 
+      incorrect input and from EOF                              ____________ 
+
+   +2 for detecting and correcting semantic errors
+      (division by zero, etc.)                                  ____________
+
+
+                                         (total)  ____________
+
+
+Seven points for an arbitrily large amount of data:
+   +2 for allocating						____________
+
+   +2 for freeing                                               ____________
+
+   +3 for getting the details, boundary cases,
+      and error-checking right                                  ____________
+
+
+                                         (total)  ____________
+
+
+Total for assignment-specific points.   	  ____________
+									    
+									    

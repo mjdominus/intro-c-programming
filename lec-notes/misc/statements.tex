@@ -1,0 +1,258 @@
+
+
+\documentstyle{article}
+
+% \def\baselinestretch{2}
+
+% \def\brac#1{{\tt <}#1{\tt >}}
+\def\brac#1{$<$#1$>$}
+\def\Int{{\tt int}}
+\def\int{\brac{\Int}}
+\def\int{\brac{\Int}}
+\def\Shortint{{\tt short~int}}
+\def\shortint{\brac{\Shortint}}
+\def\Longint{{\tt long~int}}
+\def\longint{\brac{\Longint}}
+\def\Float{{\tt float}}
+\def\float{\brac{\Float}}
+\def\Double{{\tt double}}
+\def\double{\brac{\Double}}
+\def\Char{{\tt char}}
+\def\char{\brac{\Char}}
+\def\Void{{\tt void}}
+\def\void{\brac{\Void}}
+
+\def\p2#1{\brac{pointer~to #1}}
+
+\parskip 8pt
+
+\title{About Statements}
+\author{CSE 110}
+\date{13 July 1992}
+
+\begin{document}
+\maketitle
+
+Some people have asked just what a statement is, and how you can
+identify one, and how to tell if a certain thing should be followed by a
+semicolon or not.  These notes should sum all that up.
+
+A statement is one of the following forms:
+
+\begin{itemize}
+
+\item The {\em null statement}\/, which is written
+
+\begin{flushleft}
+{\tt ;}
+\end{flushleft}
+
+To execute the null statement, the computer simply does nothing.
+
+\item An {\em expression statement}\/, which has this form:
+
+\begin{flushleft}
+{\em expression}\/{\tt ;}
+\end{flushleft}
+
+To execute an expression statement, the computer evaluates the
+expression, takes the resulting value and throws it away.  Then it
+resolves any side effects, such as increments, decrements, and
+assignments, that may have resulted from the evaluation.
+
+
+\item A {\em compound statement}\/, which has this form:
+
+\begin{flushleft}
+{\tt \{} \\*
+{\hspace{8pt}\em declarations} \\*
+{\hspace{8pt}}\\*
+{\hspace{8pt}\em statement 1} \\*
+{\hspace{8pt}\em statement 2} \\*
+{\hspace{8pt} $\cdots$} \\*
+{\hspace{8pt}\em statement n} \\*
+{\tt \}}
+\end{flushleft}
+
+To execute a compound statement, the computer executes {\em
+statement~1}\/.  Then it executes {\em statement~2}\/, and soforth,
+until finally it executes {\em statement~n}\/.  The sub-statements are
+always executed in the order in which they appear in the file.
+
+Variable declarations may appear at the beginning of any compound
+statement.  The variables so declared exist only while control is inside
+the compound statement.
+
+\item A {\em {\tt return} statement}\/, which has this form:
+
+\begin{flushleft}
+{\tt return {\em expression} ; }
+\end{flushleft}
+
+To execute a {\tt return} statement, the computer evaluates the {\em
+expression}\/.   It then imediately terminates all processing in the
+current function, and control passes back to the place from which the
+function was called; the value of the {\em expression} is the function's
+return value.  A {\tt return} from {\tt main} returns control to the
+operating system and so terminates the entire program.
+
+If the function containing the {\tt return} statement has return type
+{\tt void}, the {\em expression}\/ should simply be omitted, and no
+value will be returned.
+
+\item An {\em {\tt if} statement}\/, which has this form:
+
+\begin{flushleft}
+{\tt if ( {\em condition} )} \\*
+{\hspace{8pt}\em statement} 
+\end{flushleft}
+
+To execute an {\tt if} statement, the computer evaluates the {\em
+condition}\/, which is just an expression.  If the value of the {\em
+condition} is {\bf true} (nonzero), the computer then executes the {\em
+statement}.  If the value of the {\em condition} is {\bf false} (zero),
+the computer does not execute the {\em statement}\/.
+
+\item An {\em {\tt if{\rm--}else} statement}\/, which has this form:
+
+\begin{flushleft}
+{\tt if ( {\em condition} )} \\*
+{\hspace{8pt}\em statement 1} \\*
+{\tt else } \\*
+{\hspace{8pt}\em statement 2} 
+\end{flushleft}
+
+To execute an {\tt if{\rm--}else} statement, the computer evaluates the
+{\em condition}\/, which is just an expression.  If the value of the
+{\em condition} is {\bf true} (nonzero), the computer then executes {\em
+statement~1}.  If the value of the {\em condition} is {\bf false}
+(zero), the computer executes {\em statement~2}\/.  In no case does it
+execute both {\em statement~1} and {\em statement~2}.
+
+\item A {\em {\tt while} statement}\/, which has this form:
+
+\begin{flushleft}
+{\tt while ( {\em condition} )} \\*
+{\hspace{8pt}\em statement} \\*
+\end{flushleft}
+
+To execute a {\tt while} statement, the computer evaluates the {\em
+condition}\/, which is just an expression.  If the value of the {\em
+condition} is {\bf true} (nonzero), the computer then executes the {\em
+statement}, loops back, and executes the entire {\tt while} statement
+again. If the value of the {\em condition}\/ is {\bf false} (zero), the
+computer does not execute the {\em statement}\/ and does not loop back.
+
+\item A {\em {\tt do{\rm--}while} statement}\/, which has this form:
+
+\begin{flushleft}
+{\tt do } \\*
+{\hspace{8pt}\em statement} \\*
+{\tt while ( {\em condition} ) ;}
+\end{flushleft}
+
+To execute a {\tt do{\rm-}while} statement, the computer executes the
+{\em statement}\/. Then it evaluates the {\em condition}\/, which is
+just an expression.  If the value of the {\em condition} is {\bf true}
+(nonzero), the computer loops back, and executes the entire {\tt
+do{\rm--}while} statement again. If the value of the {\em condition}\/
+is {\bf false} (zero), the computer does not loop back.
+
+\item A {\em {\tt for} statement}\/, which has this form:
+
+\begin{flushleft}
+{\tt for ( {\em initialization}\/ ; {\em condition} ; {\em update} ) } \\*
+{\hspace{8pt}\em statement} 
+\end{flushleft}
+
+To execute a {\tt for} statement, the computer executes the following
+code:
+
+\begin{flushleft}
+{ \em initialization \tt ;} \\*
+{\tt while ( {\em condition} ) \{ } \\*
+{\hspace{8pt}\em statement} \\*
+{\hspace{8pt}\em update \tt ;} \\*
+{\tt\}} \\*
+\end{flushleft}
+
+Any or all of the {\em initializiation}\/, {\em condition}\/, or {\em
+update} expressions may be omitted.  If the {\em initialization}\/ or
+{\em update} is omitted, the corresponding statement in the
+corresponding {\tt while} loop simply becomes null.  If the {\em
+condition} is omitted, it is taken to be permanently {\bf true}.
+
+\item A {\em {\tt break} statement}\/, which has this form:
+
+\begin{flushleft}
+{\tt break ;}
+\end{flushleft}
+
+To execute a {\tt break} statement, the computer jumps out of the
+smallest {\tt for}, {\tt switch}, {\tt while}, or {\tt do{\rm--}while}
+statement that the {\tt break} was inside.  Control continues with the
+statement immediately following this {\tt for}, {\tt switch}, {\tt
+while}, or {\tt do{\rm--}while} statement.
+
+If the {\tt break} statement is not inside any {\tt for}, {\tt switch},
+{\tt while}, or {\tt do{\rm--}while} statements, the compiler will
+signal an error.
+
+\item A {\em {\tt continue} statement}\/, which has this form:
+
+\begin{flushleft}
+{\tt continue ;}
+\end{flushleft}
+
+To execute a {\tt continue} statement, the computer jumps to the end of
+the smallest {\tt for}, {\tt while}, or {\tt do{\rm--}while} statement
+that the {\tt continue} was inside.  Control continues with the {\em
+condition}\/ test of the {\tt while} or {\tt do{\rm--}while}, or, if the
+{\tt continue} statement was inside a {\tt for} statement, with the {\em
+update} expression of the {\tt for}.
+
+If the {\tt continue} statement is not inside any {\tt for}, {\tt
+while}, or {\tt do{\rm--}while} statements, the compiler will signal an
+error.
+
+\item A {\em {\tt switch} statement}\/, which has this form:
+
+\begin{flushleft}
+{\tt switch ( {\em expression} )  } \\*
+{\hspace{8pt}\em statement} \\*
+\end{flushleft}
+
+To execute a {\tt switch} statement, the computer evaluates the {\em
+expression}\/.  Control then passes to the statement immediately after
+one of the three following things, which are listed in order of
+preference:
+\begin{enumerate}
+\item A {\em case label}\/ in the {\em statement}, which has the form 
+\begin{flushleft}
+{\tt case {\em constant} : } \\*
+\end{flushleft}
+
+\noindent where the value of the {\em constant}  is the same as the
+value of the {\em expression}\/.  If there is no case label whose value
+matches that of the {\em expression}, control passes to the statement
+immediately after:
+
+\item A {\em {\tt  default} label}\/ in the {\em statement}\/, which has
+the form 
+\begin{flushleft}
+{\tt default : } \\*
+\end{flushleft}
+
+\noindent .  If there is no {\tt default \em label}\/, control passes to
+the statement immediately after:
+
+\item The end of the {\tt case} statement.  
+
+\end{enumerate}
+
+
+
+\end{itemize}
+
+\end{document}
+

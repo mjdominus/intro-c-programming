@@ -1,0 +1,51 @@
+
+
+ Program to solve quadratic equations $ax^2 + bx + c = 0$.
+ \\* Known bugs:  Fails when $a=0$.
+ 
+
+\begin{flushleft}
+\verb%#include <stdio.h>%
+\\* \verb%#include <math.h>%
+\end{flushleft}
+
+\begin{flushleft}
+\verb%int main(void) {%
+\\* \verb%   double a, b, c;%
+\\* \verb%   double x1, x2;%
+\\* \verb%   double discriminant;%
+\end{flushleft}
+
+\begin{flushleft}
+\verb%   /*%\mbox{ get inputs $a$, $b$, and $c$ from user. }\verb%*/%
+\\* \verb%   printf("Please input a, b, and c, one per line.\n");%
+\\* \verb%   scanf("%\verb-%-\verb%lf", &a);%
+\\* \verb%   scanf("%\verb-%-\verb%lf", &b);%
+\\* \verb%   scanf("%\verb-%-\verb%lf", &c);%
+\end{flushleft}
+
+\begin{flushleft}
+\verb%   discriminant = b*b - 4*a*c;%
+\end{flushleft}
+
+\begin{flushleft}
+\verb%   if ( discriminant < 0 ) {%
+\\* \verb%     printf("The roots are imaginary.  I can't find them.\n");%
+\\* \verb%     return 1;%
+\\* \verb%   } else {%
+\\* \verb%     x1 = ( -b + sqrt(discriminant) )  / (2*a);%
+\\* \verb%     x2 = ( -b - sqrt(discriminant) )  / (2*a);%
+\end{flushleft}
+
+\begin{flushleft}
+\verb%     printf("The roots are %\verb-%-\verb%f and %\verb-%-\verb%f.\n", x1, x2);%
+\end{flushleft}
+
+\begin{flushleft}
+\verb%     return 0;%
+\\* \verb%   }%
+\end{flushleft}
+
+\begin{flushleft}
+\verb%}%
+\end{flushleft}

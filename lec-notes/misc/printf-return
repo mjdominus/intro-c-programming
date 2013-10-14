@@ -1,0 +1,27 @@
+
+\section{More about {\tt printf()}}
+
+{\tt printf()} is a function, and so it has a return value.  It returns
+values to its caller to say whether or not it succeeded in doing what we
+asked.  It returns an \int.
+
+If {\tt printf()} succeeds in printing what we asked it to, it returns
+the number of characters it printed on the screen.  If it fails, it
+returns a special value, represented in the source code by {\tt EOF}.
+{\tt EOF} is actually a manifest constant; nearly all standard I/O
+functions return {\tt EOF} to signal an error.  {\tt EOF} is defined in
+{\tt <stdio.h>}, and that's another reason why you need to {\tt\#include
+<stdio.h>} in order to use {\tt printf()}; you can't check to see if it
+failed or not until you get the definition of {\tt EOF}.\footnote{So far
+as I know, {\tt EOF} is always defined to be $-1$.  But its actual value
+is None of Your Business.}
+
+It might be good style to check the return value from {\tt printf()}
+every time we call it, to make sure that nothing went wrong, but that
+gets tedious awfully fast, and if {\tt printf()} fails there's usually
+very little we can do about it.  We're not going to print a message on
+the console, because whatever condition caused {\tt printf()} to fail
+probably still holds, and so our error message will probably fail too.
+This is one of the {\em few}\/ cases where it's usually considered
+appropriate to {\em not} check for an error return.
+

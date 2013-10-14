@@ -1,0 +1,265 @@
+%
+% CSE 110 Lecture Notes
+%
+% Entire contents are copyright 1992 by Mark-Jason Dominus.
+% All rights reserved.  Unauthorized reproduction prohobited.
+%
+
+\section{Examples of Pointer Arithmetic}
+
+In each of the following examples, suppose that {\tt array} is an \ano
+3\Int, whose elements contain the values 5, 23, and 119, respectively.
+Suppose {\tt p} and {\tt q} are pointer variables of type \p2\Int, which
+point initially to the first element of the array {\tt array}, and that
+{\tt d} is an \int\ variable.  Then:
+
+\begin{itemize}
+\item This statement
+\begin{flushleft}
+\verb% q = p + 1; % 
+\end{flushleft}
+
+computes the value of {\tt p + 1}, which is a pointer to {\tt array}'s
+second element (by the pointer arithmetic rule), and assigns that
+pointer value to the variable {\tt q}.  {\tt q} now points to {\tt
+array}'s second element.  {\tt p} has not changed.
+
+\item The statement
+\begin{flushleft}
+\verb% q = p++; % 
+\end{flushleft}
+
+gets the value of {\tt p}, assigns that value to {\tt q}, and makes a
+note to bump up the value of {\tt p} by one before the statement is
+over.  So {\tt q} ends up pointing to the first element of {\tt array},
+and {\tt p}, which got bumped up, points to the the second element of
+{\tt array}.
+
+\item This statement is illegal:
+
+\begin{flushleft}
+\verb% q = *(p + 1);%
+\end{flushleft}
+
+\noindent because {\tt p} is a \p2\Int, and so {\tt p + 1} is also a
+\p2\Int---it points to the element after the one that {\tt p} points to.
+Thus \mbox{\tt *(p + 1)} is the thing that \mbox{\tt p + 1} points to, and is
+therefore an \int.  {\tt q}, on the other hand, is a pointer variable.
+You can't store an \int\ in a pointer variable, because pointers are not
+\int s. The compiler will refuse to compile this statement.
+
+\item Perhaps what we meant to write in the last example was this:
+
+\begin{flushleft}
+\verb% *q = *(p + 1);% \\*
+\end{flushleft}
+
+This gets the value of the element after the one {\tt p} is pointing to,
+and assigns that value to the element that {\tt q} is pointing to.  {\tt
+q} is pointing to the first element of {\tt array}, so that first element
+gets assigned the value 23. Neither {\tt p} nor {\tt q} changes; both
+are still pointing to the first element of {\tt array}.  But {\tt array}
+itself now contains the values {\tt \{23, 23, 119\}}.  
+
+\item Or, perhaps, what we meant to say in the incorrect example was
+this: 
+
+\begin{flushleft}
+\verb% d = *(p + 1);%
+\end{flushleft}
+
+{\tt d} is an \int, \mbox{\tt *(p + 1)} is an \int, so things work out.  \mbox{\tt
+p + 1} points to the second element of {\tt array}, and \mbox{\tt *(p + 1)} is
+this second element itself.  Since the expression \mbox{\tt *(p + 1)} is in a
+value context, it's evaluated to produce a value, and the result is the
+contents of the second element of {\tt array}, which is 23.  This value is
+assigned to the \int\ variable {\tt d}.  The value of {\tt p} does not
+change. 
+
+\item On the other hand, this is something else again:
+
+\begin{flushleft}
+\verb% d = *p + 1;%
+\end{flushleft}
+
+{\tt p} points to the first element of {\tt array}, so {\tt *p} gets the
+value of that element, 5.  Then the computer adds 5 and 1 and assigns
+the result, 6, to the variable {\tt d}.  Neither {\tt p} nor {\tt *p}
+change.  
+
+\item Unary operators like {\tt ++} and {\tt *} take precedence from
+right to left.  That means that if you see {\tt *p++}, it means {\tt
+*(p++)} and not {\tt (*p)++}.  What's the difference between these two
+expressions?
+
+\begin{flushleft}
+\verb% d = *(p++);% 
+\end{flushleft}
+
+\noindent says to get the value of {\tt p}, which is a pointer to the first
+element of {\tt array}, and to make a note to bump up {\tt p} by the end
+of the statement.  Then, the computer finds the thing that {\tt p} is
+pointing to, which has value 5, and assigns that value to {\tt d}.
+After the statement, {\tt d} got the value 5 and {\tt p} was bumped up
+to point to the second element of {\tt array}.  None of the values in {\tt
+array} changed.  On the other hand,
+
+\begin{flushleft}
+\verb% d = (*p)++;% 
+\end{flushleft}
+
+\noindent says to get the thing that {\tt p} points to, namely the first
+element of {\tt array}, get its value, and make a note to bump that value
+up by 1 before the end of the statement.  The value of the first element
+of {\tt array} gets assigned to {\tt d}, and then the value gets bumped up
+by 1.  So {\tt d} gets the value 5, and {\tt p} hasn't changed---it
+still points to the first element of {\tt array}, whose value is now 6
+instead of 5.
+
+In short:  {\tt p++} means to bump up {\tt p} so that it points to the
+next element in the array.  {\tt (*p)++} means to bump up the value of
+the thing {\tt p} points to, but to leave {\tt p} itself unchanged so
+that it points to the same place. 
+
+\end{itemize}
+
+\section{Too Much Work}
+
+C has a philosophy that it won't perform any operation unless that
+operation is completely trivial.  For example, there is no way to say
+``Add the value 3 to every element of the array {\tt a}.''  You can do
+it, but you have to code the loop yourself.  That's because there is
+usually more than one way to perform any nontrivial operation, and C
+does not want to be in the position of having to figure out what way is
+best for your particular application.  C lets the programmer decide what
+method is best.\footnote{This philosophy is why there is no automatic
+run-time array bounds checking in C: If it were there and your program
+needed to run quickly, you would be out of luck, because there would be
+no way to take the bounds checking out.  On the other hand, if you
+really did want it there, and you were willing to pay the speed penalty,
+you could write the code for the array bounds checking yourself.  There
+is a trade-off between speed and safety, and C does not presume to know
+which one you value more highly.}  
+
+Accordingly, there is no operation in C that operates on all the
+elements of an array at once.  You always have to use a loop.  Operating
+on all the elements of an array at once is ``Too Much Work.''  You can
+get C to do a little bit of work at a time, working on one array
+element, and then the next, and then the next, but that is the way you
+have to say it.
+
+In fact, C goes even farther than that.  Even manipulating an entire
+array at once is ``Too Much Work''.   In C, there are no array values.  
+
+\subsection{No Array Values}
+
+This is a little surprising.  If {\tt i} is an \int\ variable, {\tt i}'s
+value is an \int\ value.  If {\tt pc} is a \p2\Char\ variable, {\tt
+pc}'s value is a \p2\Char\ value.  
+
+But: If {\tt af} is an \ao\Float\ variable, {\tt af}'s value is {\em
+not}\/ an \ao\Float\ value, because there are no array values.
+
+So suppose {\tt af} is an \ao\Float s; what is the value of the
+expression {\tt a}?
+
+\subsection{The Array Value Rule}
+
+No expression has a value which is an array.  If {\tt a} is an
+\ao{thing}, then the value of {\tt a} is a pointer to the first element
+of the array {\tt a}, and has type \p2{thing}.
+
+\subsection{Implications for Pointer Arithmetic}
+\label{array-in-value-context}
+The array value rule says that the value of an array {\tt a} is a
+pointer to {\tt a}'s first element.  That means that in a value context,
+where {\tt a} is being evaluated to produce a value, the expressions
+{\tt a} and {\tt\&a[0]} are interchangeable.  The first denotes the
+array itself, and the second is a pointer ({\tt \&}) to {\tt a}'s first
+element ({\tt a[0]}), but the values of the two expressions are the
+same.  The two expressions therefore behave differently from one another
+only in an object context.  
+
+Now, the pointer arithmetic rule tells us that if {\tt p} points to the
+first element of an array, say to {\tt a[0]}, then the expression {\tt p
++ 1}, by definition, is a pointer which points to the second element of
+that array, namely {\tt a[1]}, and that {\tt p + n}, in general, points
+to {\tt a[n]}.
+
+The expression {\tt a} is just such a pointer---the array value rule
+says that it points to the first element of the array {\tt a}.
+Therefore, {\tt a + n} points to the element {\tt a[n]}.  
+
+Since {\tt a + n} is a pointer to the element {\tt a[n]}, the expression
+{\tt *(a + n)} denotes the element {\tt a[n]} itself.  The expression
+{\tt *(a + n)} is an lvalue expression, because it represents an object:
+the element of array {\tt a} with index {\tt n}.
+
+\label{pointer-punch-line}
+Here's the punch line:  The expression {\tt a[n]} is in all ways
+completely identical  with the expression {\tt *(a + n)}.  When the
+compiler needs to compile an array reference such as {\tt a[n]}, it
+compiles it as though you had written {\tt *(a + n)}.  Array
+subscripting is only a notation convenience, and everything we want to
+do with array can be done with pointers instead, because of C's powerful
+pointer arithmetic convention.
+
+\section{Functions that Operate on Strings}
+
+We'll apply our powerful theory of arrays and pointers, and write some
+functions that operate on strings.  First we'll write {\tt strlen}, a
+function which takes a string as an argument and returns the number of
+characters in the string.  
+
+We'll be calling {\tt strlen} this way:
+\begin{flushleft}
+\verb% char a[] = "Jean Ogrinz";% \\*
+\verb% int length; % \\*
+\verb% % \\*
+\verb% length = strlen(a);% \\*
+\verb% % \\*
+\end{flushleft}
+
+Now, if we want to write {\tt strlen}, we need to decide what its header
+looks like.  Clearly it'll return an \int.  What's its argument?  A
+string, which is an \ao\Char, but that's not quite right.  The argument
+to a function is in a value context, and so the {\tt a} in {\tt
+strlen(a)} is in a value context and is being evaluated to produce a
+value.  The array value rule says that the value of an array in a value
+context is a pointer to the array's first element.  That means that when
+{\tt strlen} is really being passed is a pointer to {\tt a}'s first
+element, which is a \p2\Char.  So {\tt strlen} will begin like this:
+
+\begin{flushleft}
+\verb% int strlen(char *s)% \\*
+\end{flushleft}
+
+here's the rest of {\tt strlen}:
+
+\begin{flushleft}
+\verb% int strlen(char *s)% \\*
+\verb% { % \\*
+\verb%   int i = 0; % \\*
+\verb%  % \\*
+\verb%   while (*s != '\0') { % \\*
+\verb%     i++; % \\*
+\verb%     s++;      /*% Make $s$ point to the next character \verb%*/ % \\*
+\verb%   } % \\*
+\verb%  % \\*
+\verb%   return i; % \\*
+\verb% } % 
+\end{flushleft}
+
+\subsection{How {\tt strlen} Works}
+
+When {\tt strlen} starts up, {\tt s} is initialized to point to the
+first character of the string we want to examine, as we've said.
+Since {\tt s} is a \p2\Char, {\tt *s} is the \chr that {\tt s} is
+pointing to.  
+
+We run through the {\tt while} loop as long as {\tt *s} is not the NUL
+character.  Each time through, we increment {\tt i}, which is a counter
+of how many characters we've seen so far, and we increment {\tt s},
+which makes it point to the next character in the string.  When that
+character is the NUL character, we quit the loop and return the count.
+

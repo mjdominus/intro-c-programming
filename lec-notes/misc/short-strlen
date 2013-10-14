@@ -1,0 +1,38 @@
+\subsection{Short {\tt strlen}}
+
+Please make sure you understand what {\tt strlen} is doing and how it is
+doing it before you go ahead.
+
+An experienced C programmer would be unlikely to write {\tt strlen}
+quite the way it appears above.  C is sometimes a marvel of conciseness
+and obscurity, and so for completeness' sake I'll show you how most
+people would write {\tt strlen}:
+
+\begin{flushleft}
+\verb% int strlen(char *s)% \\*
+\verb% { % \\*
+\verb%   int i = 0; % \\*
+\verb%  % \\*
+\verb%   while (*s++) % \\*
+\verb%     i++; % \\*
+\verb%  % \\*
+\verb%   return i; % \\*
+\verb% } % 
+\end{flushleft}
+
+The only thing you need to know here is that the {\tt ++} in {\tt *s++}
+takes precedence over the {\tt *}, so that {\tt *s++} means {\tt
+*(s++)}, and not {\tt (*s)++}.  
+
+Other than that, I don't need to explain this program any more, because
+it is exactly the same as the other {\tt strlen}.  It does the same
+thing in the same way; it's just more concise.
+
+    Why write {\tt strlen} this way rather than the other way?  I can't
+really think of a good reason.  C programmers are in the habit of
+writing everything as concisely as possible, and there's something to be
+said for that, because concise code is usually easier to understand than
+verbose code.  In this case, though, the short code doesn't seem much
+clearer.
+
+\subsection{{\tt printf} and {\tt scanf} with Strings}

@@ -1,0 +1,289 @@
+
+\documentstyle{article}
+
+% \def\brac#1{{\tt <}#1{\tt >}}
+\def\brac#1{$<${#1}$>$}
+\def\Int{{\tt int}}
+\def\int{\brac{\Int}}
+\def\int{\brac{\Int}}
+\def\Shortint{{\tt short~int}}
+\def\shortint{\brac{\Shortint}}
+\def\Longint{{\tt long~int}}
+\def\longint{\brac{\Longint}}
+\def\Float{{\tt float}}
+\def\float{\brac{\Float}}
+\def\Double{{\tt double}}
+\def\double{\brac{\Double}}
+\def\Char{{\tt char}}
+\def\chr{\brac{\Char}}
+\def\Void{{\tt void}}
+\def\void{\brac{\Void}}
+
+\def\ptr#1{pointer~to {#1}}
+\def\p2#1{\brac{\ptr{#1}}}
+\def\Ano#1#2{array~of {#1}~{#2}s}
+\def\ano#1#2{\brac{\Ano{#1}{#2}}}
+\def\Ao#1{array~of {#1}}
+\def\ao#1{\brac{\Ao#1}}
+
+\def\np{{\tt NULL} pointer}
+
+\def\breakhere{\mbox{$\otimes$}}
+
+
+\title{Lecture 18}
+\author{CSE 110}
+\date{4 August 1992}
+
+\parskip 8pt
+
+\begin{document}
+\maketitle
+
+\section{The Tower of Hanoi}
+
+As promised, here's the code for the Tower of Hanoi program.
+
+In the program, the three pegs are represented internally by the
+numbers 1, 2, and 3.  As written, the program reads a number of rings
+from the user, and print out instructions to tell the user how to
+transfer a tower of this height from ring 1 to ring 3.  
+
+The workhorse function, {\tt hanoi}, moves a tower of {\tt num\_rings}
+rings from peg {\tt start\_peg} to peg {\tt end\_peg}.  The first thing
+it does is to figure out where the spare peg is; to do this it uses a
+simple trick: If pegs $s$ and $e$ are the start and end pegs, then peg
+$6-s-e$ is the spare peg.  (For example, if $s$ is 2 and $e$ is 1, the
+spare peg is $6-2-1$ or $3$.)
+
+If the height of the tower that {\tt hanoi} is called upon to move has
+size 0, it returns immediately, because it doesn't need to do anything.
+Otherwise, it calls itself recursively to move the subtower of ${\tt
+num\_rings} - 1$ rings from the start peg to the spare beg, calls {\tt
+move} to move the largest ring from the start peg to the end peg, and
+then calls itself recursively again to move the subtower from the spare
+peg to the end peg.
+
+\begin{flushleft}
+\verb%void%
+\\* \verb%  hanoi(int num_rings,%
+\\* \verb%        int start_peg, %
+\\* \verb%        int end_peg)%
+\\* \verb%{%
+\\* \verb%  int spare_peg = 6 - start_peg - end_peg;%
+
+\verb%  if (num_rings > 0) {%
+\\* \verb%    hanoi(num_rings - 1, start_peg, spare_peg);%
+\\* \verb%    move(num_rings, start_peg, end_peg);%
+\\* \verb%    hanoi(num_rings - 1, spare_peg, end_peg);%
+\\* \verb%  }%
+
+\verb%  return;%
+\\* \verb%}%
+\end{flushleft}
+
+{\tt move} is the function which is called each time we want to move a
+particular single ring.  If we were writing our Tower of Hanoi program
+to do a fancy screen display which showed the rings flying around from
+peg to peg, we would put the code for drawing the rings on the screen in
+{\tt move}.  In this simple program, we'll be content to just print out
+an instruction about what peg should be moved where:
+
+\begin{flushleft}
+\verb%void move(int ring_num, int start, int end)%
+\\* \verb%{%
+\\* \verb%  printf("Move disk %\verb-%-\verb%d from peg %\verb-%-\verb%d onto peg %\verb-%-\verb%d.\n", %
+\\* \verb%         ring_num, start, end);%
+
+\verb%  return;%
+\\* \verb%}%
+\end{flushleft}
+
+We'll add a {\tt main} which examines its command-line arguments
+to decide how many rings the user wants, and then just calls {\tt hanoi}
+to print the instructions for moving a tower of that many rings from peg
+1 to peg 3:
+
+\begin{flushleft}
+\verb%void hanoi(int num_rings, int start_peg, int end_peg);%
+\\* \verb%void move(int ring_num, int start, int end);%
+\end{flushleft}
+
+\begin{flushleft}
+\verb%int main(int argc, char **argv)%
+\\* \verb%{%
+\\* \verb%  int num_rings;%
+
+\verb%  if (argc != 2) {%
+\\* \verb%    fprintf(stderr, "Usage: %\verb-%-\verb%s number_of_rings\n", argv[0]);%
+\\* \verb%    return 1;%
+\\* \verb%  }%
+
+\verb%  num_rings = atoi(argv[1]);%
+
+\verb%  hanoi(num_rings, 1, 3);%
+
+\verb%  return 0;%
+\\* \verb%}%
+\end{flushleft}
+
+    The {\tt atoi} function is something new: It accepts a string which
+is supposed to contain the string representation of an integer, and it
+returns the integer that the string represents.  For example {\tt
+atoi("119")} returns the integer 119.  {\tt atoi} returns 0 if there is
+an error, for example, because the string passed in was not composed of
+digits.
+
+The program is almost trivial with recursion, but it would be very
+difficult to do without recursion, because the solution we have, to
+reduce the problem to a simpler case, is already organized along
+recursive lines.
+
+\section{Divide-and-Conquer Sorting}
+
+For a more serious application of recursion, consider the sorting
+problem again.
+
+First observe that simple sorting algorithms, like insertion sort, run much
+faster on short lists than on long lists.
+
+\subsection{How Long Does insertion Sort Take?}
+
+    Suppose we have a list of $n$ things, and we want to find the
+smallest member.  We have to scan over all the elements in the list,
+looking for the smallest one.  The three fundamental operations we have
+to perform are looking at an element, comparing it to the current
+smallest, and copying the element into our `current smallest' variable
+if it is smaller.
+
+    The number of times we have to perform the first two operations is
+clearly $n$.  The number of times we have to perform the third operation
+is clearly no more than $n$.  If all three operations take 1 unit of
+time,\footnote{This is usually true on comventional computers; however,
+the main conclusion of this section, that inserion sort takes tmie
+proportional to the square of the number of elements in the list, is
+still valid even if these three operations do not all take the same
+amount of time.} then the running time of our algorithm to find the
+smallest element is no more than $3n$.  It can be demonstrated that the
+number of times we can expect to have to perform the third step is about
+$n+1\over 2$, so the running time of the find-smallest-element operation
+averages about $5n+1\over 2$.
+
+Thus if we double the length of the list, the time it takes to find the
+smallest element also doubles.
+
+Now consider the insertion sort: We repeatedly find the smallest
+element, and copy it to an auxiliary array.  To do this once on a list
+of $n$ things takes $5n + 3\over 2$ units of time ($5n+1\over 2$ for the
+search and $1$ for the copy).  We have to do it once for each element in
+the original list, so the total time to do an insertion sort on $n$
+things is about $n\cdot {5n+3\over 2}$ or $5n^2 + 3n \over 2$.  
+
+\begin{tabular}{r|l}
+$n$ & $5n^2+3n\over 2$ \\ \hline
+1   & 4 \\
+2   & 13 \\
+3   & 27 \\
+4   & 46 \\
+5   & 70 \\
+10  & 265 \\
+20  & 1030 \\
+40  & 4060 \\
+80  & 16120 
+\end{tabular}
+
+It seems that if we double to length of the list, the time it takes to
+sort it approximately quadruples.
+
+\subsection{An Improvement to Insertion Sorting}
+
+Suppose we have a list of 20 things we want to sort.  We can see from
+the table above that sorting them with insertion sort will take about
+1,030 units of time.
+
+Now suppose we broke the list of 20 things into two lists of 10 things.
+It would take 265 units of time to sort each of the two lists of 10
+things, for a total of 530 units of time.  If we would merge the two
+sorted lists together in less than 500 units of time, we'd have
+done the sort faster by splitting it into two pieces.
+
+In fact, it's quick and easy to merge two sorted lists.  You look at the
+first element in each list, find the smaller of the two, remove it from
+the list it's in, and copy it to an auxiliary list.  This takes 4 units
+of time.  Then you repeat the process until both lists are empty.  If
+the two lists have a total of $n$ things in them, you have to repeat
+this operation $n$ times, so it takes $4n$ units of time.  In the case
+above, $n$ was 20, so it takes only 80 units of time to merge the two
+sorted lists of length 10.  
+
+That means the split-sort-and-merge technique has reduced the running
+time of our sort from 1030 units to 610 units.  
+
+If we were sorting 80 things instead, we would reduce the running time
+from 16120 units to 8440 ($4060+4060+320$), a savings of almost 50\%.
+Clearly this is a substantial improvement.
+
+\subsection{Recursion}
+
+Now suppose we're sorting the 80 things.  We break the list into two
+lists of 40 things each.  We need to sort each list.
+
+We've already seen that it's a substantial improvement to break a list
+in half, sort the parts separately, and merge them, rather than sorting
+the entire list.  So let's take this sub-list of 40 elements and apply
+our imporvement, by breaking it into two sub-sub-lists of 20 things
+each.  To sort each list of 40 things by this method takes
+$1030+1030+160 = 2220$ units of time, for a total of $2220+2220+320 =
+4760$ units of time, down from 16120.  
+
+But we already saw that by using the improved method to sort a list of
+20 things we could get a speed up, so let's apply the improvement yet
+again, breaking the lists of 20 things into two lists of 10 things each.
+This reduces the running time of our sort to 3080 units.  The
+improvement is less this time, because the savings we got by sorting
+lists of 10 things instead of 20 things is not so big, and because the
+cost of merging the lists back together an extra time is larger in
+proportion.  
+
+Nevertheless if we sort the lists of 10 things by breaking them each
+into two lists of 5 things and doing insertion sort on those lists and
+merging the results, we can sort our original 80 objects in 2400 time
+units, instead of the 16120 that our original straight insertion sort
+yielded. 
+
+So here's our improved sorting algorithm:
+
+\begin{enumerate}
+\item If the list to sort is very short, use insertion sort.
+\item Otherwise, break the list into two lists of approximately equal
+size, sort each list with {\em this}\/ algorithm, and merge the two
+sorted lists back together.
+\end{enumerate}
+
+This algorithm is called {\em mergesort}\/.  We won't see a C
+implementation, because to do it proprly you get bogged down in a lot of
+little details about how to store the objects, and allocating auxiliary
+space, and handling odd-length lists which can't be broken evenly, and
+soforth.  But it's clear that the algorithm will be recursive.
+Somewhere in our program we will have a function something like this:
+
+\begin{flushleft}
+\verb% void mergesort(struct list *data, int length) % \\*
+\verb% {% \\*
+\verb%   ...% \\*
+\verb%   if (length < SMALL_SIZE )  % \\*
+\verb%     insertion_sort(data, length);% \\*
+\verb%   else {% \\*
+\verb%     split_list(data, top, bottom);% \\*
+\verb%     mergesort(top,    length/2);% \\*
+\verb%     mergesort(bottom, length/2);% \\*
+\verb%     merge_lists(top, bottom, data);% \\*
+\verb%     return;% \\*
+\verb%   }% \\*
+\verb% }% \\*
+\end{flushleft}
+
+{\tt mergesort} does a little preparatory work, calls itself do to the
+bulk of the work on simpler cases, and does a little cleanup work.  
+
+\end{document}

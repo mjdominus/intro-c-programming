@@ -1,0 +1,64 @@
+
+Write a program which prints the letters of the alphabet in a random
+order.  Each letter should appear only once.  Assume a function `ord()'
+which accepts a letter and returns the index of that letter in the
+alphabet.  (For example, ord('a') returns 0; ord('z') returns 25;
+ord('m') returns 12.
+
+Write a program that reads up to 50 grades between 0 and 100 from the
+input; -1 signals the end of the input.  The program should write out
+the letter grades that correspond to the inputs.  The program should
+grade on a curve as follows: Divide the range betwen the lowest and
+highest grade into five parts.  Grades in the top part get A's; grades
+in the second part get B's, and soforth.
+
+Write a function that reads doubles from its input and outputs the
+square root of each.  Check for negative inputs.
+
+Assume that there is a function `toupper' which takes a char argument.
+It returns the uppercase version of its argument if the argument was a
+lowercase letter; otherwise it returns its argument. That is,
+toupper('c') returns 'C'; toupper('F') returns 'F', and toupper('#')
+returns '#'.  Write a program which reads its input, translates the
+lowercase letters in the input to uppercase, and writes out the result.
+Your program should terminate when it sees EOF.
+
+Write a program which prints out the length of each line in its input,
+halting at EOF.
+
+Write a function that receives appropriate information about the
+dimensions of a cylinder from its caller and computes the volume of the
+cylinder.  
+
+Write a function that accepts a double argument and returns the largest
+integer that is less than or equal to its argument.
+
+Granny's famous Gruel Recipe goes like this:
+	3 cups corn meal
+	4 cups water
+boil water.  add meal.  reduce heat.  cook 20 minutes.  Serves 6. 
+Write a program which reads input specifying how many people are coming
+over for supper, and which prints out a gruel recipe for enough gruel to
+feed them all.  
+
+The _factorial_ of a positive intgeer n is the product of all the
+intgers between 1 and n, inclusive.  The factorial of 0 is 1.  Write a
+function that returns the factorial of its argument.
+
+Hieronymus Bonghit was never quite himself after he was struck on the
+head by a falling wah-wah pedal at last year's Saint Patrick's Day
+Parade.  His irrational hatred of the Irish rock band `U2' has increased
+ever since last March.  This week he wants to erase all the files on his
+system which mention U2.  The first step is to identify these files.
+Write a program which reads its input and reports whether or not the
+sequence of characters `U2' appeared anywhere within it.
+
+Write the function `strupcase', whose argument is a string, and which
+changes the lowercase letters in its argument to uppercase ones.
+That means that if I do:
+	char word[]="Fo-o";
+	printf("%s", word);
+	strupcase(word);
+	printf("%s", word);
+whould print `Fo-o' and then `FO-O'.  Assume `toupper()'. 
+

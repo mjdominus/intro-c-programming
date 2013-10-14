@@ -1,0 +1,18 @@
+
+\begin{flushleft}
+\verb%int num = 0;%
+\end{flushleft}
+
+\begin{flushleft}
+\verb%while ( num < 1 || num > 50 ) {%
+\\* \verb%  printf("Enter an integer between 1 and 50.\n");%
+\end{flushleft}
+
+\begin{flushleft}
+\verb%  if (scanf("%\verb-%-\verb%d", &num) < 1) {%
+\\* \verb%    /*%\mbox{ Gobble up rest of input line }\verb%*/%
+\\* \verb%    while (getchar() != '\n')%
+\\* \verb%      /*%\mbox{ do nothing }\verb%*/ ;%
+\\* \verb%  }%
+\\* \verb%}%
+\end{flushleft}

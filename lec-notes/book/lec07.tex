@@ -1,0 +1,154 @@
+%
+% CSE 110 Lecture Notes
+%
+% Entire contents are copyright 1992 by Mark-Jason Dominus.
+% All rights reserved.  Unauthorized reproduction prohobited.
+%
+
+\section{More Loops}
+
+Looping is so important that there are three ways to do it.
+
+\subsection{{\tt do{\rm \ldots}while}}
+
+Consider this example:
+\begin{flushleft}
+\verb% % \\*
+\verb% int n = 0;% \\*
+\verb% % \\*
+\verb% while ( n<1 || n>10 ) { % \\*
+\verb%   printf("Please enter an integer between 1 and 10.\n");% \\*
+\verb!   scanf("%d", &n);! \\*
+\verb% } % 
+\end{flushleft}
+Note that {\tt n} is initialized to 0; if it were initialized to 7
+instead for some reason, we'd never prompt at all, because the condition
+would be false the first time we got to the {\tt while} statement.  We
+had to be careful to fix up {\tt n} in advance to make sure that the
+loop gets executed at least once.
+
+There's another loop construct like {\tt while}, which isn't as often
+used, but which might have been better for the example above.  It looks
+like this:
+
+\begin{quote}
+{\tt do} {\em statement}\/ {\tt while ({\em condition}\/) ;}
+\end{quote}
+
+The difference is that the condition is tested {\em after}\/ the
+statement is executed, instead of before.  That means that the statement
+is always executed at least once.  For example:
+
+\begin{flushleft}
+\verb% % \\*
+\verb% int n = 7;% \\*
+\verb% % \\*
+\verb% do { % \\*
+\verb%   printf("Please enter an integer between 1 and 10.\n");% \\*
+\verb!   scanf("%d", &n);! \\*
+\verb% } while ( n<1 || n>10 ) ; % \\*
+\end{flushleft}
+
+\noindent Now it doesn't matter that {\tt n} is initialized to 7,
+because we prompt and ask for a number from the user at least once
+anyway, and the 7 is obliterated by the call to {\tt scanf()} before we
+ever look at the value of {\tt n}.
+
+Use {\tt while} when it might be appropriate for the actions in the body
+to never happen at all; use {\tt do{\rm\ldots}while} when you always
+want the actions to be executed at least once.
+
+\subsection{{\tt for}}
+
+This code exemplifies the notion that every loop has four logical
+parts:
+
+\begin{flushleft}
+\verb% int x = 1;% \\*
+\verb% % \\*
+\verb% while (x <= 50) {% \\*
+\verb!   printf("%d ", x);!	 \\*
+\verb%   x++; % \\*
+\verb% } %
+\end{flushleft}
+
+    There's an {\em initialization}\/ to set up the variable or
+variables that form the main control of the loop; that's the {\tt x =
+1}.  There's a {\em control expression}\/ that says how long to run the
+loop and when to stop; that's {\tt x <= 50} here.  There's a {\em
+control update}\/, which updates the values the main control variables;
+that's {\tt x++} here.  And there's a {\em loop body}\/, which contains
+the statements that the control expression actually controls; that's the
+{\tt printf()}.
+
+    There's a loop construct that makes all four parts explicit.  It
+looks like this:
+
+\begin{quote}
+{\tt for ( {\em initialization}\/ ; {\em control}\/ ; {\em update}\/ ) } \\*
+{\em \mbox{\hspace{.25in}} loop body}\/
+\end{quote}
+
+This is functionally identical\footnote{Not quite identical, but the
+only difference is in the behavior of {\tt continue} statements, which
+we'll see later.} to this code:
+
+\begin{quote}
+{\em initialization}\/ \\*
+{\tt while ( {\em control} ) \{ } \\*
+{\em \mbox{\hspace{.25in}} loop body}\/ \\*
+{\em \mbox{\hspace{.25in}} update}\/ \\*
+{\tt \} }
+\end{quote}
+
+For example, here's our example that prints the numbers from 1 to 50
+again:
+
+\begin{flushleft}
+\verb% int x; % \\*
+\verb% % \\*
+\verb% for ( x=1; x<=50; x++ ) % \\*
+\verb!     printf("%d ", x); ! 
+\end{flushleft}
+
+When to use {\tt for} and when to use {\tt while} is a matter of style.
+Typically, we like to use {\tt for} when the initialization, control,
+and update expressions are all closely related, because it keeps them
+together, and {\tt while} in other cases, because it doesn't emphasize a
+connection that isn't there.
+
+Sometimes for some reason we don't want to have an initialization in a
+{\tt for} statement.  In that case we just omit it and leave a blank
+space between the open parenthesis and the first semicolon after the
+{\tt for}.  Similarly, we can omit the update expression.  We can even
+omit the control condition, in which case the computer will take it as
+being always true.  So as a special case, 
+
+\begin{flushleft}
+\verb% for ( ; ; ) { ... } %
+\end{flushleft}
+
+\noindent performs the statement delimited by the braces over and over,
+forever.\footnote{There are ways to get out of this statement:  You
+could use {\tt return}, for example.  Other ways we haven't seen yet
+include {\tt goto} and {\tt break}.}  This is functionally identical with
+
+\begin{flushleft}
+\verb% while ( 1 ) { ... } %
+\end{flushleft}
+
+\section{Example: A Program to Compute Prime Numbers}
+
+A {\em prime number} is a positive integer, $n$, which is evenly
+divisible only by $n$ and by 1.  For example, 2, 3, 5, 7, 11, and 13 are
+prime numbers.  4 is not prime, because it is divisible by 2; 6 and 9
+are not prime because they are divisible by 3.
+
+This program reads number inputs from the user and says whether they are
+prime or not, until the user enters 0, when it exits.  It checks a
+number $n$ to see if it is prime by dividing it by each number $j$ between
+$2$ and $n\over 2$; if the remainder, computed with the {\tt\%}
+operator, is zero, then $n$ is evenly divisible by $j$ and so is not
+prime.  
+
+\input primes.tex

@@ -1,0 +1,43 @@
+%
+% CSE 110 Lecture Notes
+%
+% Entire contents are copyright 1992 by Mark-Jason Dominus.
+% All rights reserved.  Unauthorized reproduction prohobited.
+%
+\input tgrindmac
+\L{\LB{}}
+\L{\LB{}}
+\L{\LB{\C{}\/* Program to solve quadratic equations ax\^2 + bx + c = 0.}}
+\L{\LB{   Known bugs:  Fails when a=0.}}
+\L{\LB{ *\/\CE{}}}
+\L{\LB{}}
+\L{\LB{\K{\#include} \<stdio.h\>}}
+\L{\LB{\K{\#include} \<math.h\>}}
+\L{\LB{}}
+\L{\LB{\K{int} main(\K{void}) \{}}
+\L{\LB{   \K{double} a, b, c;}}
+\L{\LB{   \K{double} x1, x2;}}
+\L{\LB{   \K{double} discriminant;}}
+\L{\LB{}}
+\L{\LB{   \C{}\/* get inputs a, b, and c from user. *\/\CE{}}}
+\L{\LB{   printf(\S{}\"Please input a, b, and c, one per line.\!n\"\SE{});}}
+\L{\LB{   scanf(\S{}\"\%lf\"\SE{}, \&a);}}
+\L{\LB{   scanf(\S{}\"\%lf\"\SE{}, \&b);}}
+\L{\LB{   scanf(\S{}\"\%lf\"\SE{}, \&c);}}
+\L{\LB{}}
+\L{\LB{   discriminant = b*b \- 4*a*c;}}
+\L{\LB{}}
+\L{\LB{   \K{if} ( discriminant \< 0 ) \{}}
+\L{\LB{     printf(\S{}\"The roots are imaginary.  I can\'t find them.\!n\"\SE{});}}
+\L{\LB{     \K{return} 1;}}
+\L{\LB{   \} \K{else} \{}}
+\L{\LB{     x1 = ( \-b + sqrt(discriminant) )  \/ (2*a);}}
+\L{\LB{     x2 = ( \-b \- sqrt(discriminant) )  \/ (2*a);}}
+\L{\LB{}}
+\L{\LB{     printf(\S{}\"The roots are \%f and \%f.\!n\"\SE{}, x1, x2);}}
+\L{\LB{}}
+\L{\LB{     \K{return} 0;}}
+\L{\LB{   \}}}
+\L{\LB{}}
+\L{\LB{\}}}
+\vfill\eject

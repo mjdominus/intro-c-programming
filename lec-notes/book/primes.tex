@@ -1,0 +1,53 @@
+%
+% CSE 110 Lecture Notes
+%
+% Entire contents are copyright 1992 by Mark-Jason Dominus.
+% All rights reserved.  Unauthorized reproduction prohobited.
+%
+
+\begin{flushleft}
+\verb%#include <stdio.h>%
+\\* \verb%#include <math.h>               /*%\mbox{ For sqrt() }\verb%*/%
+\end{flushleft}
+
+\begin{flushleft}
+\verb%int main(void)%
+\\* \verb%{%
+\\* \verb%  int n;%
+\end{flushleft}
+
+\begin{flushleft}
+\verb%  for (;;) {%
+\\* \verb%    printf("Enter a number, 0 to quit.  ");%
+\\* \verb%    if (scanf("%\verb-%-\verb%d\n", &n) < 1)  /*%\mbox{ Bogus input }\verb%*/%
+\\* \verb%      while (getchar() != '\n') /*%\mbox{ Discard input characters to end of line }\verb%*/%
+\\* \verb%        /*%\mbox{ nothing }\verb%*/ ;%
+\\* \verb%    else {%
+\\* \verb%      if (n == 0)%
+\\* \verb%        return 0;%
+\\* \verb%      else if (is_prime(n))%
+\\* \verb%        printf("That number is prime.\n");%
+\\* \verb%      else%
+\\* \verb%        printf("That number is not prime.\n");%
+\\* \verb%    }%
+\\* \verb%  }%
+\\* \verb%}%
+\end{flushleft}
+
+
+\begin{flushleft}
+\verb%int is_prime(int n)%
+\\* \verb%{%
+\\* \verb%  int divisor;%
+\end{flushleft}
+
+\begin{flushleft}
+\verb%  for (divisor=2; divisor < sqrt(n); divisor+=1)%
+\\* \verb%    if (n%\verb-%-\verb%divisor == 0)%
+\\* \verb%      return 0;%
+\end{flushleft}
+
+\begin{flushleft}
+\verb%  return 1;%
+\\* \verb%}%
+\end{flushleft}

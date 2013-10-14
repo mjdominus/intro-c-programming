@@ -1,0 +1,50 @@
+\input tgrindmac
+\File{hanoi.c},{09:33},{Aug  4 1992}
+\L{\LB{}}
+\L{\LB{\K{\#include} \<stdio.h\>}}
+\L{\LB{\K{\#include} \<stdlib.h\>}}
+\L{\LB{}}
+\L{\LB{\K{void} hanoi(\K{int} num\_rings, \K{int} start\_peg, \K{int} end\_peg);}}
+\L{\LB{\K{void} move(\K{int} ring\_num, \K{int} start, \K{int} end);}}
+\L{\LB{}}
+\L{\LB{\K{int} main(\K{int} argc, \K{char} **argv)}}
+\L{\LB{\{}}
+\L{\LB{  \K{int} num\_rings;}}
+\L{\LB{}}
+\L{\LB{  \K{if} (argc != 2) \{}}
+\L{\LB{    fprintf(stderr, \S{}\"Usage: \%s number\_of\_rings\!n\"\SE{}, argv[0]);}}
+\L{\LB{    \K{return} 1;}}
+\L{\LB{  \}}}
+\L{\LB{}}
+\L{\LB{  num\_rings = atoi(argv[1]);}}
+\L{\LB{}}
+\L{\LB{  hanoi(num\_rings, 1, 3);}}
+\L{\LB{}}
+\L{\LB{  \K{return} 0;}}
+\L{\LB{\}}}
+\L{\LB{}}
+\L{\LB{\K{void}}}
+\L{\LB{  hanoi(\K{int} num\_rings,}}
+\L{\LB{}\Tab{8}{\K{int} start\_peg, }}
+\L{\LB{}\Tab{8}{\K{int} end\_peg)}}
+\L{\LB{\{}}
+\L{\LB{  \K{int} spare\_peg = 6 \- start\_peg \- end\_peg;}}
+\L{\LB{  }}
+\L{\LB{  \K{if} (num\_rings \> 0) \{}}
+\L{\LB{    hanoi(num\_rings \- 1, start\_peg, spare\_peg);}}
+\L{\LB{    move(num\_rings, start\_peg, end\_peg);}}
+\L{\LB{    hanoi(num\_rings \- 1, spare\_peg, end\_peg);}}
+\L{\LB{  \}}}
+\L{\LB{}}
+\L{\LB{  \K{return};}}
+\L{\LB{\}}}
+\L{\LB{}}
+\L{\LB{}}
+\L{\LB{\K{void} move(\K{int} ring\_num, \K{int} start, \K{int} end)}}
+\L{\LB{\{}}
+\L{\LB{  printf(\S{}\"Move disk \%d from peg \%d onto peg \%d.\!n\"\SE{}, }}
+\L{\LB{}\Tab{8}{ ring\_num, start, end);}}
+\L{\LB{}}
+\L{\LB{  \K{return};}}
+\L{\LB{\}}}
+\vfill\eject\end

@@ -1,0 +1,46 @@
+%
+% CSE 110 Lecture Notes
+%
+% Entire contents are copyright 1992 by Mark-Jason Dominus.
+% All rights reserved.  Unauthorized reproduction prohobited.
+%
+\begin{flushleft}
+\verb%#include <stdio.h>%
+\end{flushleft}
+
+\begin{flushleft}
+\verb%int main(int argc, char **argv)%
+\\* \verb%{%
+\\* \verb%  int i;%
+\\* \verb%  int c;%
+\\* \verb%  FILE *cur_file;%
+\\* \verb%  int num_errors = 0;%
+\end{flushleft}
+
+\begin{flushleft}
+\verb%  for (i=1; i<argc; i++) {%
+\\* \verb%    cur_file = fopen(argv[i], "r");%
+\\* \verb%    if (cur_file == NULL) {%
+\\* \verb%      printf("Couldn't open file %\verb-%-\verb%s.\n", argv[i]);%
+\\* \verb%      num_errors += 1;%
+\\* \verb%      continue;%
+\\* \verb%    }%
+\end{flushleft}
+
+\begin{flushleft}
+\verb%    while ((c = getc(cur_file)) != EOF) %
+\\* \verb%      putchar(c);%
+\end{flushleft}
+
+\begin{flushleft}
+\verb%    fclose(cur_file);%
+\\* \verb%  }%
+\end{flushleft}
+
+\begin{flushleft}
+\verb%  return num_errors;%
+\\* \verb%}%
+\end{flushleft}
+
+
+

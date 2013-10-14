@@ -1,0 +1,212 @@
+%
+% CSE 110 Lecture Notes
+%
+% Entire contents are copyright 1992 by Mark-Jason Dominus.
+% All rights reserved.  Unauthorized reproduction prohobited.
+%
+
+\section{Now You Know C}
+
+We just spent a long time learning a lot of ins and outs of the C
+language, and guess what?  We're almost done.  There's a very short list
+of language features that we haven't already seen, and some of those we
+won't bother with.  In other words:  You know the language.
+
+This book is supposed to concern itself primarily with how to program,
+and secondarily with the C language itself, and now we're finally
+getting to studying programming instead of C.
+
+Accordingly, we spent some time working on writing a simple program:
+{\tt type} Complete code for {\tt type} appears in section
+\ref{type-program}.
+
+The point of working on this in class is to argue about style and
+documentation, to think about issues of formatting, and most important,
+program structure and how to write a good program.  
+
+\section{{\tt type}, Episode 1}
+
+The {\tt type} program is a fundamental MS-DOS utility.\footnote{It's a
+fundamental utility in nearly all environments.  For example, under {\sc
+UNIX}, {\tt type} is called {\tt cat}.}  When you run it, you give it
+one or more filenames as arguments.  {\tt type} gets the contents of
+each file in turn and writes that data to the standard output.  
+
+This has at least uses:
+
+\begin{itemize}
+\item You can use {\tt type} to view a file by dumping its contents to
+the screen.
+\item You can use {\tt type} to concatenate\footnote{{\em concatenate}
+means to stick things together in a row.  For example, if we concatenate
+the words `foo' and `bar' we get the word `foobar'.} two files, by
+redirecting the standard output of {\tt type} into a destination file.
+\end{itemize}
+
+\subsection{Notes About the Design}
+
+We're writing this program with the {\em top-down design}\/ method,
+which is one of very few effective techniques for writing a real
+program.\footnote{Other techniques include: The {\em bottom-up}\/
+approach, where you implement a few fundamental primitive functions, and
+then some more complicated routines that depend on those, and then
+finally build up the program from the building blocks you've written;
+the {\em Mongolian hordes}\/ technique, where you just dive in and write
+the first thing that comes into your head.  The Mongolian hordes
+technique is not particularly effective.}  
+
+Top-down design means that we start by thinking about what our program
+has to do, in general terms:  ``It will have to open a file, read the
+data from the file, write the data to the standard output, and close the
+file.  It will have to do that over and over for each file named on the
+command line.''  Some of the sentences in the description correspond
+obviously with C constructs:  `repeat over and over' means a {\tt
+while}. {\tt do{\rm--}while}, or {\tt for} loop.  Other sentences get
+turned into functions, such as {\tt read\_data\_from\_file()}.
+
+This description becomes our function {\tt main}.  Then we start writing
+that functions that we called from {\tt main} that aren't written yet:
+{\tt read\_data\_from\_file()}, for example.  If a function is
+simple and we can see right away how to write it, we just go ahead; if
+it seems more complicated, we can top-down design it in the same way.
+
+Functions let us break a big problem into little problems.  Each
+function solves a little problem; then all we have to do is put the
+functions together.  If the little problems turn out to be too big to
+handle, we can break them down into even littler problems.
+
+\subsection{What we got Done Today}
+
+\input type.tex
+
+\subsection{Some Notes About the Design Process}
+
+Our original plan was to have {\tt open\_file} handle errors and return
+0 or 1 to {\tt main} to indicate success or failure.  But then we
+realized that won't work---on success, {\tt open\_file} gets a {\tt FILE
+*} from {\tt fopen}, and it {\em must}\/ return this {\tt FILE *} to
+{\tt main} so that {\tt main} can pass it off to the other functions
+that need it.  The function to read the data from the file will need
+this value, as will the function that closes the file again.
+
+So {\tt open\_file} must return a {\tt FILE *} on success.  The natural
+value to have it return on failure is that same one that {\tt fopen}
+itself returns on failure: {\tt NULL}.  Furthermore, {\tt open\_file}
+isn't in a position to do any cleanup if {\tt fopen} fails; {\tt main}
+will need to skip that file completely and not try to read it or close
+it, but {\tt open\_file} can't do anything about that except warn {\tt
+main} that something went wrong.  So {\tt open\_file} ended up being a
+rather small function.  That's all right.  It's much easier to merge a
+small function back into the place where it's called and eliminate the
+call than it is to separate out a big block of code from one function
+and put it into a new function.  Real programs often have one-line
+functions. 
+
+Our original plan was to have one function to read data in from the file
+and one to write it out again.  But then we realized that since all we
+ever do with the data we read in is write it out again right away, we
+should put both things together and have one function ({\tt spew}) which
+reads the data and writes it out immediately.  
+
+I want to push very hard on the idea that designs and programs do not
+spring forth out of your head fully-formed, like Athena from the
+forehead of Zeus.  You get an idea, and then discover it doesn't work
+right, and then you fix it, like we did here.  And if it doesn't work,
+the you can try something else. 
+
+\section{Miscellaneous Things We Discussed}
+
+Actually writing a program brought up a few issues, some of them about
+design and others about language features.
+
+\subsection{Predefined Streams and the Standard Error Output}
+
+When you run your program, three stream variables are already set up.
+{\tt stdin} is a value of type {\tt FILE *}, which represents the
+standard input; similarly {\tt stdout} represents the standard output.
+Doing {\tt getc(stdin)} is {\em exactly}\/ the same as doing {\tt
+getchar()}---in fact, {\tt getchar()} is usually a macro which expands
+to {\tt getc(stdin)}.  Similarly {\tt printf} is usually a one-line
+function which calls 
+
+\begin{flushleft}
+\verb! fprintf(stdout, ...); !
+\end{flushleft}
+
+\noindent to do the real work.
+
+The third predefined stream is called {\tt stderr}, which is short for
+{\em standard error output}\/.  It's pretty much equivalent to {\tt
+stdout}---it's normally attached to the screen, so that things you write
+to {\tt stderr} appear on the screen.  But it's not identical with {\tt
+stdout}, and if the user redirects the standard output into a file by
+putting {\tt > file} on the command line, the standard error is {\em
+not}\/ redirected---it stays attached to the screen.
+
+{\tt stderr} is there so that you have a place to write error messages.
+If you used {\tt printf} to write your error messages, they'd go onto
+the standard output, and might wind up in a file and never be seen.  But
+if you write them with 
+
+\begin{flushleft}
+\verb! fprintf(stderr, "Error in line %d.\n", lineno); !
+\end{flushleft}
+
+\noindent instead, they go onto the screen no matter 
+where the regular output is going, and the user can see them.
+
+\subsection{{\tt continue}}
+
+{\tt continue} is covered in section \ref{continue}.
+
+It may seem like I keep pulling these things out of my hat, but really
+we're near the end.  The only control structures we haven't seen yet are
+{\tt switch}  and {\tt goto}.  We won't do {\tt goto}.  I kept thinking
+I would bring up {\tt switch} when we needed it (like {\tt continue}),
+but it just hasn't come up yet.
+
+\subsection{Don't Ring the Bell}
+
+If you ring the bell on the computer, everyone in the room hears it.
+
+Therefore, the question you have to ask yourself before writing a
+program that rings a bell to signal a certain event is, ``Is this event
+so important that everyone in the room needs to know about it?''
+
+Usually, the answer is `no'.
+
+\subsection{Don't Worry About the Output Device}
+
+One person said we should read the input and write the output in
+80-character chunks, because the screen is probably 80 characters wide.
+
+This is silly.  The input might be something like:
+
+\begin{verbatim}
+short
+words
+stars
+groak
+fubar
+flesh
+\end{verbatim}
+
+\noindent in which case the fact that the screen is 80 characters wide is
+completely irrelevant---the lines in the input are only 5 characters
+each.  On the other hand, maybe the lines in the input are very long,
+2000 or 300 characters.  
+
+The specification for the program calls for ``Write the data to the
+standard output.''
+
+Whenever you start thinking about things like the screen width, you have
+to step back and ask if the screen width is really relevant.  The way to
+ask this is to say to yourself, `Does it make sense to run my program on
+a terminal that prints the output on paper?'  In this case the answer is
+`yes'.  Sure, you might want to type out the contents of some files,
+even if you're typing out on paper.  Ask yourself `Would it make sense
+to run my program if the screen were 1,065 characters wide?'  Sure, why
+not?  We're just typing out files.
+
+Even though {\em our}\/ displays are 80 characters wide, it's not
+relevant to the program.  So don't put it in.

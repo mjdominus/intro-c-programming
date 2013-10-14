@@ -1,0 +1,52 @@
+
+Suppose `getline' is a function which reads its input up to a newline
+character, finds space (an array of chars) to store the line, and
+returns a pointer to the first character in that space.  Let's use
+`getline' to wite a program which reads its input a line at a time and
+writes out the same input it just read.  Suppose also that getline()
+terminates the program somehow if it reaches EOF.  It so happens that
+this has a very bad bug that will cause undefined behavior in some
+circumstances:
+	while (1) {
+		char *s;
+
+		s = getline();
+		printf(s);
+	}
+What is the bug, and what are the circumstances?
+
+The Fibonacci Sequence is the sequence
+	0, 1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, ...
+where each number in the sequence (except the first two) is the sum of
+the two that precede it.  Write a function which takes an argument n and
+returns the n'th Fibonacci number.
+
+Write the function `strchr', which accepts a string s and a char c, and
+returns a pointer to the first element of s whose value is c, or NULL if
+the character c does not occur in s at all.  
+
+
+Write a function which accepts a strings  of the form
+"Abramson-Blume-Chang-Ger-"... and an integer n, and which prints out
+the n'th name from the list, or nothing if there are fewer than n names.
+
+Write the function `strrev', whose argument is a string, and which
+reverses its argument in place.  That means that if we do:
+	char word[]="Foo";
+	printf("%s", word);
+	strrev(word);
+	printf("%s", word);
+whould print `Foo' and then `ooF'.  
+
+Dafydd Painter, a world-famous nostrilologist, is writing programs to
+help him with his work.  In one of them he writes
+	#define NUMBER_OF_NOSTRILS 2
+He explains ``That constant rep4resents the number of nostrils on a
+human being.  I made it a manifest constant so that if the number of
+nostrils that people have ever changes, it'll be easy to change the
+code.''  Of course that's silly, because we don't expect the number of
+nostrils to change.  Nevertheless, there is a good reason for making
+NUMBER_OF_NOSTRILS a manifest constatnt anyway.  What is it?
+
+Write a function to print all the elements in an array of ints.  How
+will it know when to stop?

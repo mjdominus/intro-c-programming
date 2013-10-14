@@ -1,0 +1,38 @@
+
+\begin{flushleft}
+\verb%struct listnode {%
+\\* \verb%  char *data;%
+\\* \verb%  struct listnode *next;%
+\\* \verb%} ;%
+\end{flushleft}
+
+\begin{flushleft}
+\verb%struct listnode *make_new_listnode(void);%
+\end{flushleft}
+
+\begin{flushleft}
+\verb%int append(char *new_data, struct listnode *list_head)%
+\\* \verb%{%
+\\* \verb%  struct listnode *tail, *newnode;%
+\end{flushleft}
+
+\begin{flushleft}
+\verb%  newnode = make_new_listnode();%
+\\* \verb%  if (newnode == NULL) return -1;%
+\end{flushleft}
+
+\begin{flushleft}
+\verb%  for (tail=list_head; tail->next != NULL; tail=tail->next) %
+\\* \verb%    /*%\mbox{ nothing }\verb%*/ ;%
+\end{flushleft}
+
+\begin{flushleft}
+\verb%  tail->next = newnode;%
+\\* \verb%  newnode->next = NULL;%
+\\* \verb%  newnode->data = new_data;%
+\end{flushleft}
+
+\begin{flushleft}
+\verb%  return 0;%
+\\* \verb%}%
+\end{flushleft}

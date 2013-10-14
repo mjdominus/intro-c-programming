@@ -1,0 +1,47 @@
+
+\begin{flushleft}
+\verb%struct node {%
+\\* \verb%        char *data;%
+\\* \verb%        struct node * next;%
+\\* \verb%} ;%
+\end{flushleft}
+
+
+\begin{flushleft}
+\verb%int%
+\\* \verb%  rand_print(struct node *head_node_p)%
+\\* \verb%{%
+\\* \verb%  int length, i, j;%
+\\* \verb%  struct node p;                /*%\mbox{ Temporary structure }\verb%*/%
+\\* \verb%  char **data_table;            /*%\mbox{ Array of strings in list }\verb%*/%
+\end{flushleft}
+
+\begin{flushleft}
+\verb%  for (p = *head_node_p; p.next!=NULL; p=*p.next) %
+\\* \verb%    length++;%
+\end{flushleft}
+
+\begin{flushleft}
+\verb%  data_table = malloc(length * sizeof(char **));%
+\\* \verb%  if (data_table == NULL)%
+\\* \verb%    return -1;%
+\end{flushleft}
+
+\begin{flushleft}
+\verb%  for (p=*head_node_p,i=0;p.next;p=*p.next,i++) %
+\\* \verb%    data_table[i] = p.data;%
+\end{flushleft}
+
+\begin{flushleft}
+\verb%  for (j=0; j<length; j++) {%
+\\* \verb%    while (data_table[i] == NULL)%
+\\* \verb%      i = random() %\verb-%-\verb% length;%
+\\* \verb%    printf(data_table[i]);%
+\\* \verb%    data_table[i] = NULL;%
+\\* \verb%  }%
+\end{flushleft}
+
+\begin{flushleft}
+\verb%  return 0;%
+\\* \verb%}%
+\end{flushleft}

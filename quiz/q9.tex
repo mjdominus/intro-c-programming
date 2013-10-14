@@ -1,0 +1,50 @@
+
+
+
+\documentstyle{article}
+
+\topmargin -0.5in
+\textheight 9in
+
+\title{Quiz \#8}
+\date{16 July 1992}
+\author{Time: 15 minutes}
+\begin{document}
+
+\maketitle
+
+0. What's your name?
+
+\vspace{.5in}
+
+What does this program print?  (Please don't forget that if {\tt p} is a
+pointer and {\tt i} is an integer, then {\tt p[i]} is identical to {\tt
+*(p + i)}.)
+
+\begin{flushleft}
+\verb% #include <stdio.h>% \\*
+\verb% int main(void)% \\*
+\verb% { % \\*
+\verb%   int array[] = { 5, 23, 119, 17 };% \\*
+\verb%   int *p, *q, d;% \\*
+\verb% % \\*
+\verb%   print_3_ints(array);% \\*
+\verb%   p = array;  q = p + 1;% \\*
+\verb%   print_3_ints(q);% \\*
+\verb%   d = *(p++);% \\*
+\verb!   printf("Foo: %d\n", d); ! \\*
+\verb%   print_3_ints(p);% \\*
+\verb%   d = (*p)++; % \\*
+\verb!   printf("Foo: %d\n", d); ! \\*
+\verb%   print_3_ints(p);% \\*
+\verb%   print_3_ints(array);% \\*
+\verb%   return 0;% \\*
+\verb% }% \\*
+\verb% % \\*
+\verb% void print_3_ints(int *ip)% \\*
+\verb% {% \\*
+\verb!   printf("Bar: %d %d %d\n", ip[0], ip[1], ip[2]);! \\*
+\verb% }% \\*
+\end{flushleft}
+
+\end{document}

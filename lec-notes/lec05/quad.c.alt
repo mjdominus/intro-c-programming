@@ -1,0 +1,33 @@
+
+#include <stdio.h>
+#include <math.h>
+
+int main(void)
+{
+  double a, b, c;
+  double discriminant;
+
+  printf("Please enter coeficcients a, b, and c, one per line.\n");
+  scanf("%lf", &a);
+  scanf("%lf", &b);
+  scanf("%lf", &c);
+  
+  discriminant = b*b -  4*a*c;
+  
+  if (discriminant < 0)
+    printf("The roots are complex.\n");
+  else {			/* Real roots */
+    double root1, root2;
+
+    root1 = (-b + sqrt(discriminant)) / (2*a);
+    root2 = (-b - sqrt(discriminant)) / (2*a);
+
+    if (discriminant == 0) 
+      printf("There is a double root at %f.\n", root1);
+    else 
+      printf("Roots are %f and %f.\n", root1, root2);
+  }
+
+  return 0;
+}
+

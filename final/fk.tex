@@ -1,0 +1,129 @@
+
+\documentstyle{article}
+
+% \def\brac#1{{\tt <}#1{\tt >}}
+\def\brac#1{$<$#1$>$}
+\def\Int{{\tt int}}
+\def\int{\brac{\Int}}
+\def\int{\brac{\Int}}
+\def\Shortint{{\tt short~int}}
+\def\shortint{\brac{\Shortint}}
+\def\Longint{{\tt long~int}}
+\def\longint{\brac{\Longint}}
+\def\Float{{\tt float}}
+\def\float{\brac{\Float}}
+\def\Double{{\tt double}}
+\def\double{\brac{\Double}}
+\def\Char{{\tt char}}
+\def\chr{\brac{\Char}}
+\def\Void{{\tt void}}
+\def\void{\brac{\Void}}
+
+\def\ptr#1{pointer~to #1}
+\def\p2#1{\brac{\ptr#1}}
+\def\Ano#1#2{array~of {#1}~#2s}
+\def\ano#1#2{\brac{\Ano#1#2}}
+\def\Ao#1{array~of #1}
+\def\ao#1{\brac{\Ao#1}}
+
+\def\breakhere{\mbox{$\otimes$}}
+\parskip 8pt
+
+
+\topmargin -0.5in
+\textheight 9in
+
+% \def\baselinestretch{2}
+\begin{document}
+
+\section{25 Points}
+
+\begin{quotation}
+\small
+Suppose we have a large, complicated program which stores information in
+a doubly-linked list whose nodes have the following form:
+
+\begin{flushleft}
+\verb% struct node {% \\*
+\verb%   int province_code;% \\*
+\verb%   int beheadment_count;% \\*
+\verb%   int rioting_index;% \\*
+\verb%   struct node *next; /* Pointer to next node in list */% \\*
+\verb%   struct node *prev; /* Pointer to previous node in list */% \\*
+\verb% } ;% 
+\end{flushleft}
+\label{struct}
+
+The first node in the list has a {\tt NULL} value stored in its {\tt
+prev} member; the last node in the list has a {\tt NULL} value stored in
+its {\tt next} member.  There are no bogus nodes.
+
+Write a single function, whose argument is a pointer to a node in the
+list, and which deletes the node from the list and frees the memory that
+was used to hold that node.
+
+Don't worry about communicating back to the caller if you happen to
+delete the head or the tail node.
+\end{quotation}
+
+Good code for this function appears below:
+
+\begin{flushleft}
+\verb% void delete_node(struct node *delete_me)% \\*
+\verb% {% \\*
+\verb%   if (delete_me->next)% \\*
+\verb%     delete_me->next->prev = delete_me->prev;% \\*
+\verb% % \\*
+\verb%   if (delete_me->prev)% \\*
+\verb%     delete_me->prev->next = delete_me->next;% \\*
+\verb% % \\*
+\verb%   free(delete_me);% \\*
+\verb% }% 
+\end{flushleft}
+
+If you had written this, you would have gotten a full 25 points.  One
+student pointed out that the function is only a few lines of code, and
+is hardly worth 25 points, and yes, that's true---I expected it to be
+cheap pork.  (Not quite free pork.)
+
+In fact, only two students got the full 25 points.  Most people forgot
+to check to see that {\tt delete\_me->next} was not {\tt NULL} before
+they set the {\tt prev} member of the structure it pointed to with {\tt
+delete\_me->next->prev = ...}.  {\tt delete\_me->next} is {\tt NULL}
+when the function is asked to delete the last node in the list;
+therefore most people turned in programs that failed when asked to
+delete the last node in a list, and in the similar case of being asked
+to delete the first node in a list.  I wish I had stressed this more in
+class: Dereferencing the {\tt NULL} pointer is an incredibly common
+mistake, which yields undefined behavior.  On a good computer, a program
+which dereferences a {\tt NULL} pointer fails immediately.  On a crummy
+computer like an IBM PC, all that happens is that you clobber some of
+the operating system's data structures and cause a mysterious machine
+crash ten minutes down the line.  Because I did not push it hard in
+class, people who forgot to check to see if the node was at the
+beginning or the end of the list lost only 5 points, although in real
+life they would have paid a big time penalty as they wondered why their
+program crashed the machine all the time.  I am sure that some people
+did wonder this while they worked on their calculator programs, but it
+is not their fault that I could not grade the assignment before the
+exam was due.
+
+Some people included a handler in case the argument was {\tt NULL}:
+
+\begin{flushleft}
+\verb% if (delete_me == NULL) % \\*
+\verb%   return;% 
+\end{flushleft}
+
+\noindent which is a good idea but was not required.
+
+Some people forgot to free the memory that {\tt delete\_me} pointed to;
+this cost 5 points.  
+
+Some people made the function's return value an {\tt int} instead of
+{\tt void}; this would have been okay if they had actually returned a
+useful value to indicate success or failure,\footnote{For example, they
+might have passed back the return value of {\tt free}.} but none of them
+did do this; this mistake cost 3 points.
+
+\end{document}

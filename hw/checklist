@@ -1,0 +1,57 @@
+NAME:
+SOCIAL SECURITY NUMBER:
+ASSIGNMENT NUMBER:
+                                                             poor average good
+                                                             (0)    (1)    (2)
+1.  All required output submitted.  Test data used           ___    ___    ___
+    adequately tests program operations.  Output format
+    is clear and easy to read.
+2.  User interface is friendly and helpful.  Explanations    ___    ___    ___
+    and prompts displayed as needed.
+
+3.  All pragmatic requirements met.  Student's name,         ___    ___    ___
+    instructor's name prominently displayed, tractor holes
+    removed, grading checklist included, etc.
+4.  Program and subprograms contain an adequate header       ___    ___    ___
+    comment: clear description of problem, special cases,
+    and I/O.
+5.  Identifiers are mnemonic.                                ___    ___    ___
+
+
+6.  Constants, types, and variables are declared where       ___    ___    ___
+    needed, declared within the appropriate scope, and used
+    where declared.
+7.  Program format is clear; indentation highlights program  ___    ___    ___
+    structure; upper and lower case used appropriately.
+
+8.  Control structures are used appropriately.               ___    ___    ___
+
+
+9.  Program modularity is clear; functions of the right size ___    ___    ___
+    and complexity.
+
+10. Comments in the body of the code are placed where        ___    ___    ___
+    needed and only where needed, and provide truly useful
+    information.
+11. Parameters, if used, are used as needed; communication   ___    ___    ___
+    is by value or reference as appropriate.
+
+12. Code is clear and not overly tricky or complicated;      ___    ___    ___
+    clarity of code is not sacrificed for efficiency; code
+    is a reasonable implementation of the algorithm.
+13. Code is reasonably efficient given the constraints of    ___    ___    ___
+    clarity;  code is not repeated unnecessarily.
+
+    SUBTOTAL ( out of 26 points )             _______    =   ___ +  ___ +  ___
+
+14. Assignment-specific aspects of the program are implemented cleanly
+    and correctly; no logic errors; output file listing handed in with
+    the program. ( out of 14 points )                  _______
+
+    TOTAL    ( out of 40 points )                      _______
+
+     + EXTRA CREDIT                                    _______
+
+     - PENALTIES ( lateness, etc. )                    _______
+
+    FINAL PROGRAM GRADE                                _______

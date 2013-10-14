@@ -1,0 +1,20 @@
+\subsection{5 points}
+
+Katy Carr, noted fictional student, wrote this program:
+
+\input mean.tex
+
+The program won't compile, though.  The compiler fails to produce an
+executable program, and says:
+\begin{verbatim}
+mean.c: In function `main':
+mean.c:10: `cur_input' undeclared (first use this function)
+mean.c:10: (Each undeclared identifier is reported only once
+mean.c:10: for each function it appears in.)
+mean.c:11: `total' undeclared (first use this function)
+mean.c:15: `mean' undeclared (first use this function)
+\end{verbatim}
+
+(For your information: The numbers after {\tt mean.c:} in each message
+are line numbers.  An {\em identifier}\/ is a variable name.)
+

@@ -1,0 +1,272 @@
+%
+% CSE 110 Lecture Notes
+%
+% Entire contents are copyright 1992 by Mark-Jason Dominus.
+% All rights reserved.  Unauthorized reproduction prohobited.
+%
+
+\section{More about Object Contexts and Value Contexts}
+
+
+If you look back at the notes for section \ref{contexts}, you'll recall
+the following facts:
+
+\begin{itemize}
+\item The word {\em object}\/ is short for the phrase ``a particular
+part of the computer's memory.''
+\item Some expressions, such as {\tt x},  refer to objects.  (For
+example, {\tt x} refers to the variable {\tt x}, which is a particular
+part of the computer's memory and is therefore an object.)  Most
+expressions, such as {\tt 4} or {\tt 3*x + y}, do not refer to objects.
+\item An expression which refers to  an object is
+called an {\em lvalue expression}\/.\footnote{The `l' in `lvalue' stands
+for `left', because the thing on the {\bf left} side of an assignment
+must be an lvalue expression.}
+\item A {\em context}\/ is a place in your program where you are allowed
+to put an expression.
+\item When the computer encounters a certain expression in one context,
+it may behave differently than when it encounters the same expression in
+another context.
+\item There are only two kinds of contexts in C: {\em object contexts}\/
+and {\em value contexts}\/.  What the computer does with an expression
+depends only on the expression itself and on whether that expression is
+in an object context or a value context.
+\item Most contexts are value contexts.  
+\item The only contexts that are not value contexts are:
+\begin{enumerate}
+\item The left-hand-side of an assignment expression, and
+\item The operand of the {\tt\&} operator.
+\end{enumerate}
+These two contexts are object contexts, not value contexts.
+\item Any expression may appear in a value context.
+\item An expression in a value context is evaluated to produce a value.
+\item Only an lvalue expression may appear in an object context.   
+\item An lvalue expression in an object context is not evaluated to
+produce a value.  Instead, the computer figures out what object it
+refers to, and then
+\begin{enumerate}
+\item If the lvalue expression was on the left-hand-side of an assignment, the
+computer uses the object it represents as a place to store the value it
+computed on the right-hand-side of the assignment, or
+\item If the lvalue expression was the operand of the {\tt\&} operator, then the
+computer gets the address of the object that the lvalue expression represents.
+\end{enumerate}
+\end{itemize}
+
+\subsection{ A Pointer Value Points to an Object}
+
+If {\em p}\/ is a valid expression whose type is \p2{something}, then
+{\em p}\/ points to an object of type \brac{something}. Then {\tt *}{\em
+p}\/ is an expression which represents the object that {\em p}\/ is
+pointing to.  Since {\tt *}{\em p}\/ therefore refers to an object, {\tt
+*}{\em p}\/ is an lvalue expression, and may appear on the left-hand
+side of an assignment statement, as in
+
+\begin{flushleft}
+\verb% *n1 = temp ;  %
+\end{flushleft}
+
+\noindent .  {\tt temp} is in a value context, so it's evaluated, and
+the computer gets the value stored in the variable {\tt temp}.  On the
+other hand, {\tt *n1} is in an object context, and so once the computer
+finds out what part of the blackboard {\tt *n1} represents, it does {\em
+not} go get the value stored there.  Rather, it uses it as a place to
+store the value of {\tt temp}.  On the other hand, in
+
+\begin{flushleft}
+\verb% temp = *n1 ; %
+\end{flushleft}
+
+\noindent the {\tt *n1} is in a value context;  once the computer
+figures out what region of the blackboard {\tt *n1} represents, it goes
+and gets the value stored there, and then it stores that value into the
+region of the blackboard represented by {\tt temp}.  {\tt temp} is in an
+object context, not a value context, so it is not evaluated and the
+computer does never retrieves the value stored in {\tt temp}.
+
+\subsection{ The operand of {\tt\&} is in an Object Context}
+
+We have seen exactly two examples of object contexts so far.  One is the
+left-hand side of an assignment.
+
+The other is that in the expression {\tt \&{\em foo}\/}, {\tt {\em
+foo}\/} is in an object context: It is not evaluated to produce a value,
+and the value of the entire {\tt \&{\em foo}\/} expression has nothing
+whatever to do with the value actually stored in {\tt {\em foo}\/}
+itself.  Also, {\tt {\em foo}\/} must be an lvalue expression, because
+{\tt\&} asks where in memory its operand is stored, so therefore its
+operand must be an object, and only lvalue expression, by definition,
+represent objects.
+
+\subsection{So What?}
+
+This is going to become frightfully important in section
+\ref{array-in-value-context}.  In the meantime, we'll do something else.
+
+\section{Arrays}
+
+Suppose we want to write a program which reads in a list of 100 numbers
+from the user, and then prints them out in reverse order. To do that, we
+must remember all 100 numbers until the end; there's no way around it.
+We could write a program with a very long declaration:
+
+\begin{flushleft}
+\verb% int main(void) % \\*
+\verb% { %  \\*
+\verb%   int n0, n1, n2, n3, n4, n5, n6, n7, n8, n9; % \\*
+\verb%   . . . % \\*
+\verb%   int n90, n91, n92, n93, n94, n95, n96, n97, n98, n99; % \\*
+\verb% % \\*
+\verb%   . . . % \\*
+\verb% } %
+\end{flushleft}
+
+\noindent and then use 100 {\tt scanf}'s to read them in and 100 {\tt
+printf}'s to write them out backwards, but of course there has to be a
+better way.  
+
+\subsection{A Better Way}
+
+If we write
+
+\begin{flushleft}
+\verb% int n[100]; %
+\end{flushleft}
+
+\noindent instead, the compiler creates an {\em array}\/ of 100 \int s for
+us.  That means that it finds enough space for 100 \int\ variables,
+reserves the space, and arranges that {\tt n} refers to that space.  The
+space is all contiguous, meaning that if an \int\ is 2 bytes long, the
+compiler will find 200 bytes of space all in the same place---it won't
+find us 37 bytes here and 22 bytes there and 41 bytes somewhere else.  
+
+We can ask for these 100 \int s individually: The expression {\tt n[0]}
+refers to the first one, and {\tt n[1]} to the second one, and soforth,
+up to the last one which is {\tt n[99]}.  These 100 \int\ variables are
+called the {\em elements}\/ of the array; each element has an {\em
+index} which says where it is in the array.  The index of the first
+element is 0, the index of the second is 1, and the index of the last
+one is 99.  So here's our program:
+
+\subsection{Program to Read 100 Integers from the User and Write them out in Reverse Order}
+
+\input rev.tex
+
+\subsection{Notes on the Program}
+
+
+In the first loop, {\tt i} starts at 0 and goes up by ones until it gets
+to 99, the index number of the last element in the array {\tt n}.  Each
+time through the loop, the computer figures out what {\tt n[i]} is (it's
+the {\tt i}'th element of the array {\tt n}), but, because the {\tt
+n[i]} is in an object context, not a value context (it's the operand of
+the {\tt\&} operator), the computer does not go and get the value of
+{\tt n[i]}.  Instead, it computes the address of {\tt n[i]}, and passes
+that address to {\tt scanf}, which reads an \int\ value from the user
+and stores the value in the variable {\tt n[i]}.  {\tt scanf} could
+change the value of {\tt n[i]} because it knew where on the blackboard
+{\tt n[i]} was.  {\tt scanf} knew where on the blackboard {\tt n[i]} was
+because we passed it the address of {\tt n[i]}.
+
+The first number the user enters gets stored in {\tt n[0]}, and the
+second gets stored in {\tt n[1]}, and soforth, until finally the user
+enters the hundredth number, which is stored in {\tt n[99]}.  
+
+Then the computer executes the second loop.  {\tt i} starts at 99, the
+index number of the last element of the array {\tt n}, and counts
+backwards until it gets to 0.  After 0, the {\tt for} loop is done. Each
+time through the loop, the computer figures out what {\tt n[i]} is (it's
+the {\tt i}'th element of the array {\tt n}), and then, because the {\tt
+n[i]} is in a value context, the computer gets the value of {\tt n[i]}
+and passes that value to {\tt printf} as an argument.  {\tt printf} then
+prints out the value of {\tt n[i]}.
+
+Since {\tt i} starts at 99, the first value the computer prints out is
+that of {\tt n[99]}, which was the last number the user entered.  Then
+the computer decrements {\tt i}, runs through the loop again, and prints
+out the value of {\tt n[98]}, whose value is the next-to-last number the
+user entered.  The computer keeps running backwards through the array,
+until finally {\tt i} is 0; then the computer prints out the value of
+{\tt n[0]}, which is the first number the user entered.  Then the
+computer decrements {\tt i} to $-1$, exits the loop, and quits the
+program.
+
+\subsection{Initializing Arrays}
+
+When you declare an ordinary variable, you can initialize it thus:
+
+\begin{flushleft}
+\verb% int n = 57; %
+\end{flushleft}
+
+This means that {\tt n} starts out with the value 57; the 57 here is
+called an {\em initializer}.  We can do a similar thing with an array,
+only we have to specify more than one initializer: If we write
+
+\begin{flushleft}
+\verb% int n[5] = { 1, 3, 9, 27, 81} ; %
+\end{flushleft}
+
+\noindent then
+{\tt n[0]} starts out with the value 1,
+{\tt n[1]} starts out with the value 3,
+{\tt n[2]} starts out with the value 9,
+{\tt n[3]} starts out with the value 27, and
+{\tt n[4]} starts out with the value 81.  
+
+If you make the initializer list too short for the array, as in
+
+\begin{flushleft}
+\verb% int n[5] = { 1, 3 }; %
+\end{flushleft}
+
+\noindent the computer initializes the elements of the array until it
+runs out of initializers, and initializes the rest of the elements of
+the array with zero values.  So the example above is the same as if we
+had written {\tt int n[5] = \{ 1, 3, 0, 0, 0\};}.
+
+If you make the initializer list too long, the compiler will complain.
+
+If you include an initializer, you can omit the array size:
+
+\begin{flushleft}
+\verb% int n[] = { 1, 3, 5}; %
+\end{flushleft}
+
+The compiler counts the number of initializers and makes an array that
+is just big enough to hold all of them.  In this case it makes an array
+with 3 elements because you specified 3 initializers.
+
+\subsection{Character Arrays}
+
+Of course you can have an array of variables of any type, including \chr
+s.  Here's a program to print someone's name out backwards:
+
+\input jeano.tex
+
+Note that we use {\tt\%c} to print out a \chr\  with {\tt printf}.  Also
+note we had to hard-wire the length of the character array into the
+loop.  We'll learn how to get around that tomorrow.
+
+It's a pain having to type all those character constants, and C gives us
+a shortcut:  We're allowed to initialize a character array this way:
+Instead of writing
+
+\begin{flushleft}
+\verb%char name[] = { 'J', 'e', 'a', 'n', ' ', 'O', 'g', 'r', 'i', 'n', 'z' };%
+\end{flushleft}
+
+\noindent we can do this:
+
+\begin{flushleft}
+\verb%char name[] = "Jean Ogrinz";%
+\end{flushleft}
+
+\noindent .  The shorthand {\tt "Jean Ogrinz"} denotes a special array of
+characters, called a {\em string of characters}\/ or usually just a {\em
+string}\/.  Strings are how we handle things like peoples' names in C.
+We'll see a lot of them in the rest of the course.  
+
+In case you hadn't made the connection yet, the first argument to {\tt
+printf} is always a string.
+

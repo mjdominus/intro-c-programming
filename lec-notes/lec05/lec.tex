@@ -1,0 +1,264 @@
+%
+% CSE 110 Lecture Notes
+%
+% Entire contents are copyright 1992 by Mark-Jason Dominus.
+% All rights reserved.  Unauthorized reproduction prohobited.
+%
+
+\documentstyle[fancyheadings]{article}
+
+% \def\brac#1{{\tt <}#1{\tt >}}
+\def\brac#1{$<$#1$>$}
+\def\Int{{\tt int}}
+\def\int{\brac{\Int}}
+\def\int{\brac{\Int}}
+\def\Shortint{{\tt short~int}}
+\def\shortint{\brac{\Shortint}}
+\def\Longint{{\tt long~int}}
+\def\longint{\brac{\Longint}}
+\def\Float{{\tt float}}
+\def\float{\brac{\Float}}
+\def\Double{{\tt double}}
+\def\double{\brac{\Double}}
+\def\Char{{\tt char}}
+\def\chr{\brac{\Char}}
+\def\Void{{\tt void}}
+\def\void{\brac{\Void}}
+
+\def\p2#1{\brac{pointer~to #1}}
+
+\parskip 8pt
+
+% \def\baselinestretch{2}
+
+\title{Lecture 5}
+\author{CSE 110}
+\date{7 July 1992}
+
+\pagestyle{fancy}
+\lhead{CSE 110 Lecture Notes}
+\chead{Mark--Jason Dominus}
+\rhead{\thepage}
+\lfoot{Copyright \copyright 1992 Mark-Jason Dominus}
+\cfoot{}
+\rfoot{All rights reserved.}
+
+
+
+\begin{document}
+
+\maketitle
+
+\section{More About {\tt if}}
+
+\subsection {{\tt else}}
+
+Consider this code:
+
+\verb% %                  \\*
+\verb% if ( x > 0 ) %                  \\*
+\verb%   printf("X has a positive value\n");%       \\*
+\verb% if ( ! (x > 0) ) %                  \\*
+\verb%   printf("X does not have a positive value\n");%       
+
+Suppose the value of {\tt x} is 0. We know that exactly one of the {\tt
+printf} statements will always be executed, and so we know that if it
+isn't the first one, it must be the second.  So as smart humans, we
+don't have to perform both tests.  The computer, on the other hand, is
+dumber, and we have to tell it explicitly that the two {\tt if}
+statements here represent an exclusive partitioning of all possible
+situations.  We do that with an {\tt else} clause:
+
+\verb% %                  \\*
+\verb% if ( x > 0 ) %                  \\*
+\verb%   printf("X has a positive value\n");%       \\*
+\verb% else          %                  \\*
+\verb%   printf("X does not have a positive value\n");%       
+
+This tells the computer to compute the value of the expression {\tt x >
+0}, and if that expression is true, then to print {\tt X has a positive
+value}.  Otherwise, the computer prints {\tt X does not have a positive
+value}. Exactly one of the {\tt printf} statements is ever executed each
+time through this code.
+
+When we want to select one of many conditions, we use a similar construction:
+
+\verb% %                  \\*
+\verb% if ( profits < 0  ) %                  \\*
+\verb%   printf("The company is losing money\n");%      \\* 
+\verb% else if ( profits == 0 )          %                  \\*
+\verb%   printf("The company exactly broke even\n");%       \\*
+\verb% else                      %                           \\*
+\verb%   printf("The company turned a profit\n");%       
+
+The computer evaluates the conditions, one at a time, until it finds one
+that is true.  Then it executes the associated statement, and then skips
+all the rest of the clauses.  If none of the conditions are true, the
+computer executes the statement associated with the {\tt else} clause,
+if there is one.
+
+\subsection{Nested {if{\rm --}else} Statements}
+
+Here's some code for printing out information about average test grades:
+{\tt total} holds the sum of all the grades in the class, and {\tt
+count} holds the number of students in the class.
+
+\verb% % \\*
+\verb% if (count != 0) % \\*
+\verb%   if ( total/count < 80 ) % \\*
+\verb%     printf("This class is doing badly\n");%        \\*
+\verb%   else % \\*
+\verb%     printf("This class is not doing too badly\n");%        \\*
+\verb% else % \\*
+\verb%   printf("There are no students in this class\n"); % 
+
+An {\tt if} construction or an {\tt if{\rm --}else} construction is a
+statement, and can go anywhere a simple or a compound statement can.
+Here, we first check to see if {\tt count} is not 0; if it is 0, we
+print {\tt There are no students in this class}.  Otherwise, we compute
+whether or not the average grade is below 80 and print a message
+depending on whether it is or not.  This second {\tt if{\rm --}else}
+statement is said to be {\em nested within}\/ the first.
+
+We indent the nested statement to make our meaning clearer.  
+
+No suppose the final {\tt else} and the last {\tt printf} weren't in the
+example above.  How does the compiler know that we meant what we did,
+rather than
+
+\verb% % \\*
+\verb% if (count != 0) % \\*
+\verb%   if ( total/count < 80 ) % \\*
+\verb%     printf("This class is doing badly\n");%        \\*
+\verb% else % \\*
+\verb%   printf("This class is not doing too badly\n");%        \\*
+
+\noindent, which would print {\tt This class is not doing too badly}
+whenever {\tt count} was equal to 0.  
+
+If you said the compiler knows the difference because of the
+indentation, you're mistaken:  the compiler ignores all white space
+completely.  The indentation is only there for the benefit of human
+readers.  
+
+The C language resolves this ambiguaity by fiat:  The rule is that if
+there's more than one {\tt if} that an {\tt else} could go with, it goes
+with the nearest one.  So the {\tt else} above matches with the second
+{\tt if}, not the first.  If for some reason you really wanted the
+meaning suggested by the second indentation, you could write this:
+
+\verb% % \\*
+\verb% if (count != 0) { % \\*
+\verb%   if ( total/count < 80 ) % \\*
+\verb%     printf("This class is doing badly\n");%        \\*
+\verb% } else % \\*
+\verb%   printf("This class is not doing too badly\n");%        \\*
+
+The curly braces here delimit the statement that follows the first {\tt
+if}.  That statement doesn't include the {\tt else} clause, so the
+compiler can't construe the {\tt else} as being under control of the
+first {\tt if}---it must be parallel to it.
+
+\section{Example Program: Solving Quadratic Equations}
+
+Now we'll write a program which lets the user enter a quadratic
+equation.  If the roots of the equation are real, the computer will find
+them and print them out, and otherwise the computer will print a message
+saying that the roots are complex.  We did this in class, so here's the
+code:
+
+\subsection{The Program}
+
+\input quad.tex
+
+\subsection{Notes About this Program}
+
+The program's small enough that we didn't bother with any functions other
+than {\tt main}.  
+
+The declaration
+
+\verb% double discriminant; %
+
+\noindent is analogous to the {\tt int foo; } declarations we've seen,
+but it allocates enough space for a variable of type \double\ instead of
+one of type \int.  A \double\ is a double-precision floating-point
+number and can represent a fraction or a number much larger than an
+\int\ can.  We'll need that for this program.
+
+We are going to need the {\tt sqrt()} function, which takes one \double\
+argument and returns the \double\ which is its square root.  Someone
+else wrote the {\tt sqrt()} function and put it in the library for us,
+so we don't have to supply it.  But here's a problem: How does the
+compiler know that {\tt sqrt()} takes a \double\ argument and returns a
+\double\ result?  It needs to know, or else it won't be able to pass the
+argument or interpret the return value properly.  The answer is that we
+must tell it.  We {\tt\#include} the file {\tt <math.h>}, which contains
+a line that tells the compiler what types the arguments and return value
+of {\tt sqrt()} will have.  Such a line is called a {\em prototype}\/;
+it looks just like a function header with no body:
+
+\verb%  double sqrt(double x); %
+
+This gives the compiler the information it needs to compile our calls to
+{\tt sqrt()} corectly.  Otherwise it would assume that {\tt sqrt()}
+returned an \int\ value, and all sorts of nastiness would ensue.  We
+didn't have to write this, because the authors of {\tt sqrt()} put it in
+{\tt <math.h>} for us, so all we have to do is {\tt\#include} that file.
+
+The {\tt\#include <stdio.h>} is there for a similar reason, to tell the
+compiler what kinds of arguments and return types {\tt printf()} and
+{\tt scanf()} have.
+
+We haven't seen {\tt scanf()} yet, and we'll talk about it in detail
+later.  But it's the reverse of {\tt printf()}: {\tt printf()} prints
+data out, and {\tt scanf()} reads data in.  {\tt scanf()}'s first
+argument, like {\tt printf()}`s first argument, describes the format of
+input to be read, and the remaining arguments, rather than getting
+printed out, describe where to store the input values entered by the
+user.  The {\tt "\%lf"} says that the input will be in the form of a
+{\bf l}ong {\bf f}loat, which is an obsolete synonym for a \double.  The
+{\tt \&a} is more interesting and important, and so it gets a section to
+itself.
+
+\subsection {Pointers and the {\tt\&} Operator}
+
+We need to tell {\tt scanf()} where to store the value that the user
+enters.  Say we want to store that value in the variable {\tt a}.  Now,
+{\tt scanf()} can't normally do that because it doesn't know where {\tt
+a} is.  If we wrote something like
+
+\verb+ scanf("\%lf", a); +
+
+\noindent that would be no good at all, because {\tt scanf()} would get
+the {\em value}\/ of {\tt a} and would never find out what it really
+needs to know, which is where {\tt a} actually is.
+
+The {\tt \&} operator, called the {\em address-of}\/ operator, says
+where a variable is.  The expression {\tt \&a} yields a value of a
+special type, called a \p2\Double, because it `points to' a
+\double---that is, it says where a certain \double\ object can be found.
+So, in short, we are telling {\tt scanf()} where to find the variable in
+which we want it to store its result.  Later on, we'll see more of {\tt
+\&}, and of its complementary operation, {\tt *}, which takes a pointer and
+finds to which it points.  The main point here is that since we
+explicitly told {\tt scanf()} where {\tt a} is stored, {\tt scanf()} can
+change the value of {\tt a}.
+
+
+The call 
+
+\verb+ scanf("\%lf", &a); +
+
+\noindent instructs {\tt scanf()} to read input from the keyboard,
+parsing and interpreting it as a floating-point value, and to store the
+value that that data represents into the space pointed to by {\tt \&a}.
+
+Note the parentheses in the assignment expressions, to preserve clarity
+and also to get the compiler to do what we want.
+
+Note that we use {\tt \%f} to get {\tt printf()} to print out a \double\
+value, whereas we used {\tt \%d} to print out an \int.
+
+
+\end{document}

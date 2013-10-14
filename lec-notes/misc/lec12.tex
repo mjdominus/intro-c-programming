@@ -1,0 +1,449 @@
+
+\documentstyle{article}
+
+% \def\brac#1{{\tt <}#1{\tt >}}
+\def\brac#1{$<$#1$>$}
+\def\Int{{\tt int}}
+\def\int{\brac{\Int}}
+\def\int{\brac{\Int}}
+\def\Shortint{{\tt short~int}}
+\def\shortint{\brac{\Shortint}}
+\def\Longint{{\tt long~int}}
+\def\longint{\brac{\Longint}}
+\def\Float{{\tt float}}
+\def\float{\brac{\Float}}
+\def\Double{{\tt double}}
+\def\double{\brac{\Double}}
+\def\Char{{\tt char}}
+\def\chr{\brac{\Char}}
+\def\Void{{\tt void}}
+\def\void{\brac{\Void}}
+
+\def\ptr#1{pointer~to #1}
+\def\p2#1{\brac{\ptr#1}}
+\def\Ano#1#2{array~of {#1}~#2s}
+\def\ano#1#2{\brac{\Ano#1#2}}
+\def\Ao#1{array~of #1}
+\def\ao#1{\brac{\Ao#1}}
+
+\def\np{{\tt NULL} pointer}
+
+\def\breakhere{\mbox{$\otimes$}}
+\parskip 8pt
+
+% \def\baselinestretch{2}
+
+\title{Lecture 12}
+\author{CSE 110}
+\date{20 July 1992}
+
+\begin{document}
+
+\maketitle
+
+Today we'll cover the things that you still don't know that you need to
+know in order to do the assignment.
+
+\section{The {\tt NULL} Pointer}
+
+For each pointer type, there is one special value of that type which
+represents a pointer which does not point anywhere at all.  This value
+is called the {\tt NULL}{\em pointer}\/.  The \np\ has one and only one
+interesting property:  If {\em x}\/ is an object of type \brac{foo},
+and therefore {\tt\&}{\em x}\/ is pointer to the object {\em x}\/, with
+type \p2{foo}, then the value of {\tt\&}{\em x}\/ is {\em not} the \np.
+
+The way you represent the \np\ in your code is by writing {\tt NULL}.
+{\tt NULL} is actually a macro, but we won't discuss what it's a macro
+for until later, because it's confusing.
+
+Caution:  To not confuse the \np\ with the {\tt NUL} character.  The
+\np\ is a pointer, which happens not to point anywhere.  The {\tt NUL}
+character is a character, which is conventionally used to mark the end
+of a string.  It's unfortunate that the names are so similar, but the
+two things have nothing at all to do with one another.
+
+Many functions which return pointer values return the \np\ to indicate
+that something went wrong.  For example, you might have a function, {\tt
+malloc}, which takes an argument {\tt n}, somehow finds {\tt n}
+contiguous bytes of space on the backboard, reserves them, and returns a
+pointer to the first byte.  {\tt malloc} could return the \np\ to
+indicate that there weren't {\tt n} free bytes of space left on the
+blackboard.  You could check the return value from {\tt malloc} to see
+if you had run out of space:  
+\begin{flushleft}
+\verb% char *buf;% \\*
+\verb% buf = malloc(1000);% \\*
+\verb% if (buf == NULL) {% \\*
+\verb%   printf("Out of memory.\n"); % \\*
+\verb%   abort();% \\*
+\verb% }% \\*
+\verb% . . . %
+\end{flushleft}
+
+You know that if {\tt malloc} succeeded in finding the memory it was
+looking for and returned a pointer to that memory, the value of that
+pointer would be different from {\tt NULL}.  If the return value
+compares equal to {\tt NULL}, we know that {\tt malloc} didn't succeed.
+
+\section{Input Sources and Output Sinks}
+
+When you call an input function such as {\tt scanf} or {\tt getchar},
+the input comes from a place called the {\em standard input}.  Normally,
+the standard input it attached to the keyboard so that {\tt scanf} and
+{tt getchar} read from the keyboard.  
+
+If you run your program under MS-DOS, you can arrange to have the
+standard input connected somewhere else, such as to a file.  For
+example, to run the command `foo' with the standard input connected to a
+file, you enter the command line {\tt foo < input\_file}.  When {\tt
+foo} calls {\tt scanf} or {\tt getchar}, the data that {\tt scanf} or
+{\tt getchar} reads comes from the file {\tt input\_file} instead of
+from the keyboard.  This is awfully handy---it means your program
+doesn't have to know anything about files in order to operate on files.
+
+Similarly, {\tt printf} sends its output to the {\em standard output}\/,
+which is normally attached to the screen so that {\tt printf}'s output
+appears on the screen.  But you can redirect the standard output to a
+file also: {\tt foo > output\_file} attaches {\tt foo}'s standard output
+to the file {\tt output\_file}, and everything that {\tt printf} writes
+will go into the file instead of to the screen.
+
+Your program is completely incognizant that anything different is
+happening when it gets run with its standard input or output redirected,
+and that's good, because it means you don't have to write any extra code
+to handle it.
+
+\subsection{A File Copy Utility}
+
+This trivial program copies data from the standard input to the standard
+output: ({\tt putchar}'s argmuent is a character, which it writes out on
+the standard output; {\tt putchar(c)} is identical to {\tt printf("\%c",
+c)}.)
+
+\begin{flushleft}
+\verb% #include <stdio.h>% \\*
+\verb% % \\*
+\verb% int main(void)% \\*
+\verb% { % \\*
+\verb%   int c;% \\*
+\verb% % \\*
+\verb%   while ((c = getchar()) != EOF)% \\*
+\verb%     putchar(c);% \\*
+\verb%   return 0;% \\*
+\verb% }% \\*
+\end{flushleft}
+
+Let's call it {\tt scopy}, for `simple copy'.  If you run {\tt scopy},
+it echoes everything you type back at you, and perhaps that doesn't sem
+too useful.  But you can use it to copy files: {\tt scopy < source\_file
+> destination\_file} copies the data in {\tt source\_file} into {\tt
+destination\_file}.
+
+\section{Operating on a Particular File}
+
+Sometimes, though, you want to read data from or write data to a
+particular file.  For example, the compiler needs to write its output
+into a file with a particular name.  How do we do that?
+
+\subsection{Opening a File}
+
+First you have to ask the operating system to {\em open} the file for
+you.  Opening a file means that you notify the operating system that you
+want to use the file.  The operating system checks to make sure that the
+file you've named exists, and that you have permission from the file's
+owner to read or write the file.  It sets up variables in its own
+blackboard space that keep track of how much data you've read from the
+file and what part of the file the next byte is supposed to come from.
+Sometimes it does other things too---on {\sc UNIX} the operating system
+arranges that if someone erases a file that you're reading, the file
+doesn't actually go away until you're done.
+
+The way you open a file is with the {\tt fopen} function.  {\tt fopen}
+accepts two arguments:  The first a string containing the name of the
+file you want to open, and the second is a string that says whether you
+want to read the file or write it.  For example:
+
+\begin{flushleft}
+\verb% fopen("cse110.log", "r"); % 
+\end{flushleft}
+
+\noindent says to open the file {\tt cse110.log} for reading.  ({\tt r}
+means `read'.)
+
+{\tt fopen}'s return value is a peculiar type: It's a pointer to an
+object called a {\tt FILE}, which contains some data from the file,
+information about whether you've reached {\tt EOF} in the file, and
+other things that the standard I/O functions need to know to work
+properly. You need this {\tt FILE *} value later on to tell the computer
+what file you want to read or write from.  In some sense, the {\tt FILE
+*} `represents' the file.
+
+{\tt FILE *} values are often called {\em streams}\/.
+
+The prototype for {\tt fopen} looks like this:
+
+\begin{flushleft}
+\verb% FILE * fopen(char *filename, char *type); % \\*
+\end{flushleft}
+
+If {\tt fopen} can't open the file for some reason, it returns the \np.
+
+\subsection{Reading from a File with {\tt getc}}
+
+Once you've got the file open, you can operate on it with functions that
+are very much like the ones you're used to.  For example, {\tt getc} is
+a function which takes one argument, a {\tt FILE *}.  It is exactly like
+{\tt getchar} except that it reads its character from the source
+represented by the {\tt FILE *} that is its argument, instead of from
+the standard input.  Here's code to print out the contents of the file
+{\tt mydata.txt} onto the standard output:
+
+\begin{flushleft}
+\verb% #include <stdio.h>% \\*
+\verb% #define FILENAME "mydata.txt"% \\*
+\verb% % \\*
+\verb% int main(void)% \\*
+\verb% {% \\*
+\verb%   FILE * the_file;% \\*
+\verb%   int c;% \\*
+\verb% % \\*
+\verb%   the_file = fopen(FILENAME, "r");% \\*
+\verb%   if (the_file == NULL) { % \\*
+\verb!     printf("Couldn't open the file %s.\n", FILENAME);! \\*
+\verb%     return 1; % \\*
+\verb%   }% \\*
+\verb% % \\*
+\verb%   while ((c = getc(the_file)) != EOF) % \\*
+\verb%     putchar(c);% \\*
+\verb% % \\*
+\verb%   return 0;% \\*
+\verb% }% \\*
+\end{flushleft}
+
+Actually we left out a detail here:  {\tt getc} and {\tt getchar} return
+{\tt EOF} for two reasons:  because there was no more data for them to
+read, or because there was some kind of error in reading the data.  (For
+example, the disk failed in the middle.)  We really should have checked
+whether the {\tt getc} above was returning {\tt EOF} for end-of-file or
+for an error.
+
+\subsection{Minor Standard I/O Functions}
+
+The function {\tt ferror} takes a stream as its argument and returns
+{\bf true} if there's been an error on the stream, {\bf false}
+otherwise.  Similarly, the function {\tt feof} takes a stream as its
+argument and returns {\bf true} if you've tried to read beyond the end
+of the data on that stream, and {\bf false} otherwise.
+
+We should replace the {\tt reutrn 0;} in the code above with
+
+\begin{flushleft}
+\verb% % \\*
+\verb%   if (ferror(the_file)) {% \\*
+\verb!     printf("Read error on file %s.\n", FILENAME);! \\*
+\verb%     return 1; % \\*
+\verb%   } else {% \\*
+\verb%     return 0;% \\*
+\verb%   }% \\*
+\end{flushleft}
+
+\noindent to detect and report read errors while reading the file.
+
+\subsection{Stream Versions of {\tt printf} and {\tt scanf}}
+
+The funciton {\tt fprintf} is just like {\tt printf}, except it has an
+extra argmuent:  The first argument to {\tt fprintf} is a stream to
+write its output to.  The second argument is a format string just like
+{\tt printf}'s first argument, and the remaining arguments are values to
+fill into the conversions in the format string, just like {\tt printf}'s
+remaining arguments.  So, for example,
+
+\begin{flushleft}
+\verb! fprintf(the_file, "The value of %s is %d.\n", "fooey", fooey); ! \\*
+\end{flushleft}
+
+\noindent is exactly like 
+
+\begin{flushleft}
+\verb! printf("The value of %s is %d.\n", "fooey", fooey); ! \\*
+\end{flushleft}
+
+\noindent except that the {\tt fprintf} writes the output to the file
+represented by {\tt the\_file}, while the {\tt printf} writes it to the
+standard output.
+
+Similarly, there is an {\tt fscanf} function, which is just like {\tt
+scanf}.  Similarly, {\tt getchar} has {\tt getc} and {\tt putchar} has
+{\tt putc}.  
+
+\subsection{Predefined Streams and the Standard Error Output}
+
+When you run your program, three stream variables are already set up.
+{\tt stdin} is a value of type {\tt FILE *}, which represents the
+standard input; similarly {\tt stdout} represents the standard output.
+Doing {\tt getc(stdin)} is {\em exactly}\/ the same as doing {\tt
+getchar()}---in fact, {\tt getchar()} is usually a macro which expands
+to {\tt getc(stdin)}.
+
+The third predefined stream is called {\tt stderr}, which is short for
+{\em standard error output}\/.  It's pretty much equivalent to {\tt
+stdout}---it's normally attached to the screen, so that things you write
+to {\tt stderr} appear on the screen.  But it's not identical with {\tt
+stdout}, and if the user redirects the standard output into a file by
+putting {\tt > file} on the command line, the standard error is {\em
+not}\/ redirected---it stays attached to the screen.
+
+{\tt stderr} is there so that you have a place to write error messages.
+If you used {\tt printf} to write your error messages, they'd go onto
+the standard output, and might wind up in a file and never be seen.  But
+if you write them with {\tt fprintf(stderr, ...) }  instead, they go
+onto the screen no matter where the regular output is going, and the
+user can see them.
+
+\subsection{Closing a File}
+
+When you're done with a file, you must {\em close}\/ it.  This tells the
+operating system that you are done using the file.  That way the
+operating system knows that it can forget all the details about the file
+that it was keeping track of for you, such as how much data you'd read
+out of it.  
+
+To close a stream, you call {\tt fclose}.  {\tt fclose}'s argument is
+the stream you want to close.  Once a stream is closed, you can't read
+from it or write to it any more.  {\tt fclose} returns 0 if it succeeds
+and {\tt EOF} if it fails.
+
+\section{Command-Line Arguments}
+
+When you run a program from MS-DOS, you can give it argmuents.  For
+example, when you run the {\tt copy} command, you  give it arguments
+that say what files you want copied and where you want them copied to.
+These command-line arguments get passed in to {\tt main} when the
+operating system calls {\tt main}.
+
+If we were writing {\tt copy} in C, we'd need some way to examine the
+command-line argumetns so that we'd know which files to copy.
+
+\subsection{{\tt main}'s Header}
+
+There are exactly two legal ways to write {\tt main}'s header. 
+
+\begin{flushleft}
+\verb% int main(void)% \\*
+\end{flushleft}
+
+\noindent we already know about---it means we're going to ignore the
+command-line arguments.  The other header {\tt main} can have is
+
+\begin{flushleft}
+\verb% int main(int argc, char **argv)% \\*
+\end{flushleft}
+
+
+
+When the program gets run, the operating system collects the arguments
+together.  Each argument gets put into a {\tt NUL}-terminated array of
+characters.
+
+The operating system gets the address of each of these arrays.  These
+addresses have type \p2\Char.  It takes the addresses and assembles them
+into another array, an \ao\P2\Char.  This is called the {\em argument
+vector}\/.
+
+The operating system then takes the address of the first element in the
+argument vector.  The first element is a \p2\Char, and so the address of
+the first element has type \p2\P2\Char.  Theoperating system arranges
+that this value, the address of the argument vector, gets passed to {\tt
+main} as its second argument, which is conventionally called {\tt argv}
+for `argument vector', even though it's really a pointer to the argument
+vector itself.
+
+{\tt main} has the usual problem: It's got {\tt argv}, a pointer to the
+first element of an array, so it can find the elements of the array with
+no problem.  But how does it know when to stop?
+
+{\tt main}'s first argument is the {\em argument count}\/,
+conventionally called {\tt argc}.  It's an \int.  It says how many
+arguments there are and therefore how long the argument vector is.
+
+\subsection{A Thousand Words about {\tt argv} and {\tt argc}}
+
+Here's a picture:
+
+\vspace{3in}
+
+\subsection{{\tt argc} and {\tt argv} in Practice}
+
+It takes a while to get comfortable enough with pointers to understand
+what's going on with {\tt argv}.  In the meantime, just remember this:
+{\tt argv[0]} is a string which contains the program's first argument.
+{\tt argv[1]} is a string which contains the program's second argument,
+and so on, up to {\tt argv[argc-1]}, which is a string which contains
+the program's last argmuent.
+
+\subsection{The {\tt echo} Program}
+
+Here's a program called {\tt echo}, which prints out its command-line
+arguments onto the standard output:
+
+\begin{flushleft}
+\verb% #include <stdio.h>% \\*
+\verb% % \\*
+\verb% int main(int argc, char **argv)% \\*
+\verb% { % \\*
+\verb%   int i;% \\*
+\verb% % \\*
+\verb%   for (i=0; i<argc; i++)% \\*
+\verb!     printf("%s ", argv[i]); ! \\*
+\verb% % \\*
+\verb%   printf("\n");% \\*
+\verb%   return 0;% \\*
+\verb% }% \\*
+\end{flushleft}
+
+\subsection{The {\tt type} Program}
+
+Here's a program which types out the contents of the files named on its
+command line.  It's like the MS-DOS {\tt type} command.
+
+\input type.tex
+
+Some notes: We used {\tt continue}, which we haven't seen before.  When
+the computer encounters a {\tt continue} statement, it immediately
+starts the next iteration of the smallest loop it's in.  Inside of {\tt
+while} or {\tt do{\rm--}while} loop, {\tt continue} skips the rest of
+the loop body and jumps right to the test.  In a {\tt for} statement,
+{\tt continue} is the same, except it evaluates the update expression
+before skipping to the test.  We use it here becauseif we can't open a
+file, we don't want to bother with the rest of the loop, which is for
+reading a file; we want to go on and try the next file immediately.
+{\tt continue} starts the next pass thorugh the loop immediately,
+without executing the rest of the loop body.
+
+We use the variable {\tt num\_errors} to keep track of the number of
+problems we've had with the files so far, and return it when we're done.
+Note that this is consistent with the convention of returning 0 if your
+program was successful and nonzero if it encountered errors.  
+
+{\tt argv[0]} conventionally contains the name of the command
+that's being run---in this case, {\tt type}.  If we entered the command 
+\begin{flushleft}
+\verb% type foo bar baz% \\*
+\end{flushleft}
+
+\noindent to type out the files {\tt foo}, {\tt bar}, and {\tt baz}, then {\tt
+argv[0]} would be {\tt type}, and {\tt argv[1]} would be {\tt foo}.
+That's why we start opening files with the one named in {\tt argv[1]}.
+
+Note that we're always careful to close files with {\tt fclose} when
+we're done.  most systems enforce a limit on the number of files you can
+have open at once, so we need to recycle our streams when we're done
+using them.  
+
+Notice that we printed out error messages to the standard error stream
+instead of to the standard output; that's so the error messages don't
+get mixed up with the output if the user redirectes the standard output
+into a file.
+
+\end{document}

@@ -1,0 +1,300 @@
+%
+% CSE 110 Lecture Notes
+%
+% Entire contents are copyright 1992 by Mark-Jason Dominus.
+% All rights reserved.  Unauthorized reproduction prohobited.
+%
+
+\documentstyle[fancyheadings]{article}
+
+% \def\brac#1{{\tt <}#1{\tt >}}
+\def\brac#1{$<$#1$>$}
+\def\Int{{\tt int}}
+\def\int{\brac{\Int}}
+\def\int{\brac{\Int}}
+\def\Shortint{{\tt short~int}}
+\def\shortint{\brac{\Shortint}}
+\def\Longint{{\tt long~int}}
+\def\longint{\brac{\Longint}}
+\def\Float{{\tt float}}
+\def\float{\brac{\Float}}
+\def\Double{{\tt double}}
+\def\double{\brac{\Double}}
+\def\Char{{\tt char}}
+\def\chr{\brac{\Char}}
+\def\Void{{\tt void}}
+\def\void{\brac{\Void}}
+
+\def\ptr#1{pointer~to #1}
+\def\p2#1{\brac{\ptr#1}}
+\def\Ano#1#2{array~of {#1}~#2s}
+\def\ano#1#2{\brac{\Ano#1#2}}
+\def\Ao#1{array~of #1}
+\def\ao#1{\brac{\Ao#1}}
+
+\def\np{{\tt NULL} pointer}
+
+\def\breakhere{\mbox{$\otimes$}}
+\parskip 8pt
+
+% \def\baselinestretch{2}
+
+\title{Lecture 14}
+\author{CSE 110}
+\date{24 July 1992}
+
+\pagestyle{fancy}
+\lhead{CSE 110 Lecture Notes}
+\chead{Mark--Jason Dominus}
+\rhead{\thepage}
+\lfoot{Copyright \copyright 1992 Mark-Jason Dominus}
+\cfoot{}
+\rfoot{All rights reserved.}
+
+
+
+\begin{document}
+
+\maketitle
+
+We didn't get a chance to finish working on {\tt type}, but we will
+soon.  In the meantime we talked more about strings and how to work with
+them.
+
+\section{Problem 2.2 ({\tt strrev}) from the Exam}
+
+\begin{quotation}
+\small
+Write the function {\tt strrev}, whose argument is a string, and which
+reverses its argument in place.  That means that if we do:
+\begin{flushleft}
+\verb% char word[] = "Foo"; % \\*
+\verb! printf("%s\n", word); ! \\*
+\verb% strrev(word);% \\*
+\verb! printf("%s\n", word); ! \\*
+\end{flushleft}
+
+\noindent the output should be {\tt Foo}, followed by {\tt ooF}.
+\end{quotation}
+
+This was one of the hard problems on the exam.  Nobody actually turned
+in a working solution, although several people came close.  First I'll
+show a working solution, and then we'll discuss some alternative
+solutions.
+
+One thing a lot of people did was to write a program that actually
+printed out the string backwards.  People who did this correctly got
+half credit, but it wasn't what the function was supposed to be
+about---the question asked for a function that would reverse a string
+`in place'.  That means that we want to be able to tell the function
+where our string is (presumably via a pointer), and the function will
+find the data there and reverse it and leave the answer in memory in the
+same place that the original word was.  No input or output was required.
+This should have been clear from the example:  {\tt word} contains {\tt
+Foo} when we print it out the first time; we run {\tt strrev}, and
+nothing is printed out until the second {\tt printf}, which demonstrates
+that {\tt word} now contains {\tt ooF}. 
+
+When you're asking yourself how to reverse a string in place, you might
+think to yourself, ``Well, I could copy the string backwards into some
+auxiliary space, and then copy the reversed string back from the
+auxiliary space to the original space.''  To do that you need to know
+how to ask for extra space on the fly, and we didn't know how to do that
+at the time we took the exam.
+
+\subsection{A Solution}
+
+The solution I was hoping for took some ingenuity to find: We have two
+pointers, {\tt s} and {\tt e}. {\tt s} starts out pointing to the first
+character in the string, and {\tt e} starts out pointing to the last
+character in the string.  We swap the characters that {\tt s} and {\tt
+e} are pointing to; that's easy.  Then we increment {\tt s} to point to
+the second character, and decrement {\tt e} to point to the next-to-last
+character.  We repeat, until both pointers are pointing to the middle
+letters of the string; then we're done.
+
+Here's the code.
+
+\input{strrev}
+
+There's nothing new here, so it was fair game for the exam.
+
+\subsection{A Non-Solution}
+
+Some people did think of the auxiliary-space method, and handed in
+something like this:
+
+\input{strrev2}
+
+This is ingenious, but it doesn't work.  The catch is that an array's
+size must be determined at the time the program is
+compiled.\footnote{Some compilers do allow variable-sized arrays, as a
+non-portable extension.} Nevertheless, people who did this correctly
+(not counting the illegal array declaration itself) got three-quarters
+credit.
+
+\subsection{Another Solution with {\tt strdup}}
+
+Here's another auxiliary-space solution---this one does work.
+Unfortunately, nobody could have turned this in because we hadn't
+covered {\tt strdup} by the time we had the exam:
+
+\input{strrev3}
+
+{\tt strdup}'s argument is a string.  {\tt strdup} does this:
+
+\begin{enumerate}
+\item It looks at the string,
+\item It finds out (probably with {\tt strlen}) how much space is
+necessary to store the string, 
+(one byte for each character in the string, and an extra byte for the
+{\tt NUL} character that terminates it),
+\item It  somehow finds and reserves
+enough space for a copy of the string,
+\item It copies the string into the memory it's reserved, and
+\item It returns a pointer to the first character in the new copy of the
+string.
+\end{enumerate}
+
+If {\tt strdup} fails, for example because it can't reserve enough free
+space for a copy of its argument, it returns the {\tt NULL} pointer.
+
+When we say that {\tt strdup} `reserves' space, we mean that the space
+won't be used for something else until we tell the computer that it's
+all right to do so.  We can be sure that future calls to {\tt strdup}
+will find other space, and that variables we declare will be allocated
+out of space other than that reserved by {\tt strdup}.
+
+\subsection{{\tt free}}
+
+The space reserved by {\tt strdup} stays reserved until the program
+terminates or until we explicitly make the space available for re-use.
+This is called {\em freeing}\/ the space; we do it with the {\tt free}
+function.  If {\tt p} is a \p2\Char\ which points to space reserved by
+{\tt strdup}, the call {\tt free(p)} frees that space; a variable might
+get put there later, or a future call to {\tt strdup} might copy new
+data there and return a new pointer to it.  
+
+\section{Comparing Characters and Strings}
+
+The comparison operators {\tt <}, {\tt <=}, {\tt >}, and {\tt >=} all
+work on characters as well as on numbers, in a reasonable way. 
+
+\subsection{Comparing Single Characters}
+
+It's definitely true that:
+
+\begin{verbatim}
+        '0' < '1' < ... < '8' < '9'
+        'A' < 'B' < ... < 'Y' < 'Z'
+        'a' < 'b' < ... < 'y' < 'z'
+\end{verbatim}
+
+The relative ordering of these three classes, however, is
+implementation-dependent.  Depending on what kind of machine you are
+using, it might be true either that\mbox {\tt 'A' < 'a'} or that
+\mbox{\tt 'a' < 'A'}.  On the machines we use, it's the case that {\tt
+'9' < 'A' < 'Z' < 'a'}.
+
+The {\tt NUL} character is always less than any printable character.  A
+printable character is one that makes a space or a mark on the screen.
+
+We can use this character ordering to write a function that compares
+strings alphabetically. 
+
+\subsection{Comparing Strings}
+
+We'll write a function which accepts two strings as arguments and
+returns some kind of answer to say which string comes earlier in an
+alphabetical ordering.  We'll do something reasonable for nonalphabetic
+strings.  
+
+    We'll say that a string is {\em less}\/ than another string if it
+comes before that string in the dictionary.  For example: {\tt bar} is
+less than {\tt foo}; {\tt food} is less than {\tt fool}; {\tt fool } is
+less than {\tt foolish}.  Please note that `less' does not mean
+`shorter'.  {\tt foolish} is less than {\tt zebra}, but it is not
+shorter than {\tt zebra}.
+
+    Our function will examine the first character of each argument.  If
+the characters are different, we know right away which string is least:
+The one whose first character is least.  We can return an answer right
+away in this case.  We'll return {\tt -1} if the first argument is less
+than the second, and {\tt 1} if the first argument is greater than the
+second.
+
+    If the first two characters are equal, we'll go look at the second
+two characters, and soforth.
+
+    We keep doing this until either we find two characters that don't
+match (in which case we return {\tt 1} or {\tt -1} as above) or until we
+reach the end of one or both strings.
+
+    If we reach the end of both strings at once, then they were
+identical, and we return {\tt 0}. 
+
+    Otherwise, one of the strings is a {\em prefix}\/ of the other,
+which means that it is just the same as the other string, only it is
+missing some characters off the end; for example, {\tt foo} is a prefix
+of {\tt foolish}.  In this case the shorter string is least, and we
+should return {\tt 1} or {\tt -1} as above.
+
+That said, here's the code we wrote in class:
+
+\input strcmp1.tex
+
+This code works.  It's functionally equivalent to a standard library
+function called {\tt strcmp}, which operates in the same way.  {\tt
+strcmp} returns negative, zero, or positive, depending on whether its
+first argument is less than, equal to, or greater than its second
+argument.  ({\tt strcmp} doesn't always return $-1$, 0, or 1.)  To use
+{\tt strcmp}, you must include {\tt <string.h>}.
+
+\subsection{Case-Insensitive Comparison}
+
+Our {\tt strcmp} function does a thing that we might find peculiar: It
+says that {\tt Snider} is less than {\tt food}, because, in Turbo-C++,
+capital letters are always less than lowercase letters.  We say that
+{\tt strcmp} is {\em case-sensitive}\/, because it treats the words {\tt
+Snider} and {\tt snider} differently.  We might wish to erase this
+distinction and make {\tt Snider} greater than {\tt food}, because {\tt
+s}, capital or not, comes after {\tt f} in the dictionary.
+
+To do this, we can use the standard function {\tt tolower}.  {\tt
+tolower} accepts one argument, which is a character.  If the character
+is not an uppercase letter, {\tt tolower} returns the character it was
+passed; if the argument was an uppercase letter, {\tt tolower} returns
+the lowercase version of that letter.  For example, {\tt tolower('X')}
+is {\tt 'x'}; {\tt tolower('y')} is {\tt 'y'}; {\tt tolower('2')} is
+{\tt '2'}.
+
+What we'll do is convert the characters in our strings to lowercase
+before we compare them; then the {\tt S} in {\tt Snider} will behave as
+though it were a lowercase S.  
+
+Replace the lines
+
+\begin{flushleft}
+\verb%    else if ( *s1 < *s2 )% \\*
+\verb%      return -1;% \\*
+\verb%    else if ( *s1 > *s2 )% \\*
+\verb%      return 1;	% \\*
+\end{flushleft}
+
+with
+
+\begin{flushleft}
+\verb%    else if ( tolower(*s1) < tolower(*s2) )% \\*
+\verb%      return -1;% \\*
+\verb%    else if ( tolower(*s1) > tolower(*s2) )% \\*
+\verb%      return 1;	% \\*
+\end{flushleft}
+
+\noindent.  The function we get is called {\tt strcasecmp} on {\sc unix}
+systems, but it seems to be called {\tt stricmp} or {\tt strcmpi} under
+Turbo-C++.  
+
+{\tt tolower}, and a collection of similar functions, such as {\tt
+toupper}, are declared in {\tt <ctype.h>}.
+
+\end{document}

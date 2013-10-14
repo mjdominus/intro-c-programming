@@ -1,0 +1,283 @@
+%
+% CSE 110 Lecture Notes
+%
+% Entire contents are copyright 1992 by Mark-Jason Dominus.
+% All rights reserved.  Unauthorized reproduction prohobited.
+%
+
+\documentstyle[fancyheadings]{article}
+
+% \def\brac#1{{\tt <}#1{\tt >}}
+\def\brac#1{$<$#1$>$}
+\def\Int{{\tt int}}
+\def\int{\brac{\Int}}
+\def\int{\brac{\Int}}
+\def\Shortint{{\tt short~int}}
+\def\shortint{\brac{\Shortint}}
+\def\Longint{{\tt long~int}}
+\def\longint{\brac{\Longint}}
+\def\Float{{\tt float}}
+\def\float{\brac{\Float}}
+\def\Double{{\tt double}}
+\def\double{\brac{\Double}}
+\def\Char{{\tt char}}
+\def\chr{\brac{\Char}}
+\def\Void{{\tt void}}
+\def\void{\brac{\Void}}
+
+\def\ptr#1{pointer~to #1}
+\def\p2#1{\brac{\ptr#1}}
+\def\Ano#1#2{array~of {#1}~#2s}
+\def\ano#1#2{\brac{\Ano#1#2}}
+\def\Ao#1{array~of #1}
+\def\ao#1{\brac{\Ao#1}}
+
+\def\breakhere{\mbox{$\otimes$}}
+\parskip 8pt
+
+% \def\baselinestretch{2}
+
+\title{Lecture 10}
+\author{CSE 110}
+\date{15 July 1992}
+
+\pagestyle{fancy}
+\lhead{CSE 110 Lecture Notes}
+\chead{Mark--Jason Dominus}
+\rhead{\thepage}
+\lfoot{Copyright \copyright 1992 Mark-Jason Dominus}
+\cfoot{}
+\rfoot{All rights reserved.}
+
+
+
+\begin{document}
+
+\maketitle
+
+\section{Miscellaneous Details About Arrays}
+
+Here are some fine points of array use that we didn't talk about before.
+
+\subsection{Out-of-Bounds Array References}
+
+Question: {\tt arr} has only 23 elements.  In this code we're trying to
+store the value 5 into the 120th element.  What happens?
+
+\begin{flushleft}
+\verb% . . . % \\*
+\verb% int arr[23];% \\*
+\verb% % \\*
+\verb% arr[119] = 5;% 
+\end{flushleft}
+
+Answer: You get undefined behavior, so the compiler might choose to
+teleport elephants into the room, or to generate an executable program,
+which, when run, will teleport elephants into the room.  Most likely,
+however, is that the compiler will say nothing at all, and will generate
+an executable program that will assign the value 5 to the place in
+memory where {\tt arr[119]} {\em would}\/ have been if {\tt arr} had had
+that many elements.  However, {\tt arr} doesn't extend that far, and
+chances are that the compiler put some other variable at that spot
+instead, so that the {\tt 5} will obliterate some other piece of data.
+
+You might ask why the compiler doesn't catch this for you, and the
+answer is that catching out-of-bounds array references at the time the
+program is compiled is impossible.\footnote{One can prove mathematically
+that there is {\em no}\/ algorithm which, given the source code for a C
+program, can determine whether or not that C program will generate an
+out-of-bounds array reference when it is run.}
+
+You can catch out-of-bounds array references at the time the program is
+run, so that when you run the program, it aborts in the middle rather
+than doing a bogus array reference.  Some languages, such as Pascal, do
+this automatically.  But to detect the bogus array reference the
+computer must test the index value, every time it looks at any element
+of any array, to make sure it is not too big or too small, and that will
+make your programs slow.  The C compiler takes the point of view that if
+you wanted to check to index value, and accept the corresponding
+slowness, then you'd write code yourself that tests the index value, and
+that if you didn't you wouldn't, and so washes its hands of the problem.
+
+An out-of-bounds array reference can create a bug that is very difficult
+to find.  If you store a value into an array element that isn't there,
+you'll clobber some other variable's value, and you might not find out
+about that until much later when you try to use the variable and
+discover it is full of garbage.  So be careful.
+
+\subsection{The Expression {\tt a[i]} is an Lvalue}
+
+The expression {\tt a[i]} represents an object, namely the {\tt i}'th
+variable in the array {\tt a}, and is therefore an lvalue, and may
+appear on the left-hand-side of an assignment statement, or as the
+operand of the {\tt\&} operator.  We've already seen array references in
+both contexts.
+
+\subsection{{\tt[$\cdots$]} has High Precedence}
+
+The {\tt[{$\cdots$}]} operator has higher precedence than {\em
+everything}\/ else, so that {\tt\&a[i]} means {\tt\&(a[i])} and not
+{\tt(\&a)[i]}. 
+
+\subsection{More About Strings}
+
+Suppose we have an array, and we want to perform some operation on every
+element of the array.  We'd write a loop, of course; and loop over the
+elements in the array, performing the operation on the first one, and
+then on the second one, and soforth.
+
+The question:  How do we know when to stop?
+
+Either, we have to remember how long the array was, or, we have to
+arrange that the last element of the array contains a special {\em
+sentinel}\/ value that we can look for so that when we see the sentinel,
+we know we're done.  Both methods are widely used.  For strings,
+however, we always use a the sentinel value method, and the C language
+provides a little support for this.
+
+When you write something like
+
+\begin{flushleft}
+\verb% char name[] = "Jean Ogrinz"; %  
+\end{flushleft}
+
+\noindent the compiler creates an array of {\em twelve}\/ characters,
+not eleven.  It initializes the first element of the array with the
+letter {\tt J}, the second with {\tt e}, and soforth, and it initializes
+the last element with a special sentinel value: the {\em NUL character}.
+
+The C library provides many functions that operate on strings, and every
+one of them assumes that the strings you pass to it as arguments will
+end with the NUL character; that's how these functions know where to
+stop.  For example, there's a function {\tt strlen} which takes a string
+as an argument and returns the length of the string, and it does this by
+counting the characters in the string one at a time until it sees the
+NUL character.
+
+So when I said a string was an array of characters, I fibbed a little.
+A string is an array of characters that is terminated with a NUL
+character.
+
+Every character is represented internally by some integer between 0 and
+255; for example, on typical machines, the character {\tt A} is
+represented with the number 65.  The details about what number
+represents what character are None of Your Business, with one exception:
+The NUL character is always, always, always the character which is
+represented by the number 0.
+
+If you need to write the NUL character in your C program, you can write
+{\tt '\verb+\+0'}.  
+
+\section{Declarations}
+
+The C declaration syntax was designed to be intuitive, but isn't.  
+
+The declaration 
+
+
+\begin{flushleft}
+\verb! int i, *pi, ai[5], ii; !
+\end{flushleft}
+
+\noindent declares four things:  {\tt i}, an \int; {\tt pi}, a \p2\Int;
+{\tt ai}, an \ano 5\Int; and {\tt ii}, another \int.
+
+The way to remember this is that if you were to take any one of
+the expressions from the declaration and actually write it in your
+program, you'd have an \int.  So:  
+\begin{itemize}
+\item {\tt i} is an \int. 
+\item  {\tt *pi} is an
+\int, and therefore {\tt pi} itself is a \p2\Int. 
+\item {\tt ai[5]} is an
+\int\ (or would be if it weren't out-of-bounds; in any case, {\tt ai[{\rm
+something}]} is an \int.), and therefore {\tt ai} itself is an \ao\Int)
+\item {\tt ii} is an \int. 
+\end{itemize}
+
+This interpretation may come in handy when you're trying to understand a
+more complicated declaration, such as
+
+\begin{flushleft}
+\verb! char *argv[]; !
+\end{flushleft}
+
+\noindent which says that {\tt *argv[]} is a \chr, so therefore {\tt
+argv[{\rm something}]} must be a \p2\Char, and {\tt argv} itself must be
+an \ao{\ptr\Char}. 
+
+C's declaration syntax has been widely criticized already, so let's try
+to live with it.  We won't be seeing declarations much more complicated
+than this in any case.
+
+\section{Pointer Arithmetic}
+
+Having just had a section on C's declaration syntax, surely one of its
+worst features, we should try to recoup a little prestige and have a
+section on one of C's very best features.  Here it is; it gets big type
+because it is so important:
+
+\subsection{The Pointer Arithmetic Rule}
+
+{\large If {\em p}\/ is a pointer which points to a certain element of
+an array, then the value of the expression {\em p} {\tt + 1} is, by
+definition, a pointer which points to the {\em next}\/ element of the
+array.}
+
+\subsection{An Example}
+
+\begin{flushleft}
+\verb% float arr[53], *p *q;% \\*
+\verb% % \\*
+\verb% p = &arr[4];% 
+\end{flushleft}
+
+\noindent {\tt p} is now pointing to the fifth element of the array {\tt
+arr}.  (Remember that {\tt arr[4]} is the fifth element, because {\tt
+arr[0]} is first and {\tt arr[1]} is second.)
+
+\begin{flushleft}
+\verb% q = p + 1; % 
+\end{flushleft}
+
+\noindent {\t q} is now pointing to the sixth element of the array {\tt
+arr}.  (Remember that {\tt arr[5]} is the sixth element.)  Then
+
+\begin{flushleft}
+\verb% *q = 119; % \\*
+\verb!  printf("%d\n", arr[5]);!
+\end{flushleft}
+
+\noindent will print {\tt 119}, regardless of what {\tt arr[5]} was
+holding before.
+
+\subsection{Consequences of the Pointer Arithmetic Rule}
+
+Similarly, if {\em p}\/ is a pointer which points to a certain element of
+an array, then the value of the expression {\em p} {\tt + 2} is, by
+definition, a pointer which points to the element after the next one in
+the array.  
+
+Similarly, if {\em p}\/ is a pointer which points to a certain element of
+an array, then the value of the expression {\em p} {\tt - 1} is, by
+definition, a pointer which points to the previous element in the array.
+
+Similarly, if {\tt p} points to the element {\tt a[0]} of the array {\tt
+a}, and if {\tt n} is an \int, then the value of the expression {\tt p +
+n} is a pointer to the element {\tt a[n]} of the same array {\tt a}.
+Note what happens when the value of {\tt n} is 0:  {\tt p + 0} points to
+the same place as {\tt p}, as it should.
+
+Similarly, if {\tt p} points to an element of an array, and you do {\tt
+p++;}, then afterwards, {\tt p} points to the next element of the array.
+
+This simple convention is at least partly responsible for C's vast
+popularity.  C makes pointer manipulations easy and flexible by using
+this simple notation for talking about pointers to different parts of
+the same array.
+
+We'll see how to use this tomorrow, when everything will finally fall
+into place.
+
+
+\end{document}

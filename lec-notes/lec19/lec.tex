@@ -1,0 +1,301 @@
+%
+% CSE 110 Lecture Notes
+%
+% Entire contents are copyright 1992 by Mark-Jason Dominus.
+% All rights reserved.  Unauthorized reproduction prohobited.
+%
+
+\documentstyle[fancyheadings]{article}
+
+% \def\brac#1{{\tt <}#1{\tt >}}
+\def\brac#1{$<${#1}$>$}
+\def\Int{{\tt int}}
+\def\int{\brac{\Int}}
+\def\int{\brac{\Int}}
+\def\Shortint{{\tt short~int}}
+\def\shortint{\brac{\Shortint}}
+\def\Longint{{\tt long~int}}
+\def\longint{\brac{\Longint}}
+\def\Float{{\tt float}}
+\def\float{\brac{\Float}}
+\def\Double{{\tt double}}
+\def\double{\brac{\Double}}
+\def\Char{{\tt char}}
+\def\chr{\brac{\Char}}
+\def\Void{{\tt void}}
+\def\void{\brac{\Void}}
+
+\def\ptr#1{pointer~to {#1}}
+\def\p2#1{\brac{\ptr{#1}}}
+\def\Ano#1#2{array~of {#1}~{#2}s}
+\def\ano#1#2{\brac{\Ano{#1}{#2}}}
+\def\Ao#1{array~of {#1}}
+\def\ao#1{\brac{\Ao#1}}
+
+\def\np{{\tt NULL} pointer}
+
+\def\breakhere{\mbox{$\otimes$}}
+
+
+\title{Lecture 19}
+\author{CSE 110}
+\date{5 August 1992}
+
+\parskip 8pt
+
+\pagestyle{fancy}
+\lhead{CSE 110 Lecture Notes}
+\chead{Mark--Jason Dominus}
+\rhead{\thepage}
+\lfoot{Copyright \copyright 1992 Mark-Jason Dominus}
+\cfoot{}
+\rfoot{All rights reserved.}
+
+
+
+\begin{document}
+\maketitle
+
+\begin{center}
+\begin{quote}
+{You taught me Language, and my profit on't \\
+is I know how to curse.} \\
+
+{\small --- William Shakspere, {\em The Tempest}, I, ii.}
+\end{quote}
+\end{center}
+\section{Left-Over Language Features}
+
+Today was the day we saw the last of the language features, things that
+are rarely or never important.  Each of these I expected to bring up
+when the appropriate time came, at some moment when it would be useful,
+and the moment never came.  
+
+We'll see these features in increasing order of usefulness.
+
+\subsection{The {\tt ,} Operator}
+
+The {\tt ,} operator takes two operands, which must be expressions.  To
+evaluate an expression of the form {\tt {\em expr1} , {\em expr2}}, the
+computer evaluates {\em expr1}\/, and then evaluates {\em expr2}\/.  The
+value of the entire expression is the value of {\em expr2}\/.  
+
+The {\tt ,} operator has two interesting properties: It guarantees that
+{\em expr1}\/ will be evaluated first\footnote{Most operators, such as
+{\tt +}, do not guarantee which of their operands will be evaluated
+first.}, and it guarantees a sequence point between the evaluation of
+the two expressions.  This means that any side effects such as
+increments or assignments that are scheduled as a result of evaluating
+{\em expr1} will be completely resolved before {\em expr2}\/ is
+evaluated.
+
+Nevertheless, the {\tt ,} operator is mostly used when you want to stick
+two expressions where only one normally fits, such as in the condition
+of a {\tt while} statement.  The example that Kernighan and Ritchie give
+for the {\tt ,} operator is a program to reverse a string in place,
+which we've already seen:  (They called it {\tt reverse}.)
+
+\begin{flushleft}
+\verb% void strrev(char *s)% \\*
+\verb% {% \\*
+\verb%   int c, i, j;% \\*
+\verb% % \\*
+\verb%   for (i=0, j=strlen(s)-1;  i<j;  i++, j++) {% \\*
+\verb%     c = s[i];% \\*
+\verb%     s[i] = s[j];% \\*
+\verb%     s[j] = c;% \\*
+\verb%   }% \\*
+\verb% }% \\*
+\end{flushleft}
+
+The commas that separate a function's arguments, the variables in a
+declaration, and soforth, are {\em not}\/ {\tt ,} operators.
+
+\subsection{The {\tt ?:} Operator}
+
+The {\tt ?:} is unusual in that it has {\em three}\/ operands.  To
+evaluate the expression {\em expr1 {\tt ?} expr2 {\tt :} expr3}\/, the
+computer first evaluates {\em expr1}\/.  If {\em expr1} is true, the
+computer evaluates {\em expr2}\/ and that value is the value of the
+entire expression.  Otherwise, the computer evaluates {\em expr3}\/ and
+that value is the value of the entire expression.
+
+A {\tt ?:} expression is like a miniature {\tt if{\rm --}then}.  Here's
+an example:  This function prints out the elements of an array,
+separated by spaces, with ten elements per line.
+
+\begin{flushleft}
+\verb! void print_array(int *a, int nelems) ! \\*
+\verb! { ! \\*
+\verb!   int i; ! \\*
+\verb!  ! \\*
+\verb!   for (i=0; i<nelems; i++)  ! \\*
+\verb!     printf("%d%c", a[i], (i+1)%10 ? ' ' : '\n'); ! \\*
+\verb! } ! \\*
+\end{flushleft}
+
+Here's a simpler example:  It sets the value of {\tt a} to the value of
+either {\tt x} or {\tt y}, whichever is smaller:
+
+\begin{flushleft}
+\verb%  a = (x > y) ? y : x ; %
+\end{flushleft}
+
+I swiped this example from K\&R also.
+
+\subsection{The {\tt switch} Statement}
+
+A {\em {\tt switch} statement}\/ has this form:
+
+\begin{flushleft}
+\tt
+switch ({\em expression}\/) \{ \\*
+{\hspace{8pt}}case {\em value1}\/: \\*
+{\hspace{8pt}}{\hspace{8pt}}{\em statement11}\/ \\*
+{\hspace{8pt}}{\hspace{8pt}}{\em statement12}\/ \\*
+{\hspace{8pt}}{\hspace{8pt}}... \\*
+{\hspace{8pt}}case {\em value2}\/: \\*
+{\hspace{8pt}}{\hspace{8pt}}{\em statement21}\/ \\*
+{\hspace{8pt}}{\hspace{8pt}}{\em statement22}\/ \\*
+{\hspace{8pt}}{\hspace{8pt}}... \\*
+{\hspace{8pt}}... \\*
+{\hspace{8pt}}default: \\*
+{\hspace{8pt}}{\hspace{8pt}}{\em statementd1}\/ \\*
+{\hspace{8pt}}{\hspace{8pt}}{\em statementd2}\/ \\*
+{\hspace{8pt}}{\hspace{8pt}}... \\*
+\} 
+\end{flushleft}
+
+
+To execute a {\tt switch} statement, the computer evaluates the {\em
+expression}\/.  Control then passes to the statement immediately after
+one of the three following things, which are listed in order of
+preference:
+\begin{enumerate}
+\item A {\em case label}\/ in the {\em statement}, which has the form 
+\begin{flushleft}
+{\tt case {\em constant} : } \\*
+\end{flushleft}
+
+\noindent where the value of the {\em constant}  is the same as the
+value of the {\em expression}\/.  If there is no case label whose value
+matches that of the {\em expression}, control passes to the statement
+immediately after:
+
+\item A {\em {\tt  default} label}\/ in the {\em statement}\/, which has
+the form 
+\begin{flushleft}
+{\tt default : } \\*
+\end{flushleft}
+
+\noindent .  If there is no {\tt default \em label}\/, control passes to
+the statement immediately after:
+
+\item The end of the {\tt case} statement.  
+
+\end{enumerate}
+
+Once into the compound statement part of the {\tt switch}, control flows
+from top to bottom as usual.  Control does {\em not}\/ leave the
+compound statement except by flowing off the bottom of the statement or
+by encountering a {\tt break} or {\tt return} as usual.  In particular,
+after the computer executes the last statement in one of the {\tt case}
+sections, it continues on to the statements under the next {\tt case}
+section.  This usually isn't what we want, and so we almost always end
+each {\tt case} section with a {\tt break} statement.  
+
+It's so rare to actually allow control to fall through from one {\tt
+case} section to the next that you should always put in a comment when
+you do let control fall through.  
+
+{\tt case} can always be replaced by {\tt if{\rm --}else if{\rm
+--}else}, but the restrictions on it allow the compiler to generate more
+efficient code, particularly if there are a lot of {\tt case} labels.  
+
+\subsection{Block-Scoped variables}
+
+We've only seen variables declared at the head of a function.  These
+variables had names that were known only inside the function in which
+they were declared, and the variables were created each time the
+function was called and destroyed again when the function returned.
+
+In fact, you can declare new variables at the head of {\em any}\/
+compound statement.  The variables are created when control enters the
+statement, and destroyed again when control leaves the statement.  The
+names of the variables are known only within the statement.  
+
+It's good to declare variables as belonging to as small a compound
+statement as possible, because it keeps the definition and use of the
+variable close together, because it restricts communication, and because
+it's easier to understand when you're reading the code---you know you
+can forget about the variable's value unless you're reading the code for
+the compound statement in which it's declared.  
+
+We've actually seen this before:  I used it in the sample solution to
+the guessing game project.
+
+\subsection{{\bf true} and {\bf false}}
+
+We've been saying all semester that {\bf false} was a zero value and
+that {\bf true} was a nonzero value.  That's only part of the story.
+
+In any condition context, such as the condition part of a {\tt while} or
+{\tt for} loop, or the first operand of a {\tt ?:} expression, the
+following values mean {\bf true} and {\bf false}:
+
+\begin{tabular}{l|cc}
+Type & {\bf false } & {\bf true} \\ \hline
+number & 0 & non-zero \\
+pointer & {\tt NULL} & not {\tt NULL} \\
+character & {\tt '\verb+\+0'} & anything else \\
+\end{tabular}
+
+This means, in particular, that all those times we wrote {\tt if (c !=
+'\verb+\+0')} we could have just written {\tt if (c)}, and whenever we
+wrote {\tt if (newnode != NULL)} we could just have written {\tt if
+(newnode)} instead.  
+
+Opinion seems to be divided on whether or not this is bad style.  Since
+opinion is divided, and about half the world does in fact use the short
+forms, it is therefore good style.
+
+\section{The Compiler and the Linker}
+
+The compiler is really two programs in one.  The first part, the {\em
+compiler}\/, translates the C into whatever machine language is
+appropriate for the machine you're using.  The translated version of the
+program is called an {\em object file}\/. 
+
+The second part of the compiler, the {\em linker}\/, does a simpler job.
+It looks through the object file for function calls, and it arranges
+that the right functions are called.  When it's done, it might discover
+that you called some functions for which you didn't provide code, such
+as {\tt printf}; these are called {\em unresolved references}\/.  The
+linker then looks through {\em library files}\/, which contain
+pre-compiled functions, for functions whose names match the unresolved
+references.  If it finds any, it includes the object code for those
+functions into your program.  If there are still unresolved references,
+the linker complains that it couldn't finish compiling your program;
+otherwise it has resolved all the references and creates an executable
+program.
+
+Having a linker means that you can write your program in several
+different files, compile them separately, months apart, have functions
+in one file call functions in another, and the linker will sort out all
+the calls at the end. If you change one function, you only need to
+recompile the file it's in and then re-link the program; you don't need
+to recompile the unchanged source files.  
+
+We didn't see how to do this because we never wrote a program long
+enough to deserve it.
+
+\section{Idle Questions}
+
+We had a lot of idle questions about what `object-oriented' means;
+how long it takes to write a big program and how big one is; how one
+organizes a big programming project, features of other languages, how
+widespread various languages are, and soforth.  I can't possibly
+remember all the nonsense we discussed, but I do remember that there was
+one point I wanted to make that I didn't get a chance to bring up:
+
+\end{document}

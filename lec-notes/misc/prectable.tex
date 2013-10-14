@@ -1,0 +1,29 @@
+
+\documentstyle[12pt]{article}
+
+\begin{document}
+
+\begin{tabular}{l|l}
+\multicolumn{2}{c}{\sc Precedence and Associativity of Operators} \\ \hline\hline
+{\sc Operators}                                & {\sc Associativity} \\ \hline
+{\tt ( )\hfil [ ]\hfil ->\hfil .}            & left to right \\
+{\tt !\hfil \~\hfil ++\hfil -\relax-\hfil +\hfil -\hfil *\hfil \&\hfil ({\rm type})\hfil sizeof} & right to left \\ 
+{\tt * \hfil / \hfil \% \hfil }                & left to right \\ \hline
+{\tt + \hfil - \hfil }                         & left to right \\
+{\tt << \hfil >> \hfil }                       & left to right \\
+{\tt < \hfil <= \hfil > \hfil >=\hfil }        & left to right \\ \hline
+{\tt == \hfil != \hfil }                       & left to right \\
+{\tt \& }                                      & left to right \\
+{\tt \verb+^+}                                       & left to right \\ \hline
+{\tt |}                                        & left to right \\
+{\tt \&\&}                                     & left to right \\
+{\tt ||}                                       & left to right \\ \hline
+{\tt ?:}                                       & right to left \\
+{\tt = += -= *= /= \%= \&= \verb+^+= |= >>= <<=}     & right to left \\
+{\tt ,}                                        & left to right \\ \hline
+\end{tabular}
+
+(After Kernighan and Ritchie, p. 53.)
+
+
+\end{document}

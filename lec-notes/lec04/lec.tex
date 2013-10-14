@@ -1,0 +1,419 @@
+%
+% CSE 110 Lecture Notes
+%
+% Entire contents are copyright 1992 by Mark-Jason Dominus.
+% All rights reserved.  Unauthorized reproduction prohobited.
+%
+
+\documentstyle[fancyheadings]{article}
+
+% \def\brac#1{{\tt <}#1{\tt >}}
+\def\brac#1{$<$#1$>$}
+\def\Int{{\tt int}}
+\def\int{\brac{\Int}}
+\def\int{\brac{\Int}}
+\def\Shortint{{\tt short~int}}
+\def\shortint{\brac{\Shortint}}
+\def\Longint{{\tt long~int}}
+\def\longint{\brac{\Longint}}
+\def\Float{{\tt float}}
+\def\float{\brac{\Float}}
+\def\Double{{\tt double}}
+\def\double{\brac{\Double}}
+\def\Char{{\tt char}}
+\def\chr{\brac{\Char}}
+\def\Void{{\tt void}}
+\def\void{\brac{\Void}}
+
+\def\p2#1{\brac{pointer~to #1}}
+
+\parskip 8pt
+
+\title{Lecture 4}
+\author{CSE 110}
+\date{6 July 1992}
+
+\pagestyle{fancy}
+\lhead{CSE 110 Lecture Notes}
+\chead{Mark--Jason Dominus}
+\rhead{\thepage}
+\lfoot{Copyright \copyright 1992 Mark-Jason Dominus}
+\cfoot{}
+\rfoot{All rights reserved.}
+
+
+
+\begin{document}
+
+\maketitle
+
+\section{More Operators}
+
+    C has many operators.  Some of them, like {\tt +}, are {\em binary},
+which means that they require two operands, as in {\tt 4 + 5}.  Others
+are {\em unary}, which means they require only one operand.  We'll see
+an example of this in section \ref{unary-op}.
+
+\subsection{Arithmetic}
+
+    Arithmetic operators include {\tt +}, {\tt -}, {\tt *}, and {\tt /}
+for addition, subtraction, multiplication, and division.  Division is a
+little odd: Its semantics change depending on the types of its operands.
+If both operands are \int s, then {\tt /} represents {\em integer
+division}, in which the fractional part of the result is discarded.  For
+example, the value of the expression {\tt 13/5} is 2.
+
+    {\tt \%} denotes the {\em modulus}\/ operator: If {\em a}\/ and {\em
+b}\/ are integer expressions, then {\em a}\/{\tt \%}{\em b}\/ is the
+remainder when {\em a}\/ is divided by {\em b}\/.  For example, the
+value of the expression \mbox{\tt 13 \% 5} is {\tt 3}, because 3 is the
+remainder when you divide 13 by 5.  If one of the operands is an
+expression whose value isn't of integer type, that's an error and the
+compiler won't compile the program.
+
+\subsection{Assignment}
+
+    {\tt +=} is an assignment operator.  Like {\tt =}, its left operand
+must be an lvalue.  \mbox{\tt x += 2 } means the same thing as \mbox{\tt
+x = x + 2}.  It's more natural to think ``Add 2 to {\tt x}'' and to
+write \mbox{\tt x += 2;} than it is to think ``Get {\tt x}, add 2, and
+put it back.'' and write \mbox{\tt x = x + 2;}.  Furthermore, in an
+expression like
+
+\verb% yyval[yypv[p3+p4] + yypv[p1+p2]] += 2 %
+
+\noindent the assignment operator makes the code easier to understand,
+since the reader doesn't have to check painstakingly that two long
+expressions are the same, or to wonder why they're not.\footnote{I
+swiped this example from {\em The C Programming Language}\/, by
+Kernighan and Ritchie.}
+
+Similarly, there are {\tt -=}, {\tt *=}, {\tt /=}, {\tt \%=} operators,
+all defined analogously.
+
+\subsection{Increment and Decrement}
+
+    Adding one to something is such a common operation that there's a
+special name for it and yet another notation for it.  Adding 1 to a
+quantity is called {\em incrementing} it.  There's a special increment
+operator, {\tt ++}.  If we write {\tt x++} or {\tt ++x} in an
+expression, then, sometime before the computer executes the next
+statement, it will add 1 to the value stored at {\tt x}.\footnote{Of
+course, when we say ``the value stored at {\tt x},'' we are implying
+that {\tt x} is an lvalue---you can't do {\tt 4++} to increment the
+value of 4; the compiler will complain.}
+
+    The values of {\tt x++} and {\tt ++x} differ, however: if {\tt x} is
+12, then the value of {\tt x++} is 12 and the value of {\tt ++x} is 13.
+The notion is that if you use {\tt ++x}, the compiler increments {\tt x}
+before getting its value, and if you use {\tt x++}, the compiler
+increments {\tt x} after geting its value.  So if the value of {\tt x}
+is 119, then after
+
+\verb%  y = x++ ; %
+
+\noindent {\tt y} would be 119 and {\tt x} would be 120, but after
+
+\verb%  y = ++x ; %
+
+\noindent {\tt y} would be 120 and {\tt x} would be 120.
+
+When the compiler actually chooses to do the increment is None of Your
+Business, as long as the increment happens before the next
+statement.\footnote{Actually it has to happen before the next {\em
+sequence point}\/.  We know about two kinds of sequence points:
+semicolons are sequence points, and also there is a sequence point just
+before every function call.}
+
+Question:  What happens if {\tt x} is 119, and we do:
+
+\verb% y = x++ + x++ ; %
+
+\noindent ?  Depending on when the incrementing actually happens, {\tt y}
+might get 238, or 239, right?  Wrong.  For various technical reasons
+the standard says that if you try to modify the same object twice in one
+statement,\footnote{Really it says twice without a sequence point in
+between.} you get undefined behavior---the compiler is allowed to do
+whatever it likes, including nothing, printing a warning, erasing
+itself, or teleporting elephants into the room.  Similarly
+
+\verb% x = x++ ; %
+
+\noindent is undefined.  On the other hand, if {\tt x} is 2, then
+
+\verb% y = x * x++ ; %
+
+\noindent is perfectly legal, ({\tt x} and {\tt y} are each modified
+only once before the end of the statement) and might assign {\tt y} the
+value 4 or the value 6, depending on whether the compiler does the
+increment before or after it evaluates the first {\tt x}.  In general
+it's best to avoid such situations.
+
+There is a {\tt -\relax-} operator, which is just like {\tt ++}, except
+that it subtracts 1 instead of adding 1.  This is called {\em
+decrementing}\/.
+
+\subsection{Precedence}
+
+Consider this expression:
+
+\verb% 2 * 3 + 4 %
+
+\noindent does the compiler do {\tt 2 * 3} first and then add {\tt 4}, yielding
+10?  Or does it do {\tt 3 + 4} first and then multiply by {\tt 2},
+yielding 14?
+
+The rules are consistent with regular mathematics: Multiplication and
+division (meaning {\tt *}, {\tt /}, and {\tt \%}) happen before {\tt +}
+and {\tt -}.  So the example above evaluates to 10.
+
+Assignment happens way late, after almost everything else, because if
+you write
+
+\verb% x = y + 4 ; %
+
+\noindent you never ever mean that you want to store the value of {\tt
+y} in {\tt x} and then add 4 to that result---you always mean that you
+want to add 4 to the value in {\tt y} and then store that result into
+{\tt x}.
+
+As in mathematics, expressions in parentheses ({\tt (} and {\tt )}) get
+evaluated first.  So the value of
+
+\verb% 2 * ( 3 + 4 )  %
+
+\noindent is 14.
+
+{\tt ++} and {\tt --} have higher precedence than most other things,
+including everything we've seen so far.  That's so that the {\tt ++} in
+\mbox{\tt y * x++} applies just to the {\tt x} and not to the {\tt y * x}.  
+
+\section{The Preprocessor}
+
+Before the compiler starts in on its work in earnest, it transforms your
+program a little.  On some systems this transformation is done by a
+separate program, called a {\em preprocessor}\/, but in Turbo C++, the
+preprocessor is built into the compiler.  There are three important
+transformations and a few unimportant ones that we won't discuss.
+
+\subsection{Macros}
+
+If your source code contains a line like
+
+\verb%#define PI 3.141592654 %
+
+\noindent the preprocessor defines a {\em macro}.  What this means is that from
+now on, every time it sees the symbol {\tt PI}, it will replace it with
+the sequence {\tt 3.141592654}.  The compiler proper will never find out
+about {\tt PI} at all; as far as it's concerned, you wrote out {\tt
+3.141592654} in full every time.
+
+You can use this for three things:
+
+\begin{itemize}
+\item You can use it to clarify the code, by writing things like {\tt
+PI}, rather than {\tt 3.141592654} all over the place.
+
+\item You can use it to set up {\em manifest constants} that might
+change over time.  For example, suppose you are writing accounting
+software for an insurance company; the medical insurance deductible is
+\$200, and you want to compute the payment.  You could write
+
+\verb% payment = claims - 200 ; %
+
+\noindent but then if the deductible ever changed, you'd have to go and
+find all the {\tt 200}'s in your code and change every one.  Worse, it
+might be that not every {\tt 200} is actually a deductible---you'd have
+to decide which ones to change.  It's much better to do
+
+\verb%#define DEDUCTIBLE 200 %
+
+\noindent and then you can write
+
+\verb% payment = claims - DEDUCTIBLE ; %
+
+\noindent and if you need to change the deductible, you just change it
+in the {\tt\#define} directive and nowhere else.
+
+\item You can use the macro facility to make your code into an
+unreadable horror.  We will not see an example of how to do this.
+
+\end{itemize}
+
+Conventionally the names we give to macros contain only capital letters.
+
+\subsection{Include Files}
+
+If you write
+
+\verb% #include <file.h> %
+
+\noindent the compiler immediately pauses what it was doing, seeks out a
+{\em header file} called {\tt file.h} in some standard
+place,\footnote{Just what place this is is {\em implementation
+defined}\/, which means that it's well-defined, and that it must be
+documented, but it differs from system to system.} and pretends that the
+entire contents of that file appeared in your source file in place of
+the {\tt \#include} directive.  If the compiler doesn't find {\tt
+file.h} in any of the standard places, it complaints.
+
+One of the good things about C is that you can have a program whose
+source lives in more than one file; then if you make changes to one file
+you don't have to recompile all the others to make an executable.  But
+if there's some information they need to share, you can put it in one
+header file and have all of the source files {\tt \#include} it; again,
+if the information changes, you only need to change the one copy in the
+header file instead of going around and changing each source file.
+
+Similarly, when you want to use a library function like {\tt printf},
+there might be information you need to give to the compiler about that
+function.  The people who wrote {\tt printf} can put whatever
+information is necessary into a header file, and then you can include
+the header file in your program before you use {\tt printf}.  In fact,
+in order to use {\tt printf}, you have to {\tt\#include} the header file
+{\tt stdio.h}, or else you get undefined behavior.\footnote{Our {\tt
+square} program from Thursday had undefined behavior for this reason.
+Fortunately, it did the right thing anyway.}
+
+If you write {\tt\#include "file.h"} instead of {\tt\#include <file.h>},
+the preprocessor looks for {\tt file.h} in the current directory before
+it looks in the standard places.
+
+Header files don't have to have a {\tt .h} extension, but they always
+do.
+
+\subsection{Comments}
+
+The preprocessor provides a facility for including explanatory text,
+called {\em comments}\/, into your program, without confusing the
+compiler.  The rule is this: The sequences {\tt /*} and {\tt */} delimit
+comments.  The preprocessor replaces the {\tt /*}, the {\tt */}, and
+everything in between with blank space, which the compiler ignores.
+
+It's too early for an enormous rant about the importance and proper
+style of comments, but we'll have several later.
+
+\section{Conditions}
+
+If a program did the same thing every time we ran it, it wouldn't be
+useful.  We have to have a way to perform certain actions only when
+certain conditions are true.
+
+\subsection{The {\tt if} Statement}
+
+The {\tt if} statement has this form:
+
+\begin{quote}
+{\tt if (}{\it condition}\/{\tt )} {\it statement}
+
+\end{quote}
+
+The condition is just an expression.  We say that the condition is {\em
+false}\/ if the value of the expression is zero, and we say that the
+condition is {\em true}\/ otherwise.  To execute an {\tt if} statement,
+the computer first evaluates the expression to decide if the condition
+is true or not.  If the condition is true, the computer executes the
+statement.  Otherwise, it doesn't.  
+
+The statement could be a compound statement, or it could even be another
+{\tt if} statement.
+
+\subsection{Relational Operators}
+
+C provides operators for comparing numbers.  The operator {\tt ==} tests
+two expressions for equality, for example.  The expression {\tt a == b}
+has the value 0 if {\tt a} and {\tt b} are not equal and {\tt 1} if they
+are equal.  So we can write
+
+\verb%  if ( a == b ) % \\*
+\verb%      printf("a and b are equal\n"); %
+
+If {\tt a} and {\tt b} are equal, the expression {\tt a == b} evaluates
+to 1, so the condition is true, and the {\tt printf} statement gets
+executed.  But otherwise, {\tt a == b} evaluates to 0, so the condition
+is false and the {\tt printf} is not executed.
+
+{\tt{\em a}\/ != {\em b}} is true when the value of expression {\em a}\/
+is not equal to the value of expression {\em b}\/.  Similarly, we have
+{\tt <}, {\tt >}, {\tt <=}, and {\tt >=}, for testing whether one
+expression's value is less than another's, greater than another's, less
+than or equal to another's, or greater than or equal to another's.
+
+Relational operators have low precedence, just before assignments, but
+after arithmetic.
+
+\subsection{Boolean Operators}
+
+Suppose we want the user to enter an integer between 1 and 10,
+inclusive.  We want to write some code to print a rude message if the
+user didn't do what we wanted.  Suppose the user's number is stored in
+the variable {\tt x} Then we could write
+
+\verb%% \\*
+\verb% if ( x < 1 ) %                  \\*
+\verb%   <print rude message> ;  %       \\*
+\verb% if ( x > 10 ) %                  \\*
+\verb%   <print rude message> ; %       
+
+\noindent but then the code to print the rude message is the same both
+times.  That's bad, because someday someone is going to change one and
+not the other, and then the program will have different behavior where
+it used to have the same behavior; or else someday both statements might
+break\footnote{Maybe because the print function changed or something.}
+and someone might fix only one of them by mistake.  A principal rule of
+programming is to never ever have two pieces of code to do the same
+thing.  Fortunately there's a better way to accomplish what we want:
+
+\verb%% \\*
+\verb% if ( x<1 || x>10 ) %                  \\*
+\verb%   <print rude message> ; %       
+
+{\tt ||} reads as `or', so we say ``if {\tt x} is less than 1 {\bf or}
+{\tt x} is greater than 10...''.  {\tt ||} requires two operands, and an
+expression with an {\tt ||} operator is true if either of its operands
+are true, false if neither is true.
+
+{\tt ||} has a special property: it {\em short-circuits}\/.  In the
+example above, suppose the value of {\tt x} is 0.  The computer compares
+{\tt x} with 1, and finds that {\tt x < 1} is true, and so we already
+know that the rude message will be printed.  There's no longer any
+reason to computer whether or not {\tt x > 10} is true; either way we'll
+print the message.  And in fact in C when the computer is evaluating an
+{\tt ||} expression, if the left-hand operand is true, then the computer
+never evaluates the right-hand one at all.
+
+Similarly, there's a {\tt \&\&} operator, which is pronounced `and'.  For
+example:
+
+\verb%% \\*
+\verb% if ( x>=1 && x<=10 ) %                  \\*
+\verb%   <print polite message> ; %       
+
+\noindent ``If {\tt x} is greater than or equal to 1 {\bf and} {\tt x}
+is less than or equal to 10, then print the polite message.''  An
+expression with {\tt \&\&} is true if both its operands are true, false
+otherwise.  {\tt \&\&} also short-circuits, so if {\tt x} is 0 in the
+example above, then the computer will only bother to evaluate the {\tt x
+>= 1} part above; since that part is false, it already knows that the
+whole {\tt \&\&} expression is false, and there's no point in evaluating
+the {\tt x <= 10} part.
+
+\label{unary-op}
+{\tt ||} and {\tt \&\&} are called {\em logical operators}\/ because
+they operate on logical conditions such as {\tt x < 10}, rather than on
+raw numbers like {\tt 12}.  There is one other logical operator: {\tt
+!}, pronounced {\em not}\/.  {\tt !} is a unary operator; it takes only
+one operand. When the computer wants to evaluate something like {\tt
+!{\em x}\/}, it first evaluates {\em x}\/, and then if {\em x} \/ is
+true, {\tt !{\em x}\/} is false, and vice-versa.
+
+{\tt !} has higher precedence than anything else we've seen yet.  {\tt
+\&\&} and {\tt ||} have lower precedence than anything except
+assignment. {\tt \&\&} has higher precedence than {\tt ||}, which is
+consistent with conventional mathematics.\footnote{There is a table of
+operator precedence in your text, on pages
+690--691.}\footnote{Incidentally, {\tt\&\&} and {\tt ||} are both
+sequence points.}
+
+
+\end{document}

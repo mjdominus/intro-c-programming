@@ -1,0 +1,648 @@
+
+\documentstyle{article}
+
+% \def\brac#1{{\tt <}#1{\tt >}}
+\def\brac#1{$<$#1$>$}
+\def\Int{{\tt int}}
+\def\int{\brac{\Int}}
+\def\int{\brac{\Int}}
+\def\Shortint{{\tt short~int}}
+\def\shortint{\brac{\Shortint}}
+\def\Longint{{\tt long~int}}
+\def\longint{\brac{\Longint}}
+\def\Float{{\tt float}}
+\def\float{\brac{\Float}}
+\def\Double{{\tt double}}
+\def\double{\brac{\Double}}
+\def\Char{{\tt char}}
+\def\chr{\brac{\Char}}
+\def\Void{{\tt void}}
+\def\void{\brac{\Void}}
+
+\def\ptr#1{pointer~to #1}
+\def\p2#1{\brac{\ptr#1}}
+\def\Ano#1#2{array~of {#1}~#2s}
+\def\ano#1#2{\brac{\Ano#1#2}}
+\def\Ao#1{array~of #1}
+\def\ao#1{\brac{\Ao#1}}
+
+\def\breakhere{\mbox{$\otimes$}}
+\parskip 8pt
+
+
+\topmargin -0.5in
+\textheight 9in
+
+% \def\baselinestretch{2}
+
+\title{Midterm Exam}
+\author{CSE 110}
+\date{21 July 1992}
+
+\begin{document}
+% \setcounter{page}{0}
+\begin{center}
+{\Large \bf CSE 110 Final Exam {\bf Key}}\\
+\vspace{.2in}
+{\large M--J. Dominus}\\
+\vspace{.2in}
+10 August, 1992
+\end{center}
+
+\section{50 Points}
+
+\begin{quotation}
+\small
+Enclosed is a program.  The specification for this program went
+something like this: ``Read an arbitrarily large number of lines of
+input from the standard input, and then print them out again in random
+order; each line must be printed exactly once.''
+
+Evaluate and criticize the program at length.
+
+You might consider some of the following: Indentation, white space,
+variable and function names, argument passing, information hiding,
+comments (too many?  too few?), the algorithm used, the conciseness of
+the code, the correctness of the program, the attractiveness of the
+input and output, the use of manifest constants, formatting, dependence
+of the code on things that are None of Our Business, length of
+functions, appropriateness of control structures (did the programmer use
+{\tt if}...{\tt if} when they should have used {\tt if}...{\tt else}?
+Did they use {\tt while} when {\tt do}...{\tt while} would have been
+better?), appropriateness of variable types.
+
+(Please note: I wrote this list before I saw the code, so I do not
+necessarily expect all of these subjects to be worthy of comment.)
+
+The code uses a function you haven't seen before:
+
+{\tt index} is a function whose arguments are a string {\tt s} and a
+char {\tt c}.  {\tt index} tried to find an occurrence of the character
+{\tt c} in the string {\tt s}.  If it finds one, it returns a pointer to
+it.  Otherwise, it returns the {\tt NULL} pointer.  For example, {\tt
+index("CSE110", 'E')} returns a pointer to the character {\tt 'E'}.  
+
+\end{quotation}
+
+I wanted to get a real, badly-written program, so that you could have
+the pleasure of seeing authentic style errors, but instead things went
+awry and I wound up taking a program I had written before, and messing
+it up so that you would have things to find.  There were about fifty
+style errors in the program, because I made it into a real horror.  You
+did not have to find all fifty things to get a perfect score.  
+
+I gave a point or two for every minor error of typography or naming that
+you did find, and three or five points for substantive errors, such as
+the ones on lines 37, 89--96, or 99.  You could get up to ten points for
+completely fixing the morass in lines 104--114.  You lost points if you
+broke the program while correcting its style.
+
+While reading your answers to this question, I got the impression that
+some people lost patience with the job part way through.  I sympathize
+with you, because I did this same task forty-three times in the past six
+weeks.  Nevertheless I think it's instructive.
+
+A list of errors I deliberately put in for you to find follows.
+
+\begin{itemize}
+\item[3] The header comment does not describe the program sufficiently.
+The single most important fact about the program, which is that its
+output is in a random order, is missing.  Furthermore, it omits other
+important facts:  What is the source of the input?  Where does the
+output go? A better comment would say:  ``The program reads arbitrarily
+many lines of no more than {\tt MAX} characters each from the standard
+input; it then prints the lines out to the standard output in a random
+order, printing each line exactly once.''
+\item[8--10] This comment is nonsense.  The preprocessor removes all the
+comments before the compiler even sees them, so comments do not slow
+down the program at all.  One student angrily wrote that this was an
+``unnecessary comment just to make an excuse.''
+\item[18] {\tt MAX} is a terrible variable name.  Clearly it's an upper bound
+of some sort, but what is it an upper bound on?  {\tt MAX\_LINE\_LENGTH}
+would have been better.  
+\item[18] Since the maximum line length is really eighty characters, and
+the 82 is an artifact, this should say {\tt 80} and not {\tt 82}.
+\item[20] There is a declaration here for a function which doesn't
+exist.  Remove it.
+\item[21] It would probably be a good idea to add a space here between
+the base type name and the {\tt *}, if for no other reason than to be
+consistent with the rest of the program.
+\item[29] The comment is obvious three times over.  Remove it.
+\item[35--44] The function of this loop is to read in the input.  Moving
+it into a sub-function would be a good idea.  The function, say {\tt
+read}, would require no arguments and could return a pointer to the first
+node in the list that it constructed. \label{read-input-function}
+\item[37] The {\tt 5} here is not only poor style, it is also incorrect.
+It should be replaced by {\tt sizeof(struct listnode)}, which on the
+computers we were using turns out to be 3, not 5.  This is the only
+genuine programming error that I know of in the program.
+\item[39--40] These lines should be indented.
+\item[42] This line should be broken into two lines.
+\item[42] There should be more space between the operators on this line.
+\item[50] This is a weak comment.  It omits important details.  For
+example, it neglects to mention that it reads only {\em one line}\/ of
+input at a time.  Furthermore there is a typographical error.
+\item[52] Similarly, {\tt get\_line} would be a better name for this
+function.  Then we could use the name {\tt read\_input} for the function
+of lines \ref{read-input-function}, which really does read the entire
+input. 
+\item[54] {\tt chars} is a bad name for the variable; it names an array
+of chars, so it's obvious.  {\tt current\_line} or {\tt input\_buffer}
+would be better.
+\item[55] {\tt dummy} is unused.  Get rid of it.
+\item[57--58] This comment is utterly cryptic and only serves to justify
+a bizarre and unnecessary typographic convention which clutters up the
+code with redundant parentheses.  Discard it.  One student said,
+``Shouldn't comment on your style. Just make it look nice.'' I agree.
+\item[59 and elsewhere] The redundant parentheses around {\tt NULL}
+should be removed. 
+\item[63] It's really halfwitted to gratuitously replace {\tt EOF} with
+{\tt -1}, thus making your program less portable ({\tt EOF} might not
+always be {\tt -1}) and complicating it so that it requires explanation
+at the same time, whereas simply writing {\tt EOF} in the first place
+would work just as well or better and would require no explanation at
+all.
+\item[63] There are redundant parentheses here.  Remove them.  The line
+should read:  {\tt while ((c = getchar()) != '\verb+\+n' \&\& c != EOF)}
+\item[63] The null statement ({\tt ;}) is hiding at the end of the line.
+It should go an a separate line with an appropriate comment like {\tt /*
+nothing */}. 
+\item[65] This {\tt if} should be an {\tt else} attached to the previous
+{\tt if}. 
+\item[68] This line sets {\tt end\_ptr} so that it no longer points to
+the end of a string and its new value has nothing to do with its old
+value.  It would be better to use a new variable with a better name,
+instead of reusing the old one.  It would be still better to replace
+lines 68--70 with the single line {\tt return strdup(chars);}.  
+\item[73-77] This function is never called.  Remove it.
+\item[79] The comment here is wrong.  It says {\tt words}, but it should
+be {\tt lines}.
+\item[81] The name of this function is
+cryptic.  {\tt print\_in\_random\_order} might be all right; {\tt
+random\_print} might be all right.
+\item[81] {\tt l} is a bad name for a variable because it is easy to
+confuse it with the numeral 1.  {\tt list} would have been better.
+\item[83]  {\tt m} and {\tt i} are just index variables, so its all
+right to give them short names, but {\tt n} actually has a specific
+purpose in this function:  It holds a count of the number of nodes in
+the list.  {\tt node\_count} might be a better name.  It might also be
+better to call {\tt m} {\tt random\_number} or some such.
+\item[85] {\tt pointer\_array} is not such a hot name.  {\tt
+input\_lines} might be better.  The comment is not completely useless,
+despite what some of you said; it does say that {\tt pointer\_array}
+will point to an array, and that the array will contain pointers to the
+lines of input.  
+\item[86] The {\tt *} and blank should probably be switched, for
+consistency.
+\item[87] There should be a space before this line.
+\item[89--96] This entire block would be clearer as a {\tt for} loop.
+\item[91] Replace {\tt !{\rm\ldots}==} with {\tt !=}.
+\item[92--96] The indentation here is inconsistent with the indentation
+elsewhere in the program.
+\item[94--95] {\tt next\_node} is irrelevant.  These two lines should be
+replaced by {\tt cur\_node = cur\_node->next}.  Then we should discard
+the declaration of {\tt next\_node} from line 84.
+\item[99] The {\tt char **} here should be a {\tt char *}, because we
+are allocating an array of {\tt char *}'s.  
+\item[99] Why {\tt n+1}?  There should be a comment explaining this.
+However, see 106--110.
+\item[101] The indentation on this line is wrong.
+\item[101] There should be a blank line before this line.
+\item[102] This line needs more white space; it's hard to read.  Also,
+either the {\tt i++} should move out of the control part of the {\tt
+for} or else the {\tt i=0} from line 101 should move in, for symmetry.
+\item[103] There should be a blank line before this line.
+\item[104--114] This loop was so poorly written that some people could
+not understand it at all.  Here's what it does: First, the `extra'
+pointer at the end of the array gets set to {\tt NULL}, to make sure
+that we get into the {\tt while} loop.  Then we go into the {\tt while}
+loop and get a random number and store it into {\tt m}, until we find a
+number whose associated line pointer is not {\tt NULL}.  When we print
+out the line associated with that number, set the pointer to {\tt NULL}
+so that we don't print out the line again, and repeat.  
+\item[105--114] The indentation style here is inconsistent with that of
+the rest of the program.
+\item[106] Here and elsewhere, we should omit the space between the
+array name and the subscript, to emphasize the high precedence of the
+{\tt [{\rm\ldots}]} operator.
+\item[106--110] Since the only purpose to line 106 is to make sure that
+we get into the {\tt while} loop the first time through, we can replace
+these four lines with a single {\tt do{\rm--}while}, which accomplishes
+the same thing.  We know that we want to choose a random number at least
+once, and that skipping the code that chooses the random number is never
+appropriate, so {\tt do{\rm--}while} is more appropriate here.   Since
+we no longer need the extra array element, we should change the {\tt
+n+1} in line 99 to an {\tt n}. 
+\item[108--110] The indentation style here is inconsistent with that of
+the rest of the program.
+\item[111] This line is useless.   Accordingly, it and line 86 should be
+removed.
+\end{itemize}
+
+People had other complaints which I felt were reasonable even though I
+didn't deliberately put them in, or even though they were overshadowed
+by more serious errors.  
+
+\begin{itemize}
+\item[22] The variable name {\tt list} in the prototype doesn't match
+that in the actual definition of {\tt rp}. 
+\item[24] {\tt list\_node} would be easier to read.
+\item[25--26] There should be comments on the structure members to say
+what they're for. 
+\item[32] It's easier to read if you put {\tt *newnode} before {\tt
+*input\_list = NULL}, or if you break this declaration into two lines.
+\item[37] It might be better to put the code that allocates memory for a
+new node into a sub-function.
+\item[39] This would be better as {\tt perror("Couldn't read input");}. 
+\item[42] There should be a space before this line.
+\item[47] There should be a space before this line.
+\item[49] Here and elsewhere, there should be more space between
+individual functions.
+\item[50] Many people disliked this comment.  Many people liked it fine.
+\item[51--52] Some people said that the function header shouldn't be
+split across lines.  Although you could argue this for a lot longer than
+it was worth, it is nevertheless common practice, for a rather
+peculiar reason:  It allows you to put the function names in the
+leftmost column, where they can easily be found by automatic source-code
+processing systems.  For example, the pretty-print program I used to
+prepare the exam puts function names in the right margin, when it can
+identify them, but it can't identify them when they are preceded by type
+names on the same line.  Note that the name {\tt main} doesn't appear in
+the right-hand margin on the exam. 
+\item[54] One student said that since right here is the only place {\tt
+MAX} is ever used, it would be clearer {\em not} to have the manifest
+constant, whose definition is far from its use, and to just use the
+number right here.  What do you think? 
+\item[63] There should be a comment here to describe that we are
+gobbling up input to the end of the line.
+\item[76] Printing things to {\tt stderr} is bad unless they're error
+messages. 
+\item[80--115] {\tt rp} could be broken into two functions, one of
+which creates random numbers and the other of which prints out the lines. 
+\item[87] The call to {\tt srandom} should be nearer to the place where
+it becomes important, say around line 104, or else it should be right at
+the beginning of the program, around line 34.
+\item[89] There should be a comment here that says {\tt Counts the
+number of nodes.}
+\item[89--90] If you didn't make the following loop into a {\tt for}
+statement, then these initializations would have happened up above, in
+the declarations.  
+\item[99] {\tt exit(2)} should be {\tt exit(1)}, for consistency with
+other {\tt exit}s.  I feel that {\tt exit(2)} is a good idea because it
+lets the operating system determine something about the reason why the
+program failed, if it wants to.
+\item[99] There is no error message if {\tt malloc} fails here.
+\item[102--104] There should be more comments here. 
+\item[104] There shouldn't be any space around the {\tt <} sign.
+\item[106] If you're going to have this code at all, break it into two
+lines.  (I felt that the two lines were so closely related that they
+should be together, but it's reasonable to disagree.)
+\item[108--110] The braces here are unnecessary.
+\item[114] There should be a {\tt return ;} here.
+\end{itemize}
+
+
+Some complaints I didn't admit were:  
+
+\begin{itemize}
+\item[39] Some people wrote that this should be {\tt perror("Out of
+memory")} or something.  But printing {\tt Out of memory} is {\em
+exactly}\/ what {\tt perror} does---the statement, as written, probably
+delivers a message of the form {\tt read input: Out of memory}. 
+\item[42--43] Some people said that this code should be under an {\tt
+else}.  I disagree, because in this case the rule that primary, normal
+control flow should be down the left-hand margin overrides the rule
+about using {\tt else} to show {\tt else}-ness.  Similarly lines 102--114.
+\end{itemize}
+
+\noindent (There were others.)
+
+Incidentally, Joe Keane did not write the program I gave you; I put his
+name on it for fun and because he is noted for writing terrible code.
+At Carnegie Mellon, unreadable code with poor style is still called `Joe
+Code', even though Joe hasn't been back there in years.  Joe is now a
+professional computer programmer.
+
+\section{25 Points}
+
+\begin{quotation}
+\small
+Suppose we have a large, complicated program which stores information in
+a doubly-linked list whose nodes have the following form:
+
+\begin{flushleft}
+\verb% struct node {% \\*
+\verb%   int province_code;% \\*
+\verb%   int beheadment_count;% \\*
+\verb%   int rioting_index;% \\*
+\verb%   struct node *next; /* Pointer to next node in list */% \\*
+\verb%   struct node *prev; /* Pointer to previous node in list */% \\*
+\verb% } ;% 
+\end{flushleft}
+\label{struct}
+
+The first node in the list has a {\tt NULL} value stored in its {\tt
+prev} member; the last node in the list has a {\tt NULL} value stored in
+its {\tt next} member.  There are no bogus nodes.
+
+Write a single function, whose argument is a pointer to a node in the
+list, and which deletes the node from the list and frees the memory that
+was used to hold that node.
+
+Don't worry about communicating back to the caller if you happen to
+delete the head or the tail node.
+\end{quotation}
+
+Good code for this function appears below:
+
+\begin{flushleft}
+\verb% void delete_node(struct node *delete_me)% \\*
+\verb% {% \\*
+\verb%   if (delete_me->next)% \\*
+\verb%     delete_me->next->prev = delete_me->prev;% \\*
+\verb% % \\*
+\verb%   if (delete_me->prev)% \\*
+\verb%     delete_me->prev->next = delete_me->next;% \\*
+\verb% % \\*
+\verb%   free(delete_me);% \\*
+\verb% }% 
+\end{flushleft}
+
+If you had written this, you would have gotten a full 25 points.  One
+student pointed out that the function is only a few lines of code, and
+is hardly worth 25 points, and yes, that's true---I expected it to be
+cheap pork.  (Not quite free pork.)
+
+In fact, only two students got the full 25 points.  Most people forgot
+to check to see that {\tt delete\_me->next} was not {\tt NULL} before
+they set the {\tt prev} member of the structure it pointed to with {\tt
+delete\_me->next->prev = ...}.  {\tt delete\_me->next} is {\tt NULL}
+when the function is asked to delete the last node in the list;
+therefore most people turned in programs that failed when asked to
+delete the last node in a list, and in the similar case of being asked
+to delete the first node in a list.  I wish I had stressed this more in
+class: Dereferencing the {\tt NULL} pointer is an incredibly common
+mistake, which yields undefined behavior.  On a good computer, a program
+which dereferences a {\tt NULL} pointer fails immediately.  On a crummy
+computer like an IBM PC, all that happens is that you clobber some of
+the operating system's data structures and cause a mysterious machine
+crash ten minutes down the line.  Because I did not push it hard in
+class, people who forgot to check to see if the node was at the
+beginning or the end of the list lost only 5 points, although in real
+life they would have paid a big time penalty as they wondered why their
+program crashed the machine all the time.  I am sure that some people
+did wonder this while they worked on their calculator programs, but it
+is not their fault that I could not grade the assignment before the
+exam was due.
+
+Some people included a handler in case the argument was {\tt NULL}:
+
+\begin{flushleft}
+\verb% if (delete_me == NULL) % \\*
+\verb%   return;% 
+\end{flushleft}
+
+\noindent which is a good idea but was not required.
+
+Some people forgot to free the memory that {\tt delete\_me} pointed to;
+this cost 5 points.  
+
+Some people made the function's return value an {\tt int} instead of
+{\tt void}; this would have been okay if they had actually returned a
+useful value to indicate success or failure,\footnote{For example, they
+might have passed back the return value of {\tt free}.} but none of them
+did do this; this mistake cost 3 points.
+
+\section{Miscellany}
+
+\subsection{15 Points}
+
+\begin{quotation}
+\small
+Many beginners are daunted by the complexity of {\tt argc} and {\tt
+argv} and the details of managing command-line arguments.
+
+Try to explain the reasons for the existing design.  Defend or criticize
+it.  If you criticize the design, try to think of a better design.
+\end{quotation}
+
+Nearly everyone included a long description of exactly what {\tt argc}
+and {\tt argv} have stored in them.  I read and re-read the question
+wondering why everyone had done this.  I was completely at a loss as to
+why everyone would interpret ``Explain the reasons for the existing
+design'' as ``Explain the existing design.''\footnote{My roommate Ranjit
+tells me that a common tactic, when one doesn't know the answer to a
+question such as this one, is to provide a straight description of the
+facts of the case, to demonstrate that one is not completely clueless
+and to attempt to get some partial credit.  Perhaps this is the correct
+explanation.  However, I would have preferred clever but incorrect
+guesses to straight regurgitation.}
+
+While I was irritated and dismayed at extensive, irrelevant blather, I
+did not consciously deduct for it.
+
+A good answer would have been
+
+\begin{quotation}
+\small
+We want to allow the operating system to communicate an arbitrarily
+large number of arguments to the program.  The program will need a way
+to refer to the arguments. A simple way to make that possible is to
+store them in a variable.  Since programs under MS-DOS expect individual
+arguments to be separated by spaces, we would like this separation to be
+immediately visible to {\tt main}; hence each argument is stored
+separately so that we can get at each one without having to worry about
+the others.  Since we will therefore have an arbitrary number of
+arguments stored separately, we can't give a different name to each
+argument, so we store them in an array---hence {\tt argv}.  The
+arguments probably came from a keyboard or some other character device;
+therefore it is probably easy and general to represent them as character
+strings; the array can contain pointers to these strings.  Since we have
+given {\tt main} an array, we must tell it how long the array is---hence
+{\tt argc}.
+\end{quotation}
+
+If you mentioned the magic words ``arbitrarily long argument list'' or
+some equivalent such as ``any number of arguments'', ``arbitrarily large
+amounts\ldots'', ``no limit \ldots\ on number of arguments'', and soforth, you
+got a substantial amount of credit, because that's the key point here.
+This answer would have gotten about thirteen points:
+
+\begin{quotation}
+\small
+The program must have a mechanism for handling command-line arguments
+whose number is not known at the time the program is written; the {\tt
+argc}/{\tt argv} method is an obvious way to do this.
+\end{quotation}
+
+I had hoped people would put more effort into dreaming up alternative
+schemes for passing in arguments.  Consider, for example, the following,
+all of which would work:
+
+\begin{enumerate}
+\item The arguments are character strings, pointers to which are stored
+in the successive elements of a linked list, and the program is passed a
+pointer to the first node in this list. \label{ll-args}
+\item The arguments are all stored in one big character array, and are
+separated from one another by {\tt '\verb+\+0'}; the program is passed a
+pointer to the first character in this array and the length of the
+array. \label{ca-args}
+\item If the programmer expects the arguments to the program to be the
+program name, followed by an int, followed by a float, followed by a
+filename, for example, then he or she declares {\tt main} like this:
+\begin{flushleft}
+\verb% int main ( char *progname, int d, float f, char *filename)% 
+\end{flushleft}
+\noindent with the operating system interpreting the character strings
+and storing the correct values in the appropriate variables. \label{np-args}
+\item {\tt main} could do whatever {\tt printf} does to get hold of an
+arbitrarily long argument list. \label{pf-args}
+\item We could provide another standard stream, say {\tt stdarg}, which,
+when read with standard I/O functions, yields the argument data exactly
+as it was typed on the command line.\label{ss-args}
+\end{enumerate}
+
+Each of these is plausible, so why does C do it the way it does, and not
+one of these other ways?  I had hoped for analysis of other possible
+schemes such as these.  Brief analyses might go like this: Item
+\ref{ll-args} is not too bad, but it is not as good as the existing way
+because the programmer will have to go seeking all over the list to find
+the arguments he or she wants; with the present method, you can go
+backwards, or jump all over the array; you know instantly where any
+given argument is stored without having to hunt around in a list, which
+can take a long time.  Items \ref{ca-args} and \ref{ss-args} have the
+same disadvantage; \ref{ss-args} has the added disadvantage that you now
+have to include the standard I/O library, whether you want to or not.
+Item \ref{np-args} is terrible because it puts an upper bound on the
+number of arguments the program can expect in advance---if you write
+your {\tt main} to accept 16 arguments, then you can't handle the 17th,
+should someone enter that many.  Item \ref{pf-args} is a good thought,
+but {\tt printf} accepts a complicated format string as its first
+argument, from which it is able to deduce the number and types of the
+remaining arguments; using method
+\ref{pf-args} would require that all C programs be run with a format
+argument indicating the types and number of the remaining arguments, or
+something similar.
+
+\subsection{5 Points}
+
+\begin{quotation}
+\small
+Abscissa Eckert-Mauchly\footnote{J.~Presper Eckert and John Mauchly were
+the principal designers of ENIAC, the first large-scale, general-purpose
+electronic computer.}, a beginning programmer who knows too many
+things that are none of her business, is writing a function to allocate
+a structure of the type discussed in question \ref{struct}.  She says,
+``The struct has three int members, of two bytes each, and two pointers,
+which are four bytes each, for a total of fourteen bytes.''  Then she
+writes
+
+\begin{flushleft}
+\verb% newnode = malloc(14); %
+\end{flushleft}
+
+What should she have written instead, and why?
+\end{quotation}
+
+She should have written
+
+\begin{flushleft}
+\verb% newnode = malloc(sizeof(struct node)); %
+\end{flushleft}
+
+\noindent because:
+
+\begin{enumerate}
+\item It's clearer for people reading the code what is being allocated
+and why.
+\item She might have made a mistake in adding up the size
+correctly.\footnote{In fact, she {\em did}\/ make such a mistake---on
+the IBM PC, with the compiler we have been using, writing small
+programs, pointers are {\em two}\/ bytes each, not four, and the size of
+a {\tt struct node}  is 10, not 14.  Only one person caught this.}
+\item If someone changes the members in a {\tt struct node}, they will
+have to go dig up Abscissa's code and change it, and they will probably
+not know to do this; in any case it is better that they not have to.
+\item If the program is compiled on a different computer or with a
+different compiler, the sizes of {\tt int}s and pointers might not be
+the same as on Abscissa's computer.\footnote{For example, on the Sun
+computer on which I grade your assignments, an {\tt int} is four bytes,
+not two.  A related reason it that there is no guarantee that a
+structure will not contain unnamed, unused waste space, which Abscissa
+did not count.  (Contrast this with an array, which never contains waste
+space between the elements.)  In fact, compilers frequently include such
+waste spaces, which must be taken into account; {\tt sizeof} does this
+automatically and portably.}
+% In this case the program will probably break.
+% Furthermore, structs sometimes contain empty space; the size
+% of 
+% \begin{flushleft}
+% \verb% struct foo { % \\*
+% \verb%   char c; % \\*
+% \verb%   int i;% \\*
+% \verb% }% 
+% \end{flushleft}
+% 
+% \noindent on the Suns is 8, not 5, because there are three extra bytes
+% of space after {\tt c} and before {\tt i}; this is because on Suns (and
+% most other computers) there is a restriction on where in memory an
+% integer can be stored, and the three bytes of padding guarantees that it
+% comes out all right.}
+\end{enumerate}
+
+Everyone mentioned one or more of these and got all five points.
+
+Some people added that the return value of {\tt malloc} should be cast
+to have type {\tt (struct node *)}, if only to shut of the compiler's
+warnings about incompatible pointer types.  
+
+I had expected some people to add that Abscissa should have checked the
+return value from {\tt malloc} to see if {\tt malloc} failed or not:
+
+\begin{flushleft}
+\verb% if ((newnode = malloc(sizeof(struct node))) == NULL) { ... %
+\end{flushleft}
+
+\noindent but nobody seemed to think that this was within the domain of
+the question.
+
+\subsection{5 Points}
+
+\begin{quotation}
+\small
+    After seeing your solution to the previous question, Abscissa
+disagrees.  ``My way is faster that yours,'' she says, ``because the
+program doesn't have to stop and figure out the value of your argument
+to {\tt malloc} every time the function is called; it gets the {\tt 14}
+right away without having to compute anything extra.''
+
+    Is this a legitimate complaint?  If it is, whose way is better?  If
+not, why not?
+\end{quotation}
+
+In fact, this is {\em not}\/ a legitimate complaint, in spite of what
+nearly everyone said.  The result of a {\tt sizeof} operator is computed
+by the compiler, at the time the program is compiled, and the
+appropriate number is substituted into the compiled code in place of the
+{\tt sizeof} expression, so there is {\em no}\/ speed difference when
+the program is run.  Nobody knew this, but that was all right; we didn't
+mention it in class and I was just hoping that perhaps someone would
+guess it.
+
+Nevertheless, everyone guessed that {\tt sizeof} would run quickly, if
+not exactly how quickly, said that the considerations of section 3.2
+overrode Abscissa's performance concerns and got the whole five points.
+
+Some people suggested that in the unexpected circumstance that the {\tt
+sizeof} was really slowing her code down significantly, Abscissa should
+still do
+
+\begin{flushleft}
+\verb%  #define SIZEOF_STRUCT_NODE 14 %
+\end{flushleft}
+
+\noindent and use the manifest constant instead of the raw 14.  This is
+a good suggestion in general, although in this case it doesn't apply,
+because {\tt sizeof} never does slow down the code.
+
+\end{document}

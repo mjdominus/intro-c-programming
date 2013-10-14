@@ -1,0 +1,48 @@
+%
+% CSE 110 Lecture Notes
+%
+% Entire contents are copyright 1992 by Mark-Jason Dominus.
+% All rights reserved.  Unauthorized reproduction prohobited.
+%
+\begin{flushleft}
+\verb%void strrev(char *s)%
+\\* \verb%{%
+\\* \verb%  char *e;               %
+\\* \verb%  int left=0;                        /*%\mbox{ Count of characters left to swap }\verb%*/%
+\\* \verb%  char temp;                         /*%\mbox{ For swap }\verb%*/%
+\end{flushleft}
+
+\begin{flushleft}
+\verb%  /*%\mbox{ If length of string is less than 2, don't bother. }\verb%*/%
+\\* \verb%  /*%\mbox{ Note short-circuiting here---it's {\em very important}\/. }\verb%*/%
+\\* \verb%  if (s[0] == '\0' || s[1] == '\0')%
+\\* \verb%    return;%
+\end{flushleft}
+
+\begin{flushleft}
+\verb%  /*%\mbox{ First, point {\tt e} at end of {\tt s} and compute length of {\tt s}: }\verb%*/%
+\\* \verb%  for (e=s; *e != '\0'; e++)%
+\\* \verb%    left++;%
+\end{flushleft}
+
+\begin{flushleft}
+\verb%  /*%\mbox{ {\tt e} now points to {\tt NUL} character at end of {\tt s}. }\verb%*/%
+\\* \verb%  /*%\mbox{ {\tt left} is the number of characters we have to swap. }\verb%*/%
+\end{flushleft}
+
+\begin{flushleft}
+\verb%  e--;        %
+\\* \verb%  /*%\mbox{ {\tt e} now points at last character in {\tt s}. }\verb%*/%
+\end{flushleft}
+
+\begin{flushleft}
+\verb%  while (left > 1) {            %
+\\* \verb%    temp = *s; *s = *e; *e = temp; /*%\mbox{ Swap characters at beginning and end }\verb%*/%
+\\* \verb%    s++; e--;                      /*%\mbox{ Move towards middle of string  }\verb%*/%
+\\* \verb%    left -= 2;                     /*%\mbox{ two fewer characters to swap. }\verb%*/%
+\\* \verb%  }%
+\end{flushleft}
+
+\begin{flushleft}
+\verb%}%
+\end{flushleft}

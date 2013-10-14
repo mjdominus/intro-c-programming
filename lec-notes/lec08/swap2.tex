@@ -1,0 +1,35 @@
+
+\begin{flushleft}
+\verb%#include <stdio.h>%
+\end{flushleft}
+
+\begin{flushleft}
+\verb%void swap(int *n1, int *n2);%
+\end{flushleft}
+
+\begin{flushleft}
+\verb%int main(void)%
+\\* \verb%{%
+\\* \verb%  int x = 5, y = 119;%
+\end{flushleft}
+
+\begin{flushleft}
+\verb%  printf("The values of x and y before the swap are %\verb-%-\verb%d and %\verb-%-\verb%d.", x, y);%
+\\* \verb%  swap(&x, &y);%
+\\* \verb%  printf("The values of x and y after the swap are %\verb-%-\verb%d and %\verb-%-\verb%d.", x, y);%
+\\* \verb%  return 0;%
+\\* \verb%}%
+\end{flushleft}
+
+\begin{flushleft}
+\verb%void swap(int *n1, int *n2)%
+\\* \verb%{%
+\\* \verb%  int temp;%
+\end{flushleft}
+
+\begin{flushleft}
+\verb%  temp = *n1;%
+\\* \verb%  *n1 = *n2;%
+\\* \verb%  *n2 = temp;%
+\\* \verb%}%
+\end{flushleft}

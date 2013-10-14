@@ -1,0 +1,46 @@
+
+\documentstyle{article}
+
+\begin{document}
+
+\begin{flushleft}
+\verb%#include <stdio.h>%
+\end{flushleft}
+
+\begin{flushleft}
+\verb%int main(void)%
+\\* \verb%{%
+\\* \verb%  double total = 0.0, current = 1.0, mean;%
+\\* \verb%  int input_count = 0;%
+\end{flushleft}
+
+\begin{flushleft}
+\verb%  /*%\mbox{ do...while would be better here but we hadn't done that yet. }\verb%*/%
+\\* \verb%  while (current != 0) {        %
+\\* \verb%    printf("Enter another number, or 0 to stop.\n");%
+\\* \verb%    scanf("%\verb-%-\verb%lf", &current);%
+\end{flushleft}
+
+\begin{flushleft}
+\verb%    if (current != 0) {%
+\\* \verb%      input_count += 1;%
+\\* \verb%      total += current;%
+\\* \verb%    }%
+\\* \verb%  }%
+\end{flushleft}
+
+\begin{flushleft}
+\verb%  if (input_count > 0) {%
+\\* \verb%    mean = total / input_count;%
+\\* \verb%    printf("The mean of your inputs was %\verb-%-\verb%f.\n", mean);%
+\\* \verb%  }%
+\end{flushleft}
+
+\begin{flushleft}
+\verb%  return 0;%
+\\* \verb%}%
+\end{flushleft}
+
+
+
+\end{document}

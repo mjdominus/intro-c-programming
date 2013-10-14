@@ -1,0 +1,17 @@
+
+Seven points for printing a correctly sorted list:
+  -2 for including garbage lines
+  -2 for including garbage characters past the end of a line
+  -4 for incorrect sorting                                      ____________
+
+Two points for handling very long lists                         ____________
+
+Two points for handling long lines correctly                    ____________
+
+Two points for recognizing command-line arguments correctly     ____________
+
+One point for recovering gracefully from argument errors        ____________
+									    
+Total for assignment-specific points.   			____________
+									    
+									    

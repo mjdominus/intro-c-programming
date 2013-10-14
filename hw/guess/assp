@@ -1,0 +1,40 @@
+
+Your program will pick a random number between 1 and 100.  	____________
+									    
+Your program will remember this number but keep it secret.	____________
+									    
+Your program will prompt the user to guess a number between		    
+1 and 100 until the user guesses your program's secret		____________
+number.									    
+									    
+When the user guesses your program's secret number, the game		    
+is over and your program will print an appropriate message	____________
+which includes the number of guesses taken by the user.			    
+									    
+When the user enters an incorrect guess, your program will		    
+print an appropriate message and will say whether the guess	____________
+was too high or too low.						    
+									    
+You will provide a method by which the user can quit in the		    
+middle of a game if he or she desires.  			____________
+									    
+You will inform the user of how this may be accomplished.	____________
+									    
+After each game, your program will prompt the user to input		    
+whether he or she desires another game.				____________
+									    
+If not, your program will finish.				____________
+									    
+Otherwise, it will play again.  				____________
+									    
+The computer will choose a new random secret number for each		    
+game.								____________
+									    
+Your program should not assume that the user will always		    
+type what you expect; it must handle bogus inputs gracefully	____________
+and discard garbage input.     	        			____________
+									    
+									    
+Total for assignment-specific points.   			____________
+									    
+									    

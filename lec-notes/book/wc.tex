@@ -1,0 +1,32 @@
+%
+% CSE 110 Lecture Notes
+%
+% Entire contents are copyright 1992 by Mark-Jason Dominus.
+% All rights reserved.  Unauthorized reproduction prohobited.
+%
+
+\begin{flushleft}
+\verb%#include <stdio.h>%
+\end{flushleft}
+
+\begin{flushleft}
+\verb%int main(void)%
+\\* \verb%{%
+\\* \verb%  int c = 0, w = 0, l = 0;      /*%\mbox{ Count of characters, words, lines }\verb%*/%
+\\* \verb%  int ch;                       /*%\mbox{ Current character }\verb%*/%
+\end{flushleft}
+
+\begin{flushleft}
+\verb%  while ((ch = getchar()) != EOF) {%
+\\* \verb%    c++;%
+\\* \verb%    if ( ch == ' ' || ch == '\t' || ch == '\n') w++;%
+\\* \verb%    if ( ch == '\n' ) l++;%
+\\* \verb%  }%
+\end{flushleft}
+
+\begin{flushleft}
+\verb%  printf("Characters: %\verb-%-\verb%d.  Words: %\verb-%-\verb%d.  Lines: %\verb-%-\verb%d.\n", c, w, l);%
+\\* \verb%  return 0;%
+\\* \verb%}%
+\end{flushleft}
+

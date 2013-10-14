@@ -1,0 +1,89 @@
+%
+% CSE 110 Lecture Notes
+%
+% Entire contents are copyright 1992 by Mark-Jason Dominus.
+% All rights reserved.  Unauthorized reproduction prohobited.
+%
+\input tgrindmac
+\L{\LB{}}
+\L{\LB{\K{\#include} \<stdio.h\>}}
+\L{\LB{\K{\#include} \<malloc.h\>}}
+\L{\LB{}}
+\L{\LB{\K{\#define} BOGUS\_VALUE 0}\Tab{32}{\C{}\/* Terminates input *\/\CE{}}}
+\L{\LB{}}
+\L{\LB{\K{struct} node \{}}
+\L{\LB{  \K{struct} node *back;}}
+\L{\LB{  \K{int} number;}}
+\L{\LB{  \K{struct} node *forward;}}
+\L{\LB{\} ;}}
+\L{\LB{}}
+\L{\LB{\K{int} getnum(\K{void});}}
+\L{\LB{}}
+\L{\LB{\C{}\/* returns pointer to new tail of list. *\/\CE{}}}
+\L{\LB{\K{struct} node * store\_input(\K{int} input, \K{struct} node *tail);}}
+\L{\LB{}}
+\L{\LB{\K{void} print\_forward(\K{struct} node *head);}}
+\L{\LB{\K{void} print\_backward(\K{struct} node *tail);}}
+\L{\LB{}}
+\L{\LB{\K{int} main (\K{void}) }}
+\L{\LB{\{}}
+\L{\LB{  \K{int} input;}}
+\L{\LB{  \K{struct} node *head, *tail;}}
+\L{\LB{}}
+\L{\LB{  tail = head = malloc(\K{sizeof}(\K{struct} node));}}
+\L{\LB{  head\-\>forward = NULL;}}
+\L{\LB{  head\-\>number = BOGUS\_VALUE;}}
+\L{\LB{  head\-\>back = NULL;}}
+\L{\LB{ }}
+\L{\LB{  \K{while} ((input = getnum())  != BOGUS\_VALUE) \{}}
+\L{\LB{    \C{}\/* store input in the list *\/\CE{}}}
+\L{\LB{    tail = store\_input(input,tail);}}
+\L{\LB{  \}}}
+\L{\LB{  }}
+\L{\LB{  \C{}\/* print out forwards *\/\CE{}}}
+\L{\LB{  print\_forward(head);}}
+\L{\LB{  \C{}\/* print out backwards *\/\CE{}}}
+\L{\LB{  print\_backward(tail);}}
+\L{\LB{ }}
+\L{\LB{  \K{return} 0;}}
+\L{\LB{\}}}
+\L{\LB{}}
+\L{\LB{\K{struct} node * store\_input(\K{int} input, \K{struct} node *tail)}}
+\L{\LB{\{}}
+\L{\LB{  \K{struct} node *newnode; }}
+\L{\LB{}}
+\L{\LB{  newnode = malloc(\K{sizeof}(\K{struct} node));}}
+\L{\LB{  newnode\-\>number = input;}}
+\L{\LB{  tail\-\>forward = newnode;}}
+\L{\LB{  }}
+\L{\LB{  newnode\-\>forward = NULL;}}
+\L{\LB{  newnode\-\>back = tail;}}
+\L{\LB{}}
+\L{\LB{  \K{return} newnode;}}
+\L{\LB{\}}}
+\L{\LB{}}
+\L{\LB{\K{void} print\_forward(\K{struct} node *head)}}
+\L{\LB{\{}}
+\L{\LB{  head = head\-\>forward;}}
+\L{\LB{}}
+\L{\LB{  \K{while}(head != NULL) \{}}
+\L{\LB{    printf(\S{}\"\%d\!n\"\SE{}, head\-\>number);}}
+\L{\LB{    head = head\-\>forward;}}
+\L{\LB{  \}}}
+\L{\LB{\}}}
+\L{\LB{}}
+\L{\LB{\K{void} print\_backward(\K{struct} node *tail)}}
+\L{\LB{\{}}
+\L{\LB{  \K{while}(tail\-\>number != BOGUS\_VALUE) \{}}
+\L{\LB{    printf(\S{}\"\%d\!n\"\SE{}, tail\-\>number);}}
+\L{\LB{    tail = tail\-\>back;}}
+\L{\LB{  \}}}
+\L{\LB{\}}}
+\L{\LB{}}
+\L{\LB{\K{int} getnum(\K{void})}}
+\L{\LB{\{}}
+\L{\LB{  \K{int} i;}}
+\L{\LB{   scanf(\S{}\"\%d\"\SE{}, \&i);}}
+\L{\LB{  \K{return} i;}}
+\L{\LB{\}}}
+\vfill\eject
