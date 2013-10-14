@@ -7,6 +7,12 @@ summer session of CSE 110, the introduction to programming class for
 non-CS majors.  This I did.  I did not like the course materials I was
 given, so I assembled and taught a different course.
 
+One noteworthy difference between this class and typical introduction
+to C classes is in its treatment of pointers.  In most C clases
+pointers are left until the end, as an advanced topic. This class
+introduces them as early as possible.  This was an extremely
+successful approach, which I strongly recommend.
+
 The class met for 90 minutes per day, four days a week, for five weeks.
 
 This repository contains:
