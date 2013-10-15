@@ -42,6 +42,9 @@ This repository contains:
 
 I plan to release this under a Creative Commons license shortly.
 
+Makefiles, or instructions for building PDF output, or something like
+that, will also appear here shortly.
+
 WARNING
 -------
 
