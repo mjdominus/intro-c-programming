@@ -21,7 +21,12 @@ This repository contains:
 
     Each day I wrote up the notes from the previous day's lecture.
     There are no notes from lecture 1, as I didn't give this lecture.
-    The lecture notes total about 115 pages.
+    The lecture notes total about 115 pages.  The subdirectory
+    `lec-notes/book` collects the lecture notes into book form,
+    including a table of contents.  There is a `Makefile` there that
+    will build the book.  I think the files in the `book` directory
+    may have corrections that are not in the files in the parent
+    directory, but I forget.
 
   * `quiz`
 
