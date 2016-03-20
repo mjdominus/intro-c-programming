@@ -14,8 +14,8 @@
 
 #define MAX 82
 
-struct listnode*read_in(void);
-char*read_input(void);
+struct listnode *read_in(void);
+char *read_input(void);
 void rp(struct listnode *list);
 
 struct listnode {
@@ -45,8 +45,7 @@ int main(void)
 }
 
 /* Read input from stding */
-char *
-  read_input(void)
+char * read_input(void)
 {
   char chars[MAX], *end_ptr;
   int c, dummy;
@@ -67,15 +66,13 @@ char *
   return end_ptr;
 }
   
-void
-  echo(char *s)
+void echo(char *s)
 {
   fprintf(stderr, "The string is: %s\n", s);
 }
 
 /* print out words in list in random order */
-void 
-  rp(struct listnode *l)
+void rp(struct listnode *l)
 {
   int n, m, i;
   struct listnode *cur_node, *next_node;
@@ -85,6 +82,7 @@ void
 
   n = 0;
   cur_node = l;
+
   while (!(cur_node == (NULL))) 
   {
     n++;
@@ -95,9 +93,12 @@ void
 
   if ((pointer_array = malloc((n+1) * sizeof(char **))) == (NULL))
     exit(2);
+
   i = 0;
+
   for (cur_node=l;cur_node;i++,cur_node=cur_node->next)
     pointer_array[i] = cur_node->line;
+
   for (i=0; i < n; i++) 
   {
     m = n; pointer_array [m] = (NULL);
