@@ -5,9 +5,6 @@
  * Joe Keane
  * 5 August 1992
  *
- * Note:  I did not want to use too many copmments because
- * the program has to skip over them when it is running and
- * so it makes the program run slowly.
  */
 
 #include <stdio.h>
