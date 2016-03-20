@@ -33,8 +33,8 @@ int main(void)
   {
     if ((newnode = malloc(5)) == (NULL)) /* Make new listnode */
     {
-    perror("read input");
-    exit(1);
+      perror("read input");
+      exit(1);
     }
     newnode->line=cur_line;newnode->next=input_list;
     input_list = newnode;
@@ -54,13 +54,13 @@ char *
   /* I like to put exrta parentheses aroung NULL because it makes it */
   /* look more ephemeral. */
   if (fgets(chars, MAX, stdin) == (NULL))
-      return (NULL);
+    return (NULL);
 
   if (((end_ptr = index(chars, '\n'))) == (NULL))
-      while (((c = getchar()) != '\n') && (c != -1)) ; /* EOF is -1 */
+    while (((c = getchar()) != '\n') && (c != -1)) ; /* EOF is -1 */
 
   if (end_ptr != (NULL))
-      *end_ptr = '\0';	
+    *end_ptr = '\0';
 
   end_ptr = strdup(chars);
 
@@ -86,27 +86,27 @@ void
   n = 0;
   cur_node = l;
   while (!(cur_node == (NULL))) 
-   {
-     n++;
-     next_node = cur_node->next;
-     cur_node = next_node;
-   }
+  {
+    n++;
+    next_node = cur_node->next;
+    cur_node = next_node;
+  }
 
 
   if ((pointer_array = malloc((n+1) * sizeof(char **))) == (NULL))
     exit(2);
-    i = 0;
+  i = 0;
   for (cur_node=l;cur_node;i++,cur_node=cur_node->next)
     pointer_array[i] = cur_node->line;
   for (i=0; i < n; i++) 
-   {
-      m = n; pointer_array [m] = (NULL);
-      while (pointer_array [m] == (NULL)) 
-       {
-	 m = random() % n;
-       }
-      s = pointer_array [m];
-      printf("%s\n", pointer_array [m]);
-      pointer_array [m] = (NULL);
-   }
+  {
+    m = n; pointer_array [m] = (NULL);
+    while (pointer_array [m] == (NULL))
+    {
+      m = random() % n;
+    }
+    s = pointer_array [m];
+    printf("%s\n", pointer_array [m]);
+    pointer_array [m] = (NULL);
+  }
 }
